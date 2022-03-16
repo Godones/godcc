@@ -81,3 +81,48 @@ yyless(int n)    返回当前匹配项除了开始的n个字符内的所有的�
 
 解析器处理下一匹配时，他们将会被重新解析。
 ```
+
+
+
+#### 第一节
+
+目标: 支持下面的函数
+
+```c
+// 注释
+int main(){
+    return 9;
+}
+```
+
+```ebnf
+CompUnit  ::= FuncDef;
+
+FuncDef   ::= FuncType IDENT "(" ")" Block;
+FuncType  ::= "int";
+
+Block     ::= "{" Stmt "}";
+Stmt      ::= "return" Number ";";
+Number    ::= INT_CONST;
+```
+
+IDENT 的名称一定为 main
+
+INT_CONST 的范围为 [0, 2^{31} - 1][0,2 31 −1], 不包含负号
+
+
+
+#### 第二节:支持一元表达式
+
+```
+Stmt        ::= "return" Exp ";";
+
+Exp         ::= UnaryExp;
+PrimaryExp  ::= "(" Exp ")" | Number;
+Number      ::= INT_CONST;
+UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp;
+UnaryOp     ::= "+" | "-" | "!";
+```
+
+
+

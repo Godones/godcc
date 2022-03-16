@@ -8,10 +8,10 @@
 #include <vector>
 #include "irvisitor.h"
 
-struct Program;
-struct Function;
-struct BaseBlock;
-struct Instruction;
+class Program;
+class Function;
+class BaseBlock;
+class Instruction;
 class IrVisitor;
 
 enum InstructionType {
@@ -52,8 +52,7 @@ enum DataType {
 };
 
 class IRBase{
-    virtual void accept(IrVisitor *visitor)=0;
-
+    virtual void accept(IrVisitor*)=0;
 };
 // 程序定义
 class Program:public IRBase{

@@ -12,4 +12,5 @@
 
 int testParser();
 void testIRCodeGen();
+void testAsmCodeGen();
 #endif //GODCC_TPARSER_H

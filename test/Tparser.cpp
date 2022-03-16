@@ -45,3 +45,19 @@ void testIRCodeGen(){
     ir_code->accept(&irvisitor);
     return ;
 }
+void testAsmCodeGen(){
+    yyin = fopen("hello.c", "r");
+    if (yyin == nullptr) {
+        std::cerr << "open file error" << std::endl;
+        return ;
+    }
+    std::shared_ptr<Ast> ast;
+    auto result = yyparse(ast);
+    assert(!result);
+    auto visitor = IRGeneratorVisitor();
+    ast->accept(&visitor);
+    auto ir_code = visitor.programIr;
+    auto asmCodeGen = CodeGenVisitor();
+    ir_code->accept(&asmCodeGen);
+    return ;
+}
