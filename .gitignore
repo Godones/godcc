@@ -1,1 +1,2 @@
-build
+build/*
+scanner_example.tokens

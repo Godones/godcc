@@ -8,14 +8,7 @@
 #include <memory>
 #include <iostream>
 #include "visitor.h"
-
-class Ast{
-public:
-    virtual ~Ast() = default;
-    virtual void accept(Visitor* ) = 0;
-};
-
-
+class Visitor;
 class CompUnitAst;
 class FuncDefAst;
 class FuncTypeAst;
@@ -23,10 +16,15 @@ class BlockAst;
 class StmtAst;
 class IdentifierAst;
 
+class Ast{
+public:
+    virtual ~Ast() = default;
+    virtual void accept(Visitor* ) = 0;
+};
 
 class CompUnitAst:public Ast {
 public:
-    std::shared_ptr<FuncDefAst> funcDef;
+    std::shared_ptr<Ast> funcDef;
 public:
     ~CompUnitAst() override = default;
     void accept( Visitor *);
@@ -35,10 +33,10 @@ public:
 
 class FuncDefAst:public Ast {
 public:
-    std::shared_ptr<FuncTypeAst> funcType; //类型
+    std::shared_ptr<Ast> funcType; //类型
     std::string ident;//标识符
 //    std::shared_ptr<><Ast> param;//参数
-    std::shared_ptr<BlockAst> block;//函数体
+    std::shared_ptr<Ast> block;//函数体
 public:
     ~FuncDefAst() override =default;
     void accept( Visitor *) ;
@@ -57,7 +55,7 @@ public:
 
 class BlockAst:public Ast {
 public:
-    std::shared_ptr<StmtAst>stmts;
+    std::shared_ptr<Ast>stmts;
     ~BlockAst() override =default;
     void accept( Visitor *) ;
 };

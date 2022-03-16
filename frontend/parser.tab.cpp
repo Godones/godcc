@@ -1124,7 +1124,7 @@ yyreduce:
 #line 99 "frontend/sysy.y"
                       {
     auto stmt = new StmtAst();
-    stmt->statement = string(to_string((yyvsp[-1].int_val)));
+    stmt->statement = to_string((yyvsp[-1].int_val));
     (yyval.ast_val) = stmt;
   }
 #line 1131 "frontend/parser.tab.cpp"

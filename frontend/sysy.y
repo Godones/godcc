@@ -98,7 +98,7 @@ Block
 Stmt
   : RETURN Number ';' {
     auto stmt = new StmtAst();
-    stmt->statement = string(to_string($2));
+    stmt->statement = to_string($2);
     $$ = stmt;
   }
   ;

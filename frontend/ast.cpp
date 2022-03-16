@@ -4,39 +4,23 @@
 
 #include "ast.h"
 void CompUnitAst::accept(Visitor *visitor) {
-    std::cout << "CompUnitAST { ";
     visitor->VisitCompUnitAst(this);
-    std::cout << " }";
 }
 void FuncDefAst::accept( Visitor *visitor)  {
-    std::cout << "FuncDefAST { ";
-    visitor->VisitFuncTypeAst(funcType);
-    std::cout <<", ";
-    std::cout << ident;
-    std::cout <<", ";
-    visitor->VisitBlockAst(block);
-    std::cout << " }";
+    visitor->VisitFuncDefAst(this);
 }
 void FuncTypeAst::accept( Visitor *visitor)  {
-    std::cout << "FuncType { ";
-    std::cout << type;
-    std::cout << " }";
+    visitor->VisitFuncTypeAst(this);
 }
 
 void BlockAst::accept( Visitor *visitor) {
-    std::cout << "BlockAst{";
-    visitor->VisitStmtAst(stmts);
-    std::cout << "}";
+    visitor->VisitBlockAst(this);
 }
 void StmtAst::accept( Visitor *visitor)  {
-    std::cout << "StmtAst { ";
-    std::cout << statement;
-    std::cout << "}";
+    visitor->VisitStmtAst(this);
 }
 
-void IdentifierAst::accept( Visitor *) {
-    std::cout << "IdentifierAst { ";
-    std::cout << name;
-    std::cout << "}";
+void IdentifierAst::accept( Visitor *visitor) {
+    visitor->VisitIdentifierAst(this);
 }
 

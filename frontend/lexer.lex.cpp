@@ -374,8 +374,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 10
-#define YY_END_OF_BUFFER 11
+#define YY_NUM_RULES 11
+#define YY_END_OF_BUFFER 12
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -385,9 +385,9 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[30] =
     {   0,
-        1,    1,   11,    9,    1,    1,    9,    7,    6,    5,
-        5,    5,    1,    0,    7,    0,    6,    5,    5,    5,
-        0,    2,    8,    3,    5,    5,    5,    4,    0
+        2,    2,   12,   10,    2,    1,   10,    8,    7,    6,
+        6,    6,    2,    0,    8,    0,    7,    6,    6,    6,
+        0,    3,    9,    4,    6,    6,    6,    5,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -469,9 +469,9 @@ static const flex_int16_t yy_chk[72] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[11] =
+static const flex_int32_t yy_rule_can_match_eol[12] =
     {   0,
-1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
+1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -493,12 +493,21 @@ char *yytext;
 #include<iostream>
 #include<string>
 #include"parser.tab.hpp"
+#include <fstream>
 using namespace std;
-#line 498 "frontend/lexer.lex.cpp"
+
+
+/*ofstream token_file("scanner_example.tokens");*/
+void file_out(const char* word,const char* type);
+int began_line =0 ;
+int began_colum= 0;
+int token_num=0;
+ofstream token_file;
+#line 507 "frontend/lexer.lex.cpp"
 /*空格和注释等*/
 /* 标识符*/
 /*整型数字*/
-#line 502 "frontend/lexer.lex.cpp"
+#line 511 "frontend/lexer.lex.cpp"
 
 #define INITIAL 0
 
@@ -713,9 +722,9 @@ YY_DECL
 		}
 
 	{
-#line 25 "frontend/sysy.l"
+#line 34 "frontend/sysy.l"
 
-#line 719 "frontend/lexer.lex.cpp"
+#line 728 "frontend/lexer.lex.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -785,58 +794,96 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 26 "frontend/sysy.l"
-{}
+#line 35 "frontend/sysy.l"
+{began_line++;began_colum=0;}
 	YY_BREAK
 case 2:
+/* rule 2 can match eol */
+YY_RULE_SETUP
+#line 36 "frontend/sysy.l"
+{began_colum += yyleng;}
+	YY_BREAK
+case 3:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 27 "frontend/sysy.l"
-{}
-	YY_BREAK
-case 3:
-YY_RULE_SETUP
-#line 28 "frontend/sysy.l"
-{return INT;}
+#line 37 "frontend/sysy.l"
+{began_line++;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 29 "frontend/sysy.l"
-{return RETURN;}
+#line 38 "frontend/sysy.l"
+{
+                    began_colum +=yyleng;
+                    file_out("int","int");
+                    return INT;
+                }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 30 "frontend/sysy.l"
-{ yylval.str_val = new string(yytext);return IDENT;}
+#line 43 "frontend/sysy.l"
+{
+                     began_colum +=yyleng;
+                     file_out("return","return");
+                     return RETURN;
+                }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 31 "frontend/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 48 "frontend/sysy.l"
+{
+                    yylval.str_val = new string(yytext);
+                    began_colum +=yyleng;
+                    file_out(yytext,"Identifier");
+                    return IDENT;
+                }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 32 "frontend/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 54 "frontend/sysy.l"
+{
+                    yylval.int_val = strtol(yytext, nullptr, 0);
+                    began_colum +=yyleng;
+                    file_out(yytext,"Decimal");
+                    return INT_CONST;
+                }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "frontend/sysy.l"
-{ yylval.int_val = strtol(yytext, nullptr, 0); return INT_CONST; }
+#line 60 "frontend/sysy.l"
+{
+                    yylval.int_val = strtol(yytext, nullptr, 0);
+                    began_colum +=yyleng;
+                    file_out(yytext,"Octal");
+                    return INT_CONST;
+                }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "frontend/sysy.l"
-{ return yytext[0]; }
+#line 66 "frontend/sysy.l"
+{
+                    yylval.int_val = strtol(yytext, nullptr, 0);
+                    began_colum +=yyleng;
+                    file_out(yytext,"Hex");
+                    return INT_CONST;
+                }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "frontend/sysy.l"
+#line 72 "frontend/sysy.l"
+{
+                    began_colum +=yyleng;
+                    file_out(yytext,yytext);
+                    return yytext[0];
+                }
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 77 "frontend/sysy.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 840 "frontend/lexer.lex.cpp"
+#line 887 "frontend/lexer.lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1812,5 +1859,15 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 35 "frontend/sysy.l"
+#line 77 "frontend/sysy.l"
 
+
+void file_out(const char* word,const char* type){
+    if(!token_file.is_open()){
+        return;
+    }
+    token_file <<"[@" << token_num << ",";
+    token_file << began_colum << ":" << began_colum+yyleng << "=" << "'" << word << "'"<< ",";
+    token_file << "<'" << type << "'>,";
+    token_file << began_line << ":" << began_colum<< "]\n";
+}

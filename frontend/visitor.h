@@ -5,7 +5,8 @@
 #ifndef GODCC_VISITOR_H
 #define GODCC_VISITOR_H
 #include "ast.h"
-
+#include "../IR/IR.h"
+#include "../log/log.h"
 class CompUnitAst;
 class FuncDefAst;
 class FuncTypeAst;
@@ -23,6 +24,30 @@ public:
 };
 
 class AstVisitor : public Visitor {
+public:
+    void VisitCompUnitAst( CompUnitAst*) override;
+    void VisitFuncDefAst( FuncDefAst*)  override;
+    void VisitFuncTypeAst( FuncTypeAst*)  override;
+    void VisitBlockAst( BlockAst*) override;
+    void VisitStmtAst( StmtAst*) override;
+    void VisitIdentifierAst( IdentifierAst*) override;
+};
+
+// 符号表建立
+class BuildSymbolVisitor : public Visitor {
+public:
+    void VisitCompUnitAst( CompUnitAst*) override;
+    void VisitFuncDefAst( FuncDefAst*)  override;
+    void VisitFuncTypeAst( FuncTypeAst*)  override;
+    void VisitBlockAst( BlockAst*) override;
+    void VisitStmtAst( StmtAst*) override;
+    void VisitIdentifierAst( IdentifierAst*) override;
+};
+
+// 中间代码生成
+class IRGeneratorVisitor : public Visitor {
+public:
+    std::shared_ptr<Program> programIr = nullptr;
 public:
     void VisitCompUnitAst( CompUnitAst*) override;
     void VisitFuncDefAst( FuncDefAst*)  override;
