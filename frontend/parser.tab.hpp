@@ -47,33 +47,31 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 1 "frontend/sysy.y"
 
-  #include <memory>
-  #include <string>
-  #include "ast.h"
+#include <memory>
+#include <string>
+#include "ast.h"
 
 #line 55 "frontend/parser.tab.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
-  {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    INT = 258,                     /* INT  */
-    RETURN = 259,                  /* RETURN  */
-    IDENT = 260,                   /* IDENT  */
-    INT_CONST = 261                /* INT_CONST  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
+enum yytokentype {
+  YYEMPTY = -2,
+  YYEOF = 0,                     /* "end of file"  */
+  YYerror = 256,                 /* error  */
+  YYUNDEF = 257,                 /* "invalid token"  */
+  INT = 258,                     /* INT  */
+  RETURN = 259,                  /* RETURN  */
+  IDENT = 260,                   /* IDENT  */
+  INT_CONST = 261                /* INT_CONST  */
+};
+typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
+union YYSTYPE {
 #line 31 "frontend/sysy.y"
 
   std::string *str_val;
@@ -88,11 +86,8 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-
 extern YYSTYPE yylval;
 
-
-int yyparse (std::shared_ptr<Ast> &ast);
-
+int yyparse(std::shared_ptr <Ast> &ast);
 
 #endif /* !YY_YY_FRONTEND_PARSER_TAB_HPP_INCLUDED  */

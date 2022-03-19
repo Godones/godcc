@@ -3,25 +3,27 @@
 //
 
 #include "log.h"
-void DEBUG(const char* fmt,...){
+
+void DEBUG(const char *fmt, ...) {
 #ifdef _DEBUG
-    printf("[DEBUG] ");
-    printf("\033[35m");
-    va_list args;
-    va_start(args,fmt);
-    vprintf(fmt,args);
-    va_end(args);
-    printf("\033[0m\n");
+  printf("[DEBUG] ");
+  printf("\033[35m");
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("\033[0m\n");
 #endif
 }
-void INFO(const char*fmt,...){
+
+void INFO(const char *fmt, ...) {
 #ifdef _INFO
-    printf("[INFO] ");
-    printf("\033[36m");
-    va_list args;
-    va_start(args,fmt);
-    vprintf(fmt,args);
-    va_end(args);
-    printf("\033[0m\n");
+  printf("[INFO] ");
+  printf("\033[36m");
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("\033[0m\n");
 #endif
 }

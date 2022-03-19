@@ -5,10 +5,9 @@
 #include "test/Tparser.h"
 #include <string_view>
 
-int main(int argc,const char*argv[]) {
-//    testParser();
+int main(int argc, const char *argv[]) {
+  testParser();
 //    testIRCodeGen();
-    testAsmCodeGen();
-
-    return 0;
+//    testAsmCodeGen();
+  return 0;
 }

@@ -41,8 +41,9 @@ using namespace std;
 %token <int_val> INT_CONST
 
 // 非终结符的类型定义
-%type <ast_val> FuncDef FuncType Block Stmt
-%type <int_val> Number
+%type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
+//%type <int_val>
+//%type <str_val>
 %%
 
 // 开始符, CompUnit ::= FuncDef, 大括号后声明了解析完成后 parser 要做的事情
@@ -96,16 +97,78 @@ Block
   ;
 
 Stmt
-  : RETURN Number ';' {
+  : RETURN Expr ';' {
     auto stmt = new StmtAst();
-    stmt->statement = to_string($2);
+    stmt->expr = shared_ptr<Ast>($2);
     $$ = stmt;
   }
   ;
 
+Expr
+  : UnaryExp {
+    auto Expr = new ExpAst();
+    Expr->realExpr = shared_ptr<Ast>($1);
+    Expr->expType = ExpAst::ExpType::UNARY;
+    $$ = Expr;
+  }
+;
+
+UnaryExp
+  : PrimaryExpr {
+  	auto unaryExp = new UnaryExprAst();
+  	unaryExp-> primaryExp = shared_ptr<Ast>($1);
+  	unaryExp->unaryType = UnaryExprAst::UnaryType::PRIMARY;
+  	$$ = unaryExp;
+  }
+  |UnaryOp UnaryExp{
+	auto unaryExp = new UnaryExprAst();
+	UnaryExprAst::unary *unary = new UnaryExprAst::unary;
+	unary->unaryOp = shared_ptr<Ast>($1);
+        unary->unaryExpr = shared_ptr<Ast>($2);
+        unaryExp->unaryExpr = shared_ptr<UnaryExprAst::unary>(unary);
+	unaryExp->unaryType = UnaryExprAst::UnaryType::UNARY;
+	$$ = unaryExp;
+  }
+;
+
+PrimaryExpr
+  : '(' Expr ')' {
+  auto primaryAst = new PrimaryExprAst();
+  primaryAst->exp = shared_ptr<Ast>($2);
+  primaryAst->primaryType = PrimaryExprAst::PrimaryType::EXP;
+  $$ = primaryAst;
+  }
+  |Number {
+  auto primaryAst = new PrimaryExprAst();
+    primaryAst->number = shared_ptr<Ast>($1);
+    primaryAst->primaryType = PrimaryExprAst::PrimaryType::NUMBER;
+    $$ = primaryAst;
+  }
+;
+
+UnaryOp
+ : '+' {
+ auto unaryOpAst = new UnaryOpAst();
+   unaryOpAst->op = "+";
+   $$ = unaryOpAst;
+ }
+ | '-' {
+ auto unaryOpAst = new UnaryOpAst();
+   unaryOpAst->op = "-";
+   $$ = unaryOpAst;
+ }
+ | '!' {
+  auto unaryOpAst = new UnaryOpAst();
+  unaryOpAst->op = "!";
+  $$ = unaryOpAst;
+ }
+ ;
+
 Number
   : INT_CONST {
-    $$ = ($1);
+  auto numberAst = new NumberAst();
+  numberAst->value = ($1);
+  $$ = numberAst;
   }
   ;
 
