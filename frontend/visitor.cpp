@@ -45,24 +45,25 @@ void AstVisitor::VisitIdentifierAst(IdentifierAst *identifierAst) {
 
 void AstVisitor::VisitExp(ExpAst *expAst) {
     expAst->printSpace();
-    if (expAst->expType == ExpAst::ExpType::UNARY)
+    if (expAst->expType == ExpAst::ExpType::UNARY){
         std::cout << "UnaryExpAst <>\n";
-    expAst->realExpr->setSpaces(expAst->spaces+1);
-    expAst->realExpr->accept(this);
+        expAst->realExpr->setSpaces(expAst->spaces+1);
+        expAst->realExpr->accept(this);
+    }
 }
 
 void AstVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
     unaryExprAst->printSpace();
     if (unaryExprAst->unaryType == UnaryExprAst::UnaryType::UNARY) {
         std::cout << "Op UnaryExpAst <> ";
-        unaryExprAst->unaryExpr->unaryOp->accept(this);//一元运算符号
+        unaryExprAst->unaryOp->accept(this);//一元运算符号
         std::cout << "\n";
-        unaryExprAst->unaryExpr->unaryExpr->setSpaces(unaryExprAst->spaces+1);
-        unaryExprAst->unaryExpr->unaryExpr->accept(this);
+        unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces+1);
+        unaryExprAst->unaryExpr->accept(this);
     } else {
         std::cout << "Primary UnaryExpAst <> \n";
-        unaryExprAst->primaryExp->setSpaces(unaryExprAst->spaces+1);
-        unaryExprAst->primaryExp->accept(this);
+        unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces+1);
+        unaryExprAst->unaryExpr->accept(this);
     }
 }
 
@@ -78,13 +79,13 @@ void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
     primaryExprAst->printSpace();
     if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::EXP) {
         std::cout << "Exp PrimaryExpAst <> ()\n";
-        primaryExprAst->exp->setSpaces(primaryExprAst->spaces+1);
-        primaryExprAst->exp->accept(this);
+        primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces+1);
+        primaryExprAst->primaryExpr->accept(this);
     } else if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
 
         std::cout << "Number PrimaryExpAst <>\n";
-        primaryExprAst->number->setSpaces(primaryExprAst->spaces+1);
-        primaryExprAst->number->accept(this);
+        primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces+1);
+        primaryExprAst->primaryExpr->accept(this);
     }
 }
 
@@ -92,6 +93,9 @@ void AstVisitor::VisitNumberAst(NumberAst *numberAst) {
     numberAst->printSpace();
     std::cout << "NumberAst <> "<< numberAst->value << "\n";
 }
+
+
+
 
 
 void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
@@ -132,52 +136,63 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
     auto &block = function.blocks.back();
     int num = std::atoi(stmtAst->statement.c_str());
     // 如果是return语句，则生成一个ret指令
+    // 第一步 解析return语句中的表达式
+    stmtAst->expr->accept(this);
+    // 建立一个ret指令
     Instruction instruction;
-    instruction.operand = num;
+//    instruction.operand1 = num;
     instruction.instructionType = InstructionType::Return;
     block.instructions.emplace_back(instruction);
 }
 
 void IRGeneratorVisitor::VisitExp(ExpAst *expAst) {
-    if (expAst->expType == ExpAst::ExpType::UNARY)
-        std::cout << "UnaryExpAst:\n ";
     expAst->realExpr->accept(this);
 }
 
 void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
+    // 获得最后一个base_block
+    auto &function = programIr->functions.back();
+    auto &block = function.blocks.back();
+    block.instructions.emplace_back(Instruction());
+    auto &instruction = block.instructions.back();
     if (unaryExprAst->unaryType == UnaryExprAst::UnaryType::UNARY) {
-        std::cout << "Op UnaryExpAst:\n ";
-        unaryExprAst->unaryExpr->unaryOp->accept(this);//一元运算符号
-        unaryExprAst->unaryExpr->unaryExpr->accept(this);
+        // 对于一元运算符，需要生成一个指令
+        // 如 -5 / -(?)
+        // 先解析符号后面的表达式
+        unaryExprAst->unaryExpr->accept(this);
+        unaryExprAst->unaryOp->accept(this);//一元运算符号
+//        instruction.operand1 = 0;
+
     } else {
         std::cout << "Primary UnaryExpAst:\n ";
-        unaryExprAst->primaryExp->accept(this);
+        unaryExprAst->unaryExpr->accept(this);
     }
 }
 
 void IRGeneratorVisitor::VisitBinaryExpAst(BinaryExprAst *) {
-
+    auto &function = programIr->functions.back();
+    auto &block = function.blocks.back();
+    auto &instruction = block.instructions.back();
+    instruction.instructionType = InstructionType::Binary;
 }
 
 void IRGeneratorVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
-    std::cout << "UnaryOpAst:" << unaryOpAst->op << "\n ";
+    // 所有的一元运算符可以转化为二元运算符
+    auto &function = programIr->functions.back();
+    auto &block = function.blocks.back();
+    auto &instruction = block.instructions.back();
+    instruction.instructionType = InstructionType::Binary;
 }
 
 void IRGeneratorVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
     if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::EXP) {
-        std::cout << "Exp PrimaryExpAst:\n ";
-        std::cout << "(";
-        primaryExprAst->exp->accept(this);
-        std::cout << ")";
+
     } else if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
-        std::cout << "Number PrimaryExpAst:\n ";
-        primaryExprAst->number->accept(this);
     }
 }
 
 void IRGeneratorVisitor::VisitNumberAst(NumberAst *numberAst) {
-    std::cout << "NumberAst:\n ";
-    std::cout << numberAst->value;
+
 }
 
 

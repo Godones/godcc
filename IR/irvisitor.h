@@ -40,11 +40,11 @@ public:
 class CodeGenVisitor : public IrVisitor {
 public:
   std::ofstream out_file;
-  int a;
+  int a = 0;
 public:
   CodeGenVisitor();
 
-  CodeGenVisitor(const char *outfile);
+  explicit CodeGenVisitor(const char *outfile);
 
   void VisitProgram(Program *) override;
 

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "irvisitor.h"
+#include <string_view>
 
 class Program;
 
@@ -57,33 +58,35 @@ enum DataType {
 };
 
 class IRBase {
+ public:
+  IRBase() = default;
   virtual void accept(IrVisitor *) = 0;
 };
 
 // 程序定义
 class Program : public IRBase {
-public:
-  std::vector <Function> functions;
-
+ public:
+  std::vector<Function> functions;
+  Program() = default;
   void accept(IrVisitor *visitor);
 };
 
 // 程序由函数和全局指令组成
 class Function : public IRBase {
-public:
+ public:
   std::string name;
   DataType retType;
-  std::vector <BaseBlock> blocks;
-
+  std::vector<BaseBlock> blocks;
+  Function() = default;
   void accept(IrVisitor *visitor);
 };
 
 // 函数由基本块组成
 class BaseBlock : public IRBase {
-public:
+ public:
   std::string blockName;
-  std::vector <Instruction> instructions;
-
+  std::vector<Instruction> instructions;
+  BaseBlock() = default;
   void accept(IrVisitor *visitor);
 };
 
@@ -92,12 +95,22 @@ public:
 // 局部指令: 局部变量声明、局部函数声明
 
 class Instruction : public IRBase {
-public:
+ public:
   // 指令类型
   InstructionType instructionType;
   // 指令类型对应的操作数
-  int operand;
-
+  // 操作数可以是立即数
+  // 也可以是寄存器的名字
+  union {
+	int integer;
+	char* regName;
+  } operand1;
+  union {
+	int integer;
+	char* regName;
+  } operand2;
+  std::string target;
+  Instruction() = default;
   void accept(IrVisitor *visitor);
 };
 

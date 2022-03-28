@@ -29,7 +29,7 @@ void IrVisitorDefault::VisitBaseBlock(BaseBlock *block) {
 
 void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
   std::cout << toString(instruction->instructionType) << " ";
-  std::cout << instruction->operand;
+//  std::cout << instruction->operand1;
   std::cout << "\n";
 }
 
@@ -71,7 +71,7 @@ void CodeGenVisitor::VisitBaseBlock(BaseBlock *baseBlock) {
 void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
   switch (instruction->instructionType) {
   case InstructionType::Return: {
-    out_file << "\tli a0," << instruction->operand << "\n";
+//    out_file << "\tli a0," << instruction->operand1 << "\n";
     out_file << "\tret\n";
   }
   default:break;

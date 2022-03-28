@@ -125,29 +125,22 @@ public:
     std::shared_ptr <Ast> left;
     std::shared_ptr <Ast> right;
     std::string op;
-
     ~BinaryExprAst() override = default;
-
     void accept(Visitor *) override;
 };
 
 // 一元表达式
 class UnaryExprAst : public Ast {
 public:
-    typedef struct {
-        std::shared_ptr <Ast> unaryOp;
-        std::shared_ptr <Ast> unaryExpr;
-    } unary;
     enum class UnaryType {
         PRIMARY,
         UNARY,
     };
 public:
-    std::shared_ptr <unary> unaryExpr; //带符号
-    std::shared_ptr <Ast> primaryExp; //不带符号
+    std::shared_ptr <Ast> unaryOp;
+    std::shared_ptr <Ast> unaryExpr; //不带符号
     UnaryType unaryType; //类型
     ~UnaryExprAst() override = default;
-
     void accept(Visitor *) override;
 };
 
@@ -159,11 +152,8 @@ public:
     };
 public:
     PrimaryType primaryType;
-    std::shared_ptr <Ast> exp;
-    std::shared_ptr <Ast> number;
-
+    std::shared_ptr <Ast> primaryExpr;
     ~PrimaryExprAst() override = default;
-
     void accept(Visitor *) override;
 };
 
@@ -182,9 +172,7 @@ public:
 class UnaryOpAst : public Ast {
 public:
     std::string op;
-
     ~UnaryOpAst() override = default;
-
     void accept(Visitor *) override;
 };
 

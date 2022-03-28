@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_FRONTEND_PARSER_TAB_HPP_INCLUDED
-# define YY_YY_FRONTEND_PARSER_TAB_HPP_INCLUDED
+#ifndef YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -45,40 +45,42 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "frontend/sysy.y"
+#line 1 "/home/godcc/frontend/sysy.y"
 
-#include <memory>
-#include <string>
-#include "ast.h"
+  #include <memory>
+  #include <string>
+  #include "ast.h"
 
-#line 55 "frontend/parser.tab.hpp"
+#line 55 "/home/godcc/frontend/parser.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-enum yytokentype {
-  YYEMPTY = -2,
-  YYEOF = 0,                     /* "end of file"  */
-  YYerror = 256,                 /* error  */
-  YYUNDEF = 257,                 /* "invalid token"  */
-  INT = 258,                     /* INT  */
-  RETURN = 259,                  /* RETURN  */
-  IDENT = 260,                   /* IDENT  */
-  INT_CONST = 261                /* INT_CONST  */
-};
-typedef enum yytokentype yytoken_kind_t;
+  enum yytokentype
+  {
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    INT = 258,                     /* INT  */
+    RETURN = 259,                  /* RETURN  */
+    IDENT = 260,                   /* IDENT  */
+    INT_CONST = 261                /* INT_CONST  */
+  };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-union YYSTYPE {
-#line 31 "frontend/sysy.y"
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+union YYSTYPE
+{
+#line 31 "/home/godcc/frontend/sysy.y"
 
   std::string *str_val;
   int int_val;
   Ast *ast_val;
 
-#line 84 "frontend/parser.tab.hpp"
+#line 84 "/home/godcc/frontend/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -86,8 +88,11 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+
 extern YYSTYPE yylval;
 
-int yyparse(std::shared_ptr <Ast> &ast);
 
-#endif /* !YY_YY_FRONTEND_PARSER_TAB_HPP_INCLUDED  */
+int yyparse (std::shared_ptr<Ast> &ast);
+
+
+#endif /* !YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED  */

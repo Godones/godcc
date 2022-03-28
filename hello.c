@@ -1,4 +1,4 @@
 // 注释
 int main() {
-  return +(- + -9);
+  return +(- -!6);//注释
 }

@@ -5,23 +5,24 @@
 
 //导入文件声明和函数声明
 extern FILE *yyin;
-
+extern void file_out(const char* word,const char* type);
 extern int yyparse(std::shared_ptr <Ast> &ast);
-
-extern std::ofstream token_file;
+extern FILE *yyout;
 
 int testParser() {
-  yyin = fopen("hello.c", "r");
+  yyin = fopen("../hello.c", "r");
   if (yyin == nullptr) {
-    std::cerr << "open file error" << std::endl;
+    std::cout << "open file "<<"../hello.c"<<" failed\n" ;
     return -1;
   }
   //需要输出token
-  token_file.open("build/scanner_example.tokens");
-  if (!token_file.is_open()) {
-    std::cerr << "open file error" << std::endl;
+  yyout = fopen("token.txt", "w");
+  if (yyout == nullptr) {
+    std::cout << "open file "<<"token.txt"<<" failed\n" ;
     return -1;
   }
+//  file_o
+  fprintf(yyout, "token\n");
   std::shared_ptr <Ast> ast;
   auto result = yyparse(ast);
   std::cout << "Parse result:" << result << std::endl;

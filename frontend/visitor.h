@@ -6,6 +6,7 @@
 #define GODCC_VISITOR_H
 
 #include "ast.h"
+
 #include "../IR/IR.h"
 #include "../log/log.h"
 
