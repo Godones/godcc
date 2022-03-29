@@ -42,6 +42,7 @@ using namespace std;
 
 // 非终结符的类型定义
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
+%type <ast_val> AddExpr MulExpr
 //%type <int_val>
 //%type <str_val>
 %%
@@ -105,13 +106,39 @@ Stmt
   ;
 
 Expr
-  : UnaryExp {
+  : AddExpr {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>($1);
-    Expr->expType = ExpAst::ExpType::UNARY;
     $$ = Expr;
   }
 ;
+
+AddExpr
+:MulExpr {
+  $$ = new AddExprAst( shared_ptr<Ast>($1));
+}
+|AddExpr "+" MulExpr{
+  $$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"+");
+}
+|AddExpr "-" MulExpr{
+$$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"-");
+};
+
+MulExpr
+:UnaryExp{
+  $$ = new MulExprAst(shared_ptr<Ast>($1));
+}
+|MulExpr "*" UnaryExp{
+$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+}
+|MulExpr "/" UnaryExp{
+$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+}
+|MulExpr "%" UnaryExp{
+$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+}
+;
+
 
 UnaryExp
   : PrimaryExpr {

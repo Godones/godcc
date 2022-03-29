@@ -10,7 +10,7 @@ OBJ =  build/parser.o build/lexer.o build/log.o build/test.o
 SCANNER= sysy.l
 PARSER= sysy.y
 
-.PHONY:clean
+.PHONY:clean risc-v
 
 
 build:$(OUT)
@@ -43,6 +43,9 @@ frontend/parser.cpp: frontend/sysy.y
 
 
 test:build
+
+risc-v:
+	riscv64-unknown-elf-gcc riscv/a.s -o riscv/a.out
 
 clean:
 	rm build/*

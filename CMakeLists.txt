@@ -12,15 +12,15 @@ set(lexer_path ${FRONTEND}/lexer.cpp)
 set(parser_path ${FRONTEND}/parser.cpp)
 set(parser_hpp_path ${FRONTEND}/parser.hpp)
 
-#if(EXISTS ${lexer_path})
-#  file(REMOVE ${lexer_path})
-#endif()
-#if (EXISTS ${parser_path})
-#  file(REMOVE ${parser_path})
-#endif ()
-#if (EXISTS ${FRONTEND}/parser.hpp)
-#  file(REMOVE ${FRONTEND}/parser.hpp)
-#endif ()
+if(EXISTS ${lexer_path})
+  file(REMOVE ${lexer_path})
+endif()
+if (EXISTS ${parser_path})
+  file(REMOVE ${parser_path})
+endif ()
+if (EXISTS ${FRONTEND}/parser.hpp)
+  file(REMOVE ${FRONTEND}/parser.hpp)
+endif ()
 
 add_custom_command(
 	OUTPUT ${parser_path} ${parser_hpp_path}
@@ -49,8 +49,13 @@ add_library(test STATIC
 	${parser_path}
 	${lexer_path}
 	)
-#add_dependencies(test LEXER PARSER)
 
-
+add_custom_target(
+	risc-v
+	COMMAND riscv64-unknown-elf-gcc ../riscv/a.s -o ../riscv/a.out
+)
+link_directories(${PROJECT_SOURCE_DIR}/googletest)
 add_executable(main main.cpp)
-target_link_libraries(main  test)
+target_link_libraries(main test)
+
+

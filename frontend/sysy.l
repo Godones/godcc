@@ -51,7 +51,6 @@ Hex 0[xX][0-9a-fA-F]+
                 }
 {Decimal}       {
                     yylval.int_val = strtol(yytext, nullptr, 0);
-
                     file_out(yytext,"Decimal");
                     began_colum +=yyleng;
                     return INT_CONST;
@@ -76,7 +75,6 @@ Hex 0[xX][0-9a-fA-F]+
 %%
 
 void file_out(const char* word,const char* type){
-    fprintf(yyout,"gggg");
     fprintf(yyout,"[@%d,%d:%d=\"%s\",<%s>,%d:%d]\n",token_num,began_colum,began_colum+yyleng-1,word,type,yylineno,began_colum);
     token_num++;
 }

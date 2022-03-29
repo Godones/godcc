@@ -5,10 +5,10 @@
 #ifndef GODCC_IR_H
 #define GODCC_IR_H
 
-#include <iostream>
-#include <vector>
 #include "irvisitor.h"
+#include <iostream>
 #include <string_view>
+#include <vector>
 
 class Program;
 
@@ -47,11 +47,12 @@ enum BinaryOp {
   And,
   Or,
   Xor,
+  Eq, //==
 };
 
 enum DataType {
   Void,
-  Int, //当前仅支持
+  Int,//当前仅支持
   Float,
   Double,
   Pointer,
@@ -101,21 +102,25 @@ class Instruction : public IRBase {
   // 指令类型对应的操作数
   // 操作数可以是立即数
   // 也可以是寄存器的名字
-  union {
-	int integer;
-	char* regName;
-  } operand1;
-  union {
-	int integer;
-	char* regName;
-  } operand2;
-  std::string target;
+  BinaryOp binaryOp;
+  typedef struct {
+	union {
+	  int number;
+	  unsigned int reg;
+	}operand;
+	bool isreg;
+	} Operand;
+
+  Operand operand1;
+  Operand operand2;
+  unsigned int target_register;
   Instruction() = default;
   void accept(IrVisitor *visitor);
 };
 
-std::string toString(const InstructionType &type);
+std::string_view toString(const InstructionType &type);
 
-std::string toString(const DataType &op);
+std::string_view toString(const DataType &op);
+std::string_view toString(const BinaryOp&binary_op);
 
-#endif //GODCC_IR_H
+#endif//GODCC_IR_H

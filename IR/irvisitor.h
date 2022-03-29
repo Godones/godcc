@@ -8,13 +8,13 @@
 #include "IR.h"
 #include <fstream>
 
-struct Program;
-struct Function;
-struct BaseBlock;
-struct Instruction;
+class Program;
+class Function;
+class BaseBlock;
+class Instruction;
 
 class IrVisitor {
-public:
+ public:
   virtual void VisitProgram(Program *) = 0;
 
   virtual void VisitFunction(Function *) = 0;
@@ -26,7 +26,7 @@ public:
 
 // 查看中间代码形式
 class IrVisitorDefault : public IrVisitor {
-public:
+ public:
   void VisitProgram(Program *) override;
 
   void VisitFunction(Function *) override;
@@ -38,10 +38,11 @@ public:
 
 //汇编代码生成
 class CodeGenVisitor : public IrVisitor {
-public:
+ public:
   std::ofstream out_file;
   int a = 0;
-public:
+
+ public:
   CodeGenVisitor();
 
   explicit CodeGenVisitor(const char *outfile);
@@ -55,4 +56,4 @@ public:
   void VisitInstruction(Instruction *) override;
 };
 
-#endif //GODCC_IRVISITOR_H
+#endif//GODCC_IRVISITOR_H

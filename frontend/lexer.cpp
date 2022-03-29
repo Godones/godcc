@@ -842,7 +842,6 @@ YY_RULE_SETUP
 #line 52 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
-
                     file_out(yytext,"Decimal");
                     began_colum +=yyleng;
                     return INT_CONST;
@@ -850,7 +849,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 59 "../frontend/sysy.l"
+#line 58 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
                     file_out(yytext,"Octal");
@@ -860,7 +859,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 65 "../frontend/sysy.l"
+#line 64 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
                     file_out(yytext,"Hex");
@@ -870,7 +869,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 71 "../frontend/sysy.l"
+#line 70 "../frontend/sysy.l"
 {
                     file_out(yytext,yytext);
                     began_colum +=yyleng;
@@ -879,10 +878,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 76 "../frontend/sysy.l"
+#line 75 "../frontend/sysy.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 886 "../frontend/lexer.cpp"
+#line 885 "../frontend/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1858,11 +1857,10 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 76 "../frontend/sysy.l"
+#line 75 "../frontend/sysy.l"
 
 
 void file_out(const char* word,const char* type){
-    fprintf(yyout,"gggg");
     fprintf(yyout,"[@%d,%d:%d=\"%s\",<%s>,%d:%d]\n",token_num,began_colum,began_colum+yyleng-1,word,type,yylineno,began_colum);
     token_num++;
 }

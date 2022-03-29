@@ -5,63 +5,66 @@
 
 //导入文件声明和函数声明
 extern FILE *yyin;
-extern void file_out(const char* word,const char* type);
-extern int yyparse(std::shared_ptr <Ast> &ast);
+extern void file_out(const char *word, const char *type);
+extern int yyparse(std::shared_ptr<Ast> &ast);
 extern FILE *yyout;
 
-int testParser() {
+
+void openFile(){
   yyin = fopen("../hello.c", "r");
   if (yyin == nullptr) {
-    std::cout << "open file "<<"../hello.c"<<" failed\n" ;
-    return -1;
+	std::cout << "open file "
+			  << "../hello.c"
+			  << " failed\n";
+	return ;
   }
   //需要输出token
   yyout = fopen("token.txt", "w");
   if (yyout == nullptr) {
-    std::cout << "open file "<<"token.txt"<<" failed\n" ;
-    return -1;
+	std::cout << "open file "
+			  << "token.txt"
+			  << " failed\n";
+	return;
   }
-//  file_o
-  fprintf(yyout, "token\n");
-  std::shared_ptr <Ast> ast;
-  auto result = yyparse(ast);
-  std::cout << "Parse result:" << result << std::endl;
+}
+
+auto parser()-> decltype(std::make_shared<Ast>()) {
+  static std::shared_ptr<Ast> ast = nullptr;
+  if (ast!=nullptr) {
+	return ast;
+  }
+  openFile();
+  int result = yyparse(ast);
   assert(!result);
+//  fclose(yyin);
+//  fclose(yyout);
+  return ast;
+}
+int testParser() {
+  openFile();
+  auto ast = parser();
   auto visitor = AstVisitor();
   ast->accept(&visitor);
   std::cout << "\n";
   return 0;
 }
 
-//void testIRCodeGen(){
-//    yyin = fopen("hello.c", "r");
-//    if (yyin == nullptr) {
-//        std::cerr << "open file error" << std::endl;
-//        return ;
-//    }
-//    std::shared_ptr<Ast> ast;
-//    auto result = yyparse(ast);
-//    assert(!result);
-//    auto visitor = IRGeneratorVisitor();
-//    ast->accept(&visitor);
-//    auto ir_code = visitor.programIr;
-//    auto irvisitor = IrVisitorDefault();
-//    ir_code->accept(&irvisitor);
-//    return ;
-//}
-//void testAsmCodeGen(){
-//    yyin = fopen("hello.c", "r");
-//    if (yyin == nullptr) {
-//        std::cerr << "open file error" << std::endl;
-//        return ;
-//    }
-//    std::shared_ptr<Ast> ast;
-//    auto result = yyparse(ast);
-//    assert(!result);
-//    auto visitor = IRGeneratorVisitor();
-//    ast->accept(&visitor);
-//    auto ir_code = visitor.programIr;
-//    auto asmCodeGen = CodeGenVisitor();
-//    ir_code->accept(&asmCodeGen);
-//    return ;
-//}
+void testIRCodeGen() {
+  openFile();
+  auto ast = parser();
+  auto visitor = IRGeneratorVisitor();
+  ast->accept(&visitor);
+  auto ir_code = visitor.programIr;
+  auto visitor_default = IrVisitorDefault();
+  ir_code->accept(&visitor_default);
+}
+
+void testAsmCodeGen() {
+  openFile();
+  auto ast = parser();
+  auto visitor = IRGeneratorVisitor();
+  ast->accept(&visitor);
+  auto ir_code = visitor.programIr;
+  auto asmCodeGen = CodeGenVisitor();
+  ir_code->accept(&asmCodeGen);
+}

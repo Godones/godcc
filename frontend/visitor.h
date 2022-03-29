@@ -5,6 +5,7 @@
 #ifndef GODCC_VISITOR_H
 #define GODCC_VISITOR_H
 
+#include <memory>
 #include "ast.h"
 
 #include "../IR/IR.h"
@@ -26,7 +27,9 @@ class UnaryExprAst;
 
 class UnaryOpAst;
 
-class BinaryExprAst;
+class AddExprAst;
+
+class MulExprAst;
 
 class NumberAst;
 
@@ -35,7 +38,7 @@ class PrimaryExprAst;
 class IdentifierAst;
 
 class Visitor {
-public:
+ public:
   virtual void VisitCompUnitAst(CompUnitAst *) = 0;
 
   virtual void VisitFuncDefAst(FuncDefAst *) = 0;
@@ -50,8 +53,8 @@ public:
 
   virtual void VisitUnaryExpAst(UnaryExprAst *) = 0;
 
-  virtual void VisitBinaryExpAst(BinaryExprAst *) = 0;
-
+  virtual void VisitAddExpAst(AddExprAst *) = 0;
+  virtual void VisitMulExpAst(MulExprAst *) =0;
   virtual void VisitUnaryOpAst(UnaryOpAst *) = 0;
 
   virtual void VisitPrimaryExpAst(PrimaryExprAst *) = 0;
@@ -62,7 +65,7 @@ public:
 };
 
 class AstVisitor : public Visitor {
-public:
+ public:
   void VisitCompUnitAst(CompUnitAst *) override;
 
   void VisitFuncDefAst(FuncDefAst *) override;
@@ -77,8 +80,9 @@ public:
 
   void VisitUnaryExpAst(UnaryExprAst *) override;
 
-  void VisitBinaryExpAst(BinaryExprAst *) override;
+  void VisitAddExpAst(AddExprAst *) override;
 
+  void VisitMulExpAst(MulExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
 
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
@@ -107,9 +111,10 @@ public:
 
 // 中间代码生成
 class IRGeneratorVisitor : public Visitor {
-public:
-  std::shared_ptr <Program> programIr = nullptr;
-public:
+ public:
+  std::shared_ptr<Program> programIr = nullptr;
+  unsigned int register_num_ = 0; //记录分配的寄存器
+ public:
   void VisitCompUnitAst(CompUnitAst *) override;
 
   void VisitFuncDefAst(FuncDefAst *) override;
@@ -124,8 +129,9 @@ public:
 
   void VisitUnaryExpAst(UnaryExprAst *) override;
 
-  void VisitBinaryExpAst(BinaryExprAst *) override;
+  void VisitAddExpAst(AddExprAst *) override;
 
+  void VisitMulExpAst(MulExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
 
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
@@ -135,4 +141,4 @@ public:
   void VisitIdentifierAst(IdentifierAst *) override;
 };
 
-#endif //GODCC_VISITOR_H
+#endif//GODCC_VISITOR_H

@@ -8,11 +8,11 @@
 #include <cstdarg>
 #include <cstdio>
 
-#define _DEBUG
+//#define _DEBUG
 #define _INFO
 
 void DEBUG(const char *fmt, ...);
 
 void INFO(const char *fmt, ...);
 
-#endif //GODCC_LOG_H
+#endif//GODCC_LOG_H

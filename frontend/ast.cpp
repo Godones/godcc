@@ -4,6 +4,8 @@
 
 #include "ast.h"
 
+#include <utility>
+
 void CompUnitAst::accept(Visitor *visitor) {
   visitor->VisitCompUnitAst(this);
 }
@@ -28,9 +30,13 @@ void ExpAst::accept(Visitor *visitor) {
   visitor->VisitExp(this);
 }
 
-void BinaryExprAst::accept(Visitor *visitor) {
-  visitor->VisitBinaryExpAst(this);
+void AddExprAst::accept(Visitor *visitor) {
+  visitor->VisitAddExpAst(this);
 }
+AddExprAst::AddExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op)
+	: left(std::move(left)), right(std::move(right)), op(op) ,is_add(true){}
+AddExprAst::AddExprAst(std::shared_ptr<Ast> right)
+	:right(std::move(right)), is_add(false){}
 
 void UnaryExprAst::accept(Visitor *visitor) {
   visitor->VisitUnaryExpAst(this);
@@ -51,4 +57,10 @@ void UnaryOpAst::accept(Visitor *visitor) {
 void IdentifierAst::accept(Visitor *visitor) {
   visitor->VisitIdentifierAst(this);
 }
-
+void MulExprAst::accept(Visitor *visitor) {
+  visitor->VisitMulExpAst(this);
+}
+MulExprAst::MulExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op)
+	: left(std::move(left)), right(std::move(right)), op(op) ,is_mul(true){}
+MulExprAst::MulExprAst(std::shared_ptr<Ast> right)
+	:right(std::move(right)), is_mul(false){}

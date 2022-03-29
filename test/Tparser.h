@@ -5,11 +5,11 @@
 #ifndef GODCC_TPARSER_H
 #define GODCC_TPARSER_H
 
-#include <iostream>
 #include "../frontend/ast.h"
-#include <fstream>
-#include <cassert>
 #include "../log/log.h"
+#include <cassert>
+#include <fstream>
+#include <iostream>
 
 int testParser();
 
@@ -17,4 +17,4 @@ void testIRCodeGen();
 
 void testAsmCodeGen();
 
-#endif //GODCC_TPARSER_H
+#endif//GODCC_TPARSER_H
