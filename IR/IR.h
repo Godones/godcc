@@ -48,6 +48,7 @@ enum BinaryOp {
   Or,
   Xor,
   Eq, //==
+  Invalid
 };
 
 enum DataType {

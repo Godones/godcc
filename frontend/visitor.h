@@ -132,6 +132,7 @@ class IRGeneratorVisitor : public Visitor {
   void VisitAddExpAst(AddExprAst *) override;
 
   void VisitMulExpAst(MulExprAst *) override;
+
   void VisitUnaryOpAst(UnaryOpAst *) override;
 
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
@@ -140,5 +141,7 @@ class IRGeneratorVisitor : public Visitor {
 
   void VisitIdentifierAst(IdentifierAst *) override;
 };
+
+BinaryOp to_BinaryOp(const std::string_view &op);
 
 #endif//GODCC_VISITOR_H

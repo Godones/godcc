@@ -1,5 +1,14 @@
 #include "visitor.h"
 
+BinaryOp to_BinaryOp(const std::string_view &op){
+  if (op=="+") return BinaryOp::Add;
+  if (op=="-") return BinaryOp::Sub;
+  if (op=="*") return BinaryOp::Mul;
+  if (op=="/") return BinaryOp::Div;
+  if (op=="%") return BinaryOp::Mod;
+  return BinaryOp::Invalid;
+}
+
 void AstVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
   compUnitAst->printSpace();
   std::cout << "CompUnitAST <> \n";
@@ -42,7 +51,7 @@ void AstVisitor::VisitIdentifierAst(IdentifierAst *identifierAst) {
 
 void AstVisitor::VisitExp(ExpAst *expAst) {
   expAst->printSpace();
-  std::cout << "UnaryExpAst <>\n";
+  std::cout << "ExpAst <>\n";
   expAst->realExpr->setSpaces(expAst->spaces + 1);
   expAst->realExpr->accept(this);
 
@@ -50,21 +59,48 @@ void AstVisitor::VisitExp(ExpAst *expAst) {
 
 void AstVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
   unaryExprAst->printSpace();
+  std::cout << "UnaryExpAst <> ";
   if (unaryExprAst->unaryType == UnaryExprAst::UnaryType::UNARY) {
-	std::cout << "Op UnaryExpAst <> ";
 	unaryExprAst->unaryOp->accept(this);//一元运算符号
 	std::cout << "\n";
 	unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces + 1);
 	unaryExprAst->unaryExpr->accept(this);
   } else {
-	std::cout << "Primary UnaryExpAst <> \n";
+	std::cout << "\n";
 	unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces + 1);
 	unaryExprAst->unaryExpr->accept(this);
   }
 }
 
-void AstVisitor::VisitAddExpAst(AddExprAst *){}
+void AstVisitor::VisitAddExpAst(AddExprAst *add_expr_ast){
+  add_expr_ast->printSpace();
+  std::cout << "AddExpAst <> ";
+  // 如果存在左子树
+  if (add_expr_ast->is_add){
+	std::cout << add_expr_ast->op <<"\n";
+	add_expr_ast->left->setSpaces(add_expr_ast->spaces + 1);
+	add_expr_ast->left->accept(this);
+  }
+  // 右子树
+  std::cout<<"\n";
+  add_expr_ast->right->setSpaces(add_expr_ast->spaces + 1);
+  add_expr_ast->right->accept(this);
+}
+void AstVisitor::VisitMulExpAst(MulExprAst *mul_expr_ast) {
+  mul_expr_ast->printSpace();
+  std::cout << "MulExpAst <> ";
+  // 如果存在左子树
+  if (mul_expr_ast->is_mul) {
+	std::cout << mul_expr_ast->op <<" \n";
+	mul_expr_ast->left->setSpaces(mul_expr_ast->spaces + 1);
+	mul_expr_ast->left->accept(this);
 
+  }
+  // 右子树
+  std::cout<<"\n";
+  mul_expr_ast->right->setSpaces(mul_expr_ast->spaces + 1);
+  mul_expr_ast->right->accept(this);
+}
 void AstVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
   std::cout << unaryOpAst->op;
 }
@@ -72,12 +108,12 @@ void AstVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
 void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
   primaryExprAst->printSpace();
   if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::EXP) {
-	std::cout << "Exp PrimaryExpAst <> ()\n";
+	std::cout << "PrimaryExpAst <> ()\n";
 	primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
 	primaryExprAst->primaryExpr->accept(this);
   } else if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
 
-	std::cout << "Number PrimaryExpAst <>\n";
+	std::cout << "PrimaryExpAst <>\n";
 	primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
 	primaryExprAst->primaryExpr->accept(this);
   }
@@ -85,11 +121,9 @@ void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
 
 void AstVisitor::VisitNumberAst(NumberAst *numberAst) {
   numberAst->printSpace();
-  std::cout << "NumberAst <> " << numberAst->value << "\n";
+  std::cout << "NumberAst <> " << numberAst->value;
 }
-void AstVisitor::VisitMulExpAst(MulExprAst *mul_expr_ast) {
-//  todo!()
-}
+
 
 // 生成程序主体
 void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
@@ -153,12 +187,67 @@ void IRGeneratorVisitor::VisitExp(ExpAst *expAst) {
   expAst->realExpr->accept(this);
 }
 
+//生成 加减法的中间代码
+void IRGeneratorVisitor::VisitAddExpAst(AddExprAst *add_expr_ast) {
+	auto& function = programIr->functions.back();
+	auto& block = function.blocks.back();
+	//解析右表达式
+	add_expr_ast->right->accept(this);
+	unsigned int record_index = block.instructions.size()-1;
+	// 记录右表达式解析出来后的指令位置
+	// 后面形成指令需要使用
+
+	//如果有左表达式 解析左表达式
+	if (add_expr_ast->is_add){
+	  // 形式为AddExp ("+" | "-") MulExp 需要一条新指令
+	  add_expr_ast->left->accept(this);
+	  auto last_f_instruction = block.instructions.back();
+	  auto last_s_instruction = block.instructions[record_index];
+	  Instruction instruction{};
+	  instruction.instructionType = InstructionType::Binary;
+	  instruction.operand1.operand.reg = last_f_instruction.target_register;
+	  instruction.operand2.operand.reg = last_s_instruction.target_register;
+	  instruction.operand1.isreg = true;
+	  instruction.operand2.isreg = true;
+	  instruction.binaryOp = to_BinaryOp(add_expr_ast->op);
+	  instruction.target_register = register_num_ ++;
+	  block.instructions.emplace_back(instruction);
+	}
+}
+
+// 生成 乘除模的中间代码
+void IRGeneratorVisitor::VisitMulExpAst(MulExprAst *mul_expr_ast) {
+  auto& function = programIr->functions.back();
+  auto& block = function.blocks.back();
+  //解析右表达式
+  mul_expr_ast->right->accept(this);
+  unsigned int record_index = block.instructions.size()-1;
+  // 记录右表达式解析出来后的指令位置
+  // 后面形成指令需要使用
+
+  //如果有左表达式 解析左表达式
+  if (mul_expr_ast->is_mul){
+	// 形式为AddExp ("+" | "-") MulExp 需要一条新指令
+	mul_expr_ast->left->accept(this);
+	auto last_f_instruction = block.instructions.back();
+	auto last_s_instruction = block.instructions[record_index];
+	Instruction instruction{};
+	instruction.instructionType = InstructionType::Binary;
+	instruction.operand1.operand.reg = last_f_instruction.target_register;
+	instruction.operand2.operand.reg = last_s_instruction.target_register;
+	instruction.operand1.isreg = true;
+	instruction.operand2.isreg = true;
+	instruction.binaryOp = to_BinaryOp(mul_expr_ast->op);
+	instruction.target_register = register_num_ ++;
+	block.instructions.emplace_back(instruction);
+  }
+}
+
 // 生成一元表达式
 void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
   // 获得最后一个base_block
   auto &function = programIr->functions.back();
   auto &block = function.blocks.back();
-
   unaryExprAst->unaryExpr->accept(this);
   // 构建指令
   Instruction instruction{};
@@ -179,18 +268,7 @@ void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
 	// 设置运算类型
 	unaryExprAst->unaryOp->accept(this);
   }
-  else{
-	// 处理PrimaryExpr
-	// 这里只需要将其值放入某个寄存器即可
-//	instruction.instructionType = InstructionType::Integer;
-//	instruction.operand1.operand.reg = last_instruction.target_register;
-//	instruction.operand1.isreg = true;
-//	instruction.target_register = register_num_++;//设置目标寄存器
-//	block.instructions.emplace_back(instruction);
-  }
 }
-
-void IRGeneratorVisitor::VisitAddExpAst(AddExprAst *) {}
 
 void IRGeneratorVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
   // 所有的一元运算符可以转化为二元运算符
@@ -229,7 +307,4 @@ void IRGeneratorVisitor::VisitNumberAst(NumberAst *numberAst) {
 
 void IRGeneratorVisitor::VisitIdentifierAst(IdentifierAst *) {
   //标识符，这里暂时不需要
-}
-void IRGeneratorVisitor::VisitMulExpAst(MulExprAst *) {
-  //todo!()
 }

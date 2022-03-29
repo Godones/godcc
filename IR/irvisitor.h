@@ -7,7 +7,7 @@
 
 #include "IR.h"
 #include <fstream>
-
+#include <cassert>
 class Program;
 class Function;
 class BaseBlock;

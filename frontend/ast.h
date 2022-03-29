@@ -26,8 +26,6 @@ class ExpAst;
 
 class UnaryExprAst;
 
-class BinaryExprAst;
-
 class PrimaryExprAst;
 
 class UnaryOpAst;

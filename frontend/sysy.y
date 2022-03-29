@@ -117,10 +117,10 @@ AddExpr
 :MulExpr {
   $$ = new AddExprAst( shared_ptr<Ast>($1));
 }
-|AddExpr "+" MulExpr{
+|AddExpr '+' MulExpr{
   $$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"+");
 }
-|AddExpr "-" MulExpr{
+|AddExpr '-' MulExpr{
 $$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"-");
 };
 
@@ -128,14 +128,14 @@ MulExpr
 :UnaryExp{
   $$ = new MulExprAst(shared_ptr<Ast>($1));
 }
-|MulExpr "*" UnaryExp{
+|MulExpr '*' UnaryExp{
 $$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
 }
-|MulExpr "/" UnaryExp{
-$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+|MulExpr '/' UnaryExp{
+$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"/");
 }
-|MulExpr "%" UnaryExp{
-$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+|MulExpr '%' UnaryExp{
+$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"%");
 }
 ;
 

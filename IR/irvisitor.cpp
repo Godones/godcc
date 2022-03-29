@@ -139,7 +139,16 @@ void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
 	  } else {
 		out_file << "	" << toString(instruction->binaryOp) << " ";
 		out_file << "t" << instruction->target_register << ", ";
-		out_file << "x0, ";
+		// 对于一元运算来说，第一个操作数都是0，使用x0寄存器
+		// 其它运算则需要使用其对应的寄存器
+		if (!instruction->operand1.isreg&&instruction->operand1.operand.number==0){
+		  out_file << "x0, ";
+		} else{
+		  // 所有的操作数都会被加载到寄存器中
+		  assert(instruction->operand1.isreg== true);
+		  out_file << "t" <<instruction->operand1.operand.reg<<", ";
+		}
+		assert(instruction->operand2.isreg== true);
 		out_file << "t" << instruction->operand2.operand.reg ;
 		out_file<<"\n";
 	  }

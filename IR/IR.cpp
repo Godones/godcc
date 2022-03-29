@@ -26,13 +26,14 @@ std::string_view toString(const BinaryOp&binary_op){
 	case Sub: return "sub ";
 	case Mul: return "mul ";
 	case Div: return "div ";
-	case Mod: return "mod ";
+	case Mod: return "rem ";
 	case Shl: return "shl ";
 	case Shr: return "shr ";
 	case And: return "and ";
 	case Or: return "or ";
 	case Xor: return "xor " ;
 	case Eq: return "eq ";
+	case Invalid: break;
   }
   //todo!(符号错误)
   exit(-1);
