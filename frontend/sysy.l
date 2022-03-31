@@ -38,6 +38,39 @@ Hex 0[xX][0-9a-fA-F]+
                     began_colum +=yyleng;
                     return INT;
                 }
+"<="            {
+                    file_out("<=","<=");
+                    began_colum +=yyleng;
+                    return LE;
+                }
+">="            {
+                    file_out(">=",">=");
+                    began_colum +=yyleng;
+                    return GE;
+                }
+
+"=="            {
+                    file_out("==","==");
+                    began_colum +=yyleng;
+                    return EQ;
+                }
+"!="            {
+                    file_out("!=","!=");
+                    began_colum +=yyleng;
+                    return NE;
+                }
+"&&"            {
+                    file_out("&&","&&");
+                    began_colum +=yyleng;
+                    return AND;
+                }
+
+"||"            {
+                    file_out("||","||");
+                    began_colum +=yyleng;
+                    return OR;
+                }
+
 "return"        {
                      file_out("return","return");
                      began_colum +=yyleng;

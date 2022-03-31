@@ -5,10 +5,11 @@
 #ifndef GODCC_AST_H
 #define GODCC_AST_H
 
-#include "visitor.h"
 #include <iostream>
 #include <memory>
 #include <ostream>
+
+#include "visitor.h"
 
 class Visitor;
 
@@ -102,10 +103,26 @@ class StmtAst : public Ast {
 class ExpAst : public Ast {
  public:
   std::shared_ptr<Ast> realExpr;
+
  public:
   ~ExpAst() override = default;
   void accept(Visitor *) override;
 };
+
+
+class BinaryExprAst:public Ast {
+ public:
+  std::shared_ptr<Ast> left;
+  std::shared_ptr<Ast> right;
+  std::string_view op;
+  bool is_two_op = false;
+  public:
+  ~BinaryExprAst() override = default;
+  void accept(Visitor *) override;
+  BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  BinaryExprAst(std::shared_ptr<Ast> right);
+};
+
 
 // 二元加法表达式
 // AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
@@ -114,7 +131,7 @@ class AddExprAst : public Ast {
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   std::string_view op;
-  bool is_add = false; //判断是否是MulExp
+  bool is_add = false;//判断是否是MulExp
  public:
   AddExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
   AddExprAst(std::shared_ptr<Ast> right);
@@ -129,14 +146,73 @@ class MulExprAst : public Ast {
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   std::string_view op;
-  bool is_mul = false; //判断是否是MulExp
-  public:
-   MulExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-   explicit MulExprAst(std::shared_ptr<Ast> right);
+  bool is_mul = false;//判断是否是MulExp
+ public:
+  MulExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  explicit MulExprAst(std::shared_ptr<Ast> right);
   ~MulExprAst() override = default;
   void accept(Visitor *) override;
 };
 
+// 二元逻辑表达式
+//LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
+class LOrExprAst : public Ast {
+ public:
+  std::shared_ptr<Ast> left;
+  std::shared_ptr<Ast> right;
+  std::string_view op;
+  bool is_lor = false;//判断是否是LOrExp
+ public:
+  LOrExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  LOrExprAst(std::shared_ptr<Ast> right);
+  ~LOrExprAst() override = default;
+  void accept(Visitor *) override;
+};
+
+// 二元逻辑表达式
+//LAndExp     ::= RelExp | LAndExp "&&" RelExp;
+class LAndExprAst : public Ast {
+ public:
+  std::shared_ptr<Ast> left;
+  std::shared_ptr<Ast> right;
+  std::string_view op;
+  bool is_land = false;//判断是否是LAndExp
+ public:
+  LAndExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  LAndExprAst(std::shared_ptr<Ast> right);
+  ~LAndExprAst() override = default;
+  void accept(Visitor *) override;
+};
+
+// 二元关系表达式
+// EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+class EqExprAst : public Ast {
+ public:
+  std::shared_ptr<Ast> left;
+  std::shared_ptr<Ast> right;
+  std::string_view op;
+  bool is_eq = false;//判断是否是EqExp
+ public:
+  EqExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  EqExprAst(std::shared_ptr<Ast> right);
+  ~EqExprAst() override = default;
+  void accept(Visitor *) override;
+};
+
+// 二元关系表达式
+// RelExp      ::= AddExp | RelExp ("<" | "<=" | ">" | ">=") AddExp;
+class RelExprAst : public Ast {
+ public:
+  std::shared_ptr<Ast> left;
+  std::shared_ptr<Ast> right;
+  std::string_view op;
+  bool is_rel = false;//判断是否是RelExp
+ public:
+  RelExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
+  RelExprAst(std::shared_ptr<Ast> right);
+  ~RelExprAst() override = default;
+  void accept(Visitor *) override;
+};
 
 // 一元表达式
 class UnaryExprAst : public Ast {
@@ -147,7 +223,7 @@ class UnaryExprAst : public Ast {
   };
 
  public:
-  std::shared_ptr<Ast> unaryOp; //符号 --只有类型为unary时才有
+  std::shared_ptr<Ast> unaryOp;  //符号 --只有类型为unary时才有
   std::shared_ptr<Ast> unaryExpr;//表达式
   UnaryType unaryType;           //类型
   ~UnaryExprAst() override = default;
@@ -157,7 +233,7 @@ class UnaryExprAst : public Ast {
 class PrimaryExprAst : public Ast {
  public:
   enum class PrimaryType {
-	EXP, //(exp) --- 带括号的表达式
+	EXP,//(exp) --- 带括号的表达式
 	NUMBER,
   };
 

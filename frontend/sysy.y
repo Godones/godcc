@@ -37,12 +37,20 @@ using namespace std;
 // lexer 返回的所有 token 种类的声明
 // 注意 IDENT 和 INT_CONST 会返回 token 的值, 分别对应 str_val 和 int_val
 %token INT RETURN
-%token <str_val> IDENT
+%token <str_val> IDENT LT GT EQ AND OR NE LE GE
 %token <int_val> INT_CONST
+//Lt,//<
+//Gt,//>
+//Eq,//==
+//And,//&&
+//Or,// ||
+//Ne,// !=
+//Le,// <=
+//Ge,// >=
 
 // 非终结符的类型定义
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
-%type <ast_val> AddExpr MulExpr
+%type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr
 //%type <int_val>
 //%type <str_val>
 %%
@@ -106,7 +114,7 @@ Stmt
   ;
 
 Expr
-  : AddExpr {
+  : OrExpr {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>($1);
     $$ = Expr;
@@ -115,27 +123,72 @@ Expr
 
 AddExpr
 :MulExpr {
-  $$ = new AddExprAst( shared_ptr<Ast>($1));
+  $$ = new BinaryExprAst( shared_ptr<Ast>($1));
 }
 |AddExpr '+' MulExpr{
-  $$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"+");
+  $$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"+");
 }
 |AddExpr '-' MulExpr{
-$$ = new AddExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"-");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"-");
+};
+
+RelExpr
+:AddExpr{
+ $$ = new BinaryExprAst( shared_ptr<Ast>($1));
+}
+| RelExpr LT AddExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"<");
+}
+| RelExpr GT AddExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),">");
+}
+| RelExpr LE AddExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"<=");
+}
+| RelExpr GE AddExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),">=");
+};
+
+EqExpr
+:RelExpr {
+$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+}
+|EqExpr EQ RelExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"==");
+}
+|EqExpr NE RelExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"!=");
+};
+
+AndExpr
+:EqExpr{
+$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+}
+|AndExpr  AND EqExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"&&");
+};
+
+
+OrExpr
+:AndExpr{
+$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+}
+|OrExpr OR AndExpr{
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"||");
 };
 
 MulExpr
 :UnaryExp{
-  $$ = new MulExprAst(shared_ptr<Ast>($1));
+  $$ = new BinaryExprAst(shared_ptr<Ast>($1));
 }
 |MulExpr '*' UnaryExp{
-$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
 }
 |MulExpr '/' UnaryExp{
-$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"/");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"/");
 }
 |MulExpr '%' UnaryExp{
-$$ = new MulExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"%");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"%");
 }
 ;
 

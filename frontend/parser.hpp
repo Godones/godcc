@@ -65,7 +65,15 @@ extern int yydebug;
     INT = 258,                     /* INT  */
     RETURN = 259,                  /* RETURN  */
     IDENT = 260,                   /* IDENT  */
-    INT_CONST = 261                /* INT_CONST  */
+    LT = 261,                      /* LT  */
+    GT = 262,                      /* GT  */
+    EQ = 263,                      /* EQ  */
+    AND = 264,                     /* AND  */
+    OR = 265,                      /* OR  */
+    NE = 266,                      /* NE  */
+    LE = 267,                      /* LE  */
+    GE = 268,                      /* GE  */
+    INT_CONST = 269                /* INT_CONST  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -80,7 +88,7 @@ union YYSTYPE
   int int_val;
   Ast *ast_val;
 
-#line 84 "/home/godcc/frontend/parser.hpp"
+#line 92 "/home/godcc/frontend/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -6,10 +6,10 @@
 #define GODCC_VISITOR_H
 
 #include <memory>
-#include "ast.h"
 
 #include "../IR/IR.h"
 #include "../log/log.h"
+#include "ast.h"
 
 class CompUnitAst;
 
@@ -26,10 +26,14 @@ class ExpAst;
 class UnaryExprAst;
 
 class UnaryOpAst;
-
+class BinaryExprAst;
 class AddExprAst;
 
 class MulExprAst;
+class LAndExprAst;
+class LOrExprAst;
+class RelExprAst;
+class EqExprAst;
 
 class NumberAst;
 
@@ -50,11 +54,17 @@ class Visitor {
   virtual void VisitStmtAst(StmtAst *) = 0;
 
   virtual void VisitExp(ExpAst *) = 0;
-
+  virtual void VisitBinaryExpAst(BinaryExprAst *) =0;
   virtual void VisitUnaryExpAst(UnaryExprAst *) = 0;
 
   virtual void VisitAddExpAst(AddExprAst *) = 0;
-  virtual void VisitMulExpAst(MulExprAst *) =0;
+  virtual void VisitMulExpAst(MulExprAst *) = 0;
+  virtual void VisitLOrExpAst(LOrExprAst *) = 0;
+
+  virtual void VisitLAndExpAst(LAndExprAst *) = 0;
+  virtual void VisitEqExpAst(EqExprAst *) = 0;
+  virtual void VisitRelExpAst(RelExprAst *) = 0;
+
   virtual void VisitUnaryOpAst(UnaryOpAst *) = 0;
 
   virtual void VisitPrimaryExpAst(PrimaryExprAst *) = 0;
@@ -77,14 +87,17 @@ class AstVisitor : public Visitor {
   void VisitStmtAst(StmtAst *) override;
 
   void VisitExp(ExpAst *) override;
-
+  void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
 
   void VisitAddExpAst(AddExprAst *) override;
 
   void VisitMulExpAst(MulExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
-
+  void VisitLOrExpAst(LOrExprAst *) override;
+  void VisitLAndExpAst(LAndExprAst *) override;
+  void VisitEqExpAst(EqExprAst *) override;
+  void VisitRelExpAst(RelExprAst *) override;
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
 
   void VisitNumberAst(NumberAst *) override;
@@ -113,7 +126,7 @@ class AstVisitor : public Visitor {
 class IRGeneratorVisitor : public Visitor {
  public:
   std::shared_ptr<Program> programIr = nullptr;
-  unsigned int register_num_ = 0; //记录分配的寄存器
+  unsigned int register_num_ = 0;//记录分配的寄存器
  public:
   void VisitCompUnitAst(CompUnitAst *) override;
 
@@ -126,12 +139,14 @@ class IRGeneratorVisitor : public Visitor {
   void VisitStmtAst(StmtAst *) override;
 
   void VisitExp(ExpAst *) override;
-
+  void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
-
   void VisitAddExpAst(AddExprAst *) override;
-
   void VisitMulExpAst(MulExprAst *) override;
+  void VisitLOrExpAst(LOrExprAst *) override;
+  void VisitLAndExpAst(LAndExprAst *) override;
+  void VisitEqExpAst(EqExprAst *) override;
+  void VisitRelExpAst(RelExprAst *) override;
 
   void VisitUnaryOpAst(UnaryOpAst *) override;
 

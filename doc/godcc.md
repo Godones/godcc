@@ -120,5 +120,95 @@ UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp;
 UnaryOp     ::= "+" | "-" | "!";
 ```
 
+### 第三节:支持二元算数运算
+```
+Exp         ::= AddExp;
+PrimaryExp  ::= ...;
+Number      ::= ...;
+UnaryExp    ::= ...;
+UnaryOp     ::= ...;
+MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
+```
 
+### 第四节:支持二元逻辑运算
+```
+Exp         ::= LOrExp;
+PrimaryExp  ::= ...;
+Number      ::= ...;
+UnaryExp    ::= ...;
+UnaryOp     ::= ...;
+MulExp      ::= ...;
+AddExp      ::= ...;
+RelExp      ::= AddExp | RelExp ("<" | ">" | "<=" | ">=") AddExp;
+EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+LAndExp     ::= EqExp | LAndExp "&&" EqExp;
+LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
+```
+
+
+
+### 额外:json数据生成和树图格式化
+
+```
+     |----B     |----E----|----I
+     |          |
+     |----C-----|----F         |----J
+A----|                         |
+     |----D-----|----G----|----|----K
+                |
+                |----H
+```
+
+```
+{
+    "children": [
+        {
+            "children": [],
+            "name": "B"
+        },
+        {
+            "children": [
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "name": "I"
+                        }
+                    ],
+                    "name": "E"
+                },
+                {
+                    "children": [],
+                    "name": "F"
+                }
+            ],
+            "name": "C"
+        },
+        {
+            "children": [
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "name": "J"
+                        },
+                        {
+                            "children": [],
+                            "name": "K"
+                        }
+                    ],
+                    "name": "G"
+                },
+                {
+                    "children": [],
+                    "name": "H"
+                }
+            ],
+            "name": "D"
+        }
+    ],
+    "name": "A"
+}
+```
 

@@ -50,6 +50,11 @@ add_library(test STATIC
 	${lexer_path}
 	)
 
+#添加子目录
+add_subdirectory(json)
+
+
+# 生成可执行文件
 add_custom_target(
 	risc-v
 	COMMAND riscv64-unknown-elf-gcc ../riscv/a.s -o ../riscv/a.out
