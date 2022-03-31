@@ -9,10 +9,13 @@
 
 class GodJSon{
  private:
-  std::fstream& file;
+  std::ofstream file;
+  int state = 0;
  public:
-  GodJSon()=delete;
-  GodJSon(std::fstream& file);
-
+  GodJSon();
+  explicit GodJSon(const char *file_name);
+  void BeganWrite(const std::string_view &dot_name);
+  void close();
+  void EndWrite();
 };
 #endif//GODCC_JSON_JSON_H_

@@ -46,6 +46,8 @@ add_library(test STATIC
 	frontend/visitor.cpp
 	IR/IR.cpp
 	IR/irvisitor.cpp
+	backend/asm.cpp
+	json/json.cpp
 	${parser_path}
 	${lexer_path}
 	)
@@ -58,6 +60,11 @@ add_subdirectory(json)
 add_custom_target(
 	risc-v
 	COMMAND riscv64-unknown-elf-gcc ../riscv/a.s -o ../riscv/a.out
+)
+
+add_custom_target(
+	tree
+	COMMAND cp test.json /mnt/d/2022.2-2022.7/Comiler/lab4
 )
 link_directories(${PROJECT_SOURCE_DIR}/googletest)
 add_executable(main main.cpp)

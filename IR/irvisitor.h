@@ -30,19 +30,6 @@ class IrVisitorDefault : public IrVisitor {
   void VisitInstruction(Instruction *) override;
 };
 
-//汇编代码生成
-class CodeGenVisitor : public IrVisitor {
- public:
-  std::ofstream out_file;
-  int a = 0;
 
- public:
-  CodeGenVisitor();
-  explicit CodeGenVisitor(const char *outfile);
-  void VisitProgram(Program *) override;
-  void VisitFunction(Function *) override;
-  void VisitBaseBlock(BaseBlock *) override;
-  void VisitInstruction(Instruction *) override;
-};
 
 #endif//GODCC_IRVISITOR_H

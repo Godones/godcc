@@ -1,4 +1,4 @@
 // 注释
 int main() {
-  return 2+3/1;
+  return 5+3*5;
 }

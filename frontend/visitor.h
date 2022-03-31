@@ -10,6 +10,7 @@
 #include "../IR/IR.h"
 #include "../log/log.h"
 #include "ast.h"
+#include "../json/json.h"
 
 class CompUnitAst;
 class FuncDefAst;
@@ -23,6 +24,7 @@ class BinaryExprAst;
 class NumberAst;
 class PrimaryExprAst;
 class IdentifierAst;
+class GodJSon;
 
 class Visitor {
  public:
@@ -56,6 +58,23 @@ class AstVisitor : public Visitor {
   void VisitIdentifierAst(IdentifierAst *) override;
 };
 
+class AstViewVisitor:public Visitor{
+ private:
+  GodJSon j_son_;
+ public:
+  void VisitCompUnitAst(CompUnitAst *) override;
+  void VisitFuncDefAst(FuncDefAst *) override;
+  void VisitFuncTypeAst(FuncTypeAst *) override;
+  void VisitBlockAst(BlockAst *) override;
+  void VisitStmtAst(StmtAst *) override;
+  void VisitExp(ExpAst *) override;
+  void VisitBinaryExpAst(BinaryExprAst *) override;
+  void VisitUnaryExpAst(UnaryExprAst *) override;
+  void VisitUnaryOpAst(UnaryOpAst *) override;
+  void VisitPrimaryExpAst(PrimaryExprAst *) override;
+  void VisitNumberAst(NumberAst *) override;
+  void VisitIdentifierAst(IdentifierAst *) override;
+};
 //// 符号表建立
 //class BuildSymbolVisitor : public Visitor {
 //public:

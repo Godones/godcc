@@ -6,5 +6,11 @@
 
 int main(){
   std::cout << "Json test:\n";
+  GodJSon json;
+  json.BeganWrite("Function");
+  json.BeganWrite("Stmt");
+  json.EndWrite();
+  json.EndWrite();
+  json.close();
   return 0;
 }

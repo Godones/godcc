@@ -162,28 +162,29 @@ A----|                         |
 
 ```
 {
+ 	"name": "A",
     "children": [
         {
-            "children": [],
-            "name": "B"
+        	"name": "B",
+            "children": []
         },
         {
+        	"name": "C",
             "children": [
                 {
+                	"name": "E",
                     "children": [
                         {
-                            "children": [],
-                            "name": "I"
+                        	"name": "I",
+                            "children": []  
                         }
-                    ],
-                    "name": "E"
+                    ]
                 },
                 {
-                    "children": [],
-                    "name": "F"
+                 	"name": "F",
+                    "children": []
                 }
-            ],
-            "name": "C"
+            ]
         },
         {
             "children": [
@@ -207,8 +208,7 @@ A----|                         |
             ],
             "name": "D"
         }
-    ],
-    "name": "A"
+    ]
 }
 ```
 

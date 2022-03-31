@@ -10,6 +10,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include "../backend/asm.h"
 
 int testParser();
 
@@ -17,4 +18,5 @@ void testIRCodeGen();
 
 void testAsmCodeGen();
 
+void testAsmViewGen();
 #endif//GODCC_TPARSER_H

@@ -68,3 +68,12 @@ void testAsmCodeGen() {
   auto asmCodeGen = CodeGenVisitor();
   ir_code->accept(&asmCodeGen);
 }
+
+void testAsmViewGen(){
+  openFile();
+  auto ast = parser();
+  auto visitor = AstViewVisitor();
+  ast->accept(&visitor);
+  auto asmCodeGen = CodeGenVisitor();
+  ast->accept(&visitor);
+}

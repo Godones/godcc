@@ -117,6 +117,94 @@ void AstVisitor::VisitNumberAst(NumberAst *numberAst) {
   std::cout << "NumberAst <> " << numberAst->value;
 }
 
+
+// 生成json文件输出图形化显示
+void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
+  j_son_.BeganWrite("CompUnit");
+  comp_unit_ast->funcDef->accept(this);
+  j_son_.EndWrite();
+  j_son_.close();
+}
+
+void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
+  j_son_.BeganWrite("FuncDef");
+  func_def_ast->funcType->accept(this);
+  j_son_.BeganWrite(func_def_ast->ident);
+  j_son_.EndWrite();
+  func_def_ast->block->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitFuncTypeAst(FuncTypeAst *func_type_ast) {
+  j_son_.BeganWrite("FuncType");
+  j_son_.BeganWrite(func_type_ast->type);
+  j_son_.EndWrite();
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
+  j_son_.BeganWrite("Block");
+  block_ast->stmts->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
+  j_son_.BeganWrite("Stmt");
+  stmt_ast->expr->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitExp(ExpAst *exp_ast) {
+  j_son_.BeganWrite("Expr");
+  exp_ast->realExpr->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
+  j_son_.BeganWrite("UnaryExp");
+  if (unary_expr_ast->unaryType == UnaryExprAst::UnaryType::UNARY) {
+	unary_expr_ast->unaryOp->accept(this);//一元运算符号
+  }
+  unary_expr_ast->unaryExpr->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitUnaryOpAst(UnaryOpAst *unary_op_ast) {
+  j_son_.BeganWrite("UnaryOp");
+  j_son_.BeganWrite(unary_op_ast->op);
+  j_son_.EndWrite();
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
+  j_son_.BeganWrite("BinaryExp");
+  if (binary_expr_ast->is_two_op) {
+	binary_expr_ast->left->accept(this);
+	j_son_.BeganWrite(binary_expr_ast->op);
+	j_son_.EndWrite();
+  }
+  binary_expr_ast->right->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
+  j_son_.BeganWrite("PrimaryExp");
+  if (primary_expr_ast->primaryType == PrimaryExprAst::PrimaryType::EXP) {
+	j_son_.BeganWrite("(");
+	j_son_.EndWrite();
+	primary_expr_ast->primaryExpr->accept(this);
+	j_son_.BeganWrite(")");
+	j_son_.EndWrite();
+  } else if (primary_expr_ast->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
+	primary_expr_ast->primaryExpr->accept(this);
+  }
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitNumberAst(NumberAst *number_ast) {
+  j_son_.BeganWrite("Number");
+  j_son_.BeganWrite(std::to_string(number_ast->value));
+  j_son_.EndWrite();
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
+  j_son_.BeganWrite("Identifier");
+  j_son_.BeganWrite(identifier_ast->name);
+  j_son_.EndWrite();
+  j_son_.EndWrite();
+}
+
 // 生成程序主体
 void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
   DEBUG("IRGeneratorVisitor::VisitCompUnitAst");

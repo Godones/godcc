@@ -104,8 +104,8 @@ class ExpAst : public Ast {
 // AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
 // MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
 // RelExp      ::= AddExp | RelExp ("<" | "<=" | ">" | ">=") AddExp;
-//EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
-//LAndExp     ::= RelExp | LAndExp "&&" RelExp;
+// EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+// LAndExp     ::= RelExp | LAndExp "&&" RelExp;
 // LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
 
 class BinaryExprAst : public Ast {

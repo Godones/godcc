@@ -7,7 +7,9 @@
 int main(int argc, const char *argv[]) {
   std::cout << "god cc:\n";
   testParser();
+  testAsmViewGen();
   testIRCodeGen();
   testAsmCodeGen();
+
   return 0;
 }
