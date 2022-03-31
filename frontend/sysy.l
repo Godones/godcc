@@ -38,6 +38,16 @@ Hex 0[xX][0-9a-fA-F]+
                     began_colum +=yyleng;
                     return INT;
                 }
+ "<"            {
+                    file_out("<","<");
+                    began_colum +=yyleng;
+                    return LT;
+                }
+ ">"            {
+                    file_out(">",">");
+                    began_colum +=yyleng;
+                    return GT;
+                }
 "<="            {
                     file_out("<=","<=");
                     began_colum +=yyleng;

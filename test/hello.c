@@ -1,2 +1,4 @@
 // 注释
-int main() { return 0; }
+int main() {
+  return 2+3/1;
+}

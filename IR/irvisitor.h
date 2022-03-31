@@ -16,11 +16,8 @@ class Instruction;
 class IrVisitor {
  public:
   virtual void VisitProgram(Program *) = 0;
-
   virtual void VisitFunction(Function *) = 0;
-
   virtual void VisitBaseBlock(BaseBlock *) = 0;
-
   virtual void VisitInstruction(Instruction *) = 0;
 };
 
@@ -28,11 +25,8 @@ class IrVisitor {
 class IrVisitorDefault : public IrVisitor {
  public:
   void VisitProgram(Program *) override;
-
   void VisitFunction(Function *) override;
-
   void VisitBaseBlock(BaseBlock *) override;
-
   void VisitInstruction(Instruction *) override;
 };
 
@@ -44,15 +38,10 @@ class CodeGenVisitor : public IrVisitor {
 
  public:
   CodeGenVisitor();
-
   explicit CodeGenVisitor(const char *outfile);
-
   void VisitProgram(Program *) override;
-
   void VisitFunction(Function *) override;
-
   void VisitBaseBlock(BaseBlock *) override;
-
   void VisitInstruction(Instruction *) override;
 };
 

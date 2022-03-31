@@ -374,8 +374,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 17
-#define YY_END_OF_BUFFER 18
+#define YY_NUM_RULES 19
+#define YY_END_OF_BUFFER 20
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -385,10 +385,10 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[42] =
     {   0,
-        2,    2,   18,   16,    2,    1,   16,   16,   16,   14,
-       13,   16,   16,   16,   12,   12,   12,   16,    2,    8,
-        9,    0,   14,    0,   13,    5,    7,    6,   12,   12,
-       12,   10,    0,    3,   15,    4,   12,   12,   12,   11,
+        2,    2,   20,   18,    2,    1,   18,   18,   18,   16,
+       15,    5,   18,    6,   14,   14,   14,   18,    2,   10,
+       11,    0,   16,    0,   15,    7,    9,    8,   14,   14,
+       14,   12,    0,    3,   17,    4,   14,   14,   14,   13,
         0
     } ;
 
@@ -476,9 +476,10 @@ static const flex_int16_t yy_chk[86] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[18] =
+static const flex_int32_t yy_rule_can_match_eol[20] =
     {   0,
-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
+1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -508,11 +509,11 @@ static int began_colum= 0;
 static int token_num=0;
 
 
-#line 512 "../frontend/lexer.cpp"
+#line 513 "../frontend/lexer.cpp"
 /*空格和注释等*/
 /* 标识符*/
 /*整型数字*/
-#line 516 "../frontend/lexer.cpp"
+#line 517 "../frontend/lexer.cpp"
 
 #define INITIAL 0
 
@@ -729,7 +730,7 @@ YY_DECL
 	{
 #line 32 "../frontend/sysy.l"
 
-#line 733 "../frontend/lexer.cpp"
+#line 734 "../frontend/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -829,68 +830,86 @@ case 5:
 YY_RULE_SETUP
 #line 41 "../frontend/sysy.l"
 {
-                    file_out("<=","<=");
+                    file_out("<","<");
                     began_colum +=yyleng;
-                    return LE;
+                    return LT;
                 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 46 "../frontend/sysy.l"
 {
-                    file_out(">=",">=");
+                    file_out(">",">");
                     began_colum +=yyleng;
-                    return GE;
+                    return GT;
                 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 52 "../frontend/sysy.l"
+#line 51 "../frontend/sysy.l"
 {
-                    file_out("==","==");
+                    file_out("<=","<=");
                     began_colum +=yyleng;
-                    return EQ;
+                    return LE;
                 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 57 "../frontend/sysy.l"
+#line 56 "../frontend/sysy.l"
 {
-                    file_out("!=","!=");
+                    file_out(">=",">=");
                     began_colum +=yyleng;
-                    return NE;
+                    return GE;
                 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 62 "../frontend/sysy.l"
 {
+                    file_out("==","==");
+                    began_colum +=yyleng;
+                    return EQ;
+                }
+	YY_BREAK
+case 10:
+YY_RULE_SETUP
+#line 67 "../frontend/sysy.l"
+{
+                    file_out("!=","!=");
+                    began_colum +=yyleng;
+                    return NE;
+                }
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 72 "../frontend/sysy.l"
+{
                     file_out("&&","&&");
                     began_colum +=yyleng;
                     return AND;
                 }
 	YY_BREAK
-case 10:
+case 12:
 YY_RULE_SETUP
-#line 68 "../frontend/sysy.l"
+#line 78 "../frontend/sysy.l"
 {
                     file_out("||","||");
                     began_colum +=yyleng;
                     return OR;
                 }
 	YY_BREAK
-case 11:
+case 13:
 YY_RULE_SETUP
-#line 74 "../frontend/sysy.l"
+#line 84 "../frontend/sysy.l"
 {
                      file_out("return","return");
                      began_colum +=yyleng;
                      return RETURN;
                 }
 	YY_BREAK
-case 12:
+case 14:
 YY_RULE_SETUP
-#line 79 "../frontend/sysy.l"
+#line 89 "../frontend/sysy.l"
 {
                     yylval.str_val = new string(yytext);
                     file_out(yytext,"Identifier");
@@ -898,9 +917,9 @@ YY_RULE_SETUP
                     return IDENT;
                 }
 	YY_BREAK
-case 13:
+case 15:
 YY_RULE_SETUP
-#line 85 "../frontend/sysy.l"
+#line 95 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
                     file_out(yytext,"Decimal");
@@ -908,9 +927,9 @@ YY_RULE_SETUP
                     return INT_CONST;
                 }
 	YY_BREAK
-case 14:
+case 16:
 YY_RULE_SETUP
-#line 91 "../frontend/sysy.l"
+#line 101 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
                     file_out(yytext,"Octal");
@@ -918,9 +937,9 @@ YY_RULE_SETUP
                     return INT_CONST;
                 }
 	YY_BREAK
-case 15:
+case 17:
 YY_RULE_SETUP
-#line 97 "../frontend/sysy.l"
+#line 107 "../frontend/sysy.l"
 {
                     yylval.int_val = strtol(yytext, nullptr, 0);
                     file_out(yytext,"Hex");
@@ -928,21 +947,21 @@ YY_RULE_SETUP
                     return INT_CONST;
                 }
 	YY_BREAK
-case 16:
+case 18:
 YY_RULE_SETUP
-#line 103 "../frontend/sysy.l"
+#line 113 "../frontend/sysy.l"
 {
                     file_out(yytext,yytext);
                     began_colum +=yyleng;
                     return yytext[0];
                 }
 	YY_BREAK
-case 17:
+case 19:
 YY_RULE_SETUP
-#line 108 "../frontend/sysy.l"
+#line 118 "../frontend/sysy.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 946 "../frontend/lexer.cpp"
+#line 965 "../frontend/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1918,7 +1937,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 108 "../frontend/sysy.l"
+#line 118 "../frontend/sysy.l"
 
 
 void file_out(const char* word,const char* type){

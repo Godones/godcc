@@ -11,10 +11,10 @@ extern FILE *yyout;
 
 
 void openFile(){
-  yyin = fopen("../hello.c", "r");
+  yyin = fopen("../test/hello.c", "r");
   if (yyin == nullptr) {
 	std::cout << "open file "
-			  << "../hello.c"
+			  << "../test/hello.c"
 			  << " failed\n";
 	return ;
   }

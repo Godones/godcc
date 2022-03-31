@@ -9,17 +9,13 @@
 #include <iostream>
 #include <string_view>
 #include <vector>
+#include "log/log.h"
 
 class Program;
-
 class Function;
-
 class BaseBlock;
-
 class Instruction;
-
 class IrVisitor;
-
 enum InstructionType {
   Integer,
   ZeroInit,
@@ -31,22 +27,27 @@ enum InstructionType {
   GetPtr,
   GetElementPtr,
   Binary,
+  Unary,
   Branch,
   Jump,
   Return,
   Call,
 };
 enum BinaryOp {
-  Add,
-  Sub,
-  Mul,
-  Div,
-  Mod,
-  Shl,
-  Shr,
-  And,
-  Or,
-  Xor,
+  Add,//+
+  Sub,//-
+  Mul,//*
+  Div,///
+  Mod,//%
+  Shl,//<<
+  Shr,//>>
+  And,//&&
+  Or,//||
+  Ne,//!=
+  Le,//<=
+  Ge,//>=
+  Lt,//<
+  Gt,//>
   Eq, //==
   Invalid
 };
@@ -120,7 +121,6 @@ class Instruction : public IRBase {
 };
 
 std::string_view toString(const InstructionType &type);
-
 std::string_view toString(const DataType &op);
 std::string_view toString(const BinaryOp&binary_op);
 

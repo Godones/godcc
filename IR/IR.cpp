@@ -31,11 +31,16 @@ std::string_view toString(const BinaryOp&binary_op){
 	case Shr: return "shr ";
 	case And: return "and ";
 	case Or: return "or ";
-	case Xor: return "xor " ;
+	case Lt: return "lt ";
+	case Gt: return "gt ";
+	case Le: return "le ";
+	case Ge: return "ge ";
 	case Eq: return "eq ";
-	case Invalid: break;
+	case Ne: return "ne ";
+	default: break;
   }
   //todo!(符号错误)
+  INFO("\n符号错误");
   exit(-1);
 }
 

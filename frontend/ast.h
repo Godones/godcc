@@ -12,27 +12,17 @@
 #include "visitor.h"
 
 class Visitor;
-
 class CompUnitAst;
-
 class FuncDefAst;
-
 class FuncTypeAst;
-
 class BlockAst;
-
 class StmtAst;
-
 class ExpAst;
-
+class BinaryExprAst;
 class UnaryExprAst;
-
 class PrimaryExprAst;
-
 class UnaryOpAst;
-
 class IdentifierAst;
-
 class Ast {
  public:
   int spaces = 0;
@@ -109,110 +99,30 @@ class ExpAst : public Ast {
   void accept(Visitor *) override;
 };
 
+// 二元关系表达式
 
-class BinaryExprAst:public Ast {
+// AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
+// MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+// RelExp      ::= AddExp | RelExp ("<" | "<=" | ">" | ">=") AddExp;
+//EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+//LAndExp     ::= RelExp | LAndExp "&&" RelExp;
+// LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
+
+class BinaryExprAst : public Ast {
  public:
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   std::string_view op;
   bool is_two_op = false;
-  public:
+
+ public:
   ~BinaryExprAst() override = default;
-  void accept(Visitor *) override;
+  virtual void accept(Visitor *) override;
   BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
   BinaryExprAst(std::shared_ptr<Ast> right);
 };
 
 
-// 二元加法表达式
-// AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
-class AddExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_add = false;//判断是否是MulExp
- public:
-  AddExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  AddExprAst(std::shared_ptr<Ast> right);
-  ~AddExprAst() override = default;
-  void accept(Visitor *) override;
-};
-
-// 二元乘法表达式
-// MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
-class MulExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_mul = false;//判断是否是MulExp
- public:
-  MulExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  explicit MulExprAst(std::shared_ptr<Ast> right);
-  ~MulExprAst() override = default;
-  void accept(Visitor *) override;
-};
-
-// 二元逻辑表达式
-//LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
-class LOrExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_lor = false;//判断是否是LOrExp
- public:
-  LOrExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  LOrExprAst(std::shared_ptr<Ast> right);
-  ~LOrExprAst() override = default;
-  void accept(Visitor *) override;
-};
-
-// 二元逻辑表达式
-//LAndExp     ::= RelExp | LAndExp "&&" RelExp;
-class LAndExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_land = false;//判断是否是LAndExp
- public:
-  LAndExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  LAndExprAst(std::shared_ptr<Ast> right);
-  ~LAndExprAst() override = default;
-  void accept(Visitor *) override;
-};
-
-// 二元关系表达式
-// EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
-class EqExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_eq = false;//判断是否是EqExp
- public:
-  EqExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  EqExprAst(std::shared_ptr<Ast> right);
-  ~EqExprAst() override = default;
-  void accept(Visitor *) override;
-};
-
-// 二元关系表达式
-// RelExp      ::= AddExp | RelExp ("<" | "<=" | ">" | ">=") AddExp;
-class RelExprAst : public Ast {
- public:
-  std::shared_ptr<Ast> left;
-  std::shared_ptr<Ast> right;
-  std::string_view op;
-  bool is_rel = false;//判断是否是RelExp
- public:
-  RelExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  RelExprAst(std::shared_ptr<Ast> right);
-  ~RelExprAst() override = default;
-  void accept(Visitor *) override;
-};
 
 // 一元表达式
 class UnaryExprAst : public Ast {
