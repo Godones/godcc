@@ -8,7 +8,7 @@
 #include <cstdarg>
 #include <cstdio>
 
-//#define _DEBUG
+#define _DEBUG
 #define _INFO
 
 void DEBUG(const char *fmt, ...);

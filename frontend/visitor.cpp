@@ -28,33 +28,48 @@ void AstVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   funcDefAst->printSpace();
   std::cout << "FuncDefAST <> ";
   funcDefAst->funcType->accept(this);
-  std::cout << funcDefAst->ident << "\n";
+  funcDefAst->ident->setSpaces(funcDefAst->spaces + 1);
+  funcDefAst->ident->accept(this);
   funcDefAst->block->setSpaces(funcDefAst->spaces + 1);
   funcDefAst->block->accept(this);
 }
 
 void AstVisitor::VisitFuncTypeAst(FuncTypeAst *funcTypeAst) {
-  std::cout << funcTypeAst->type << " ";
+  std::cout << funcTypeAst->type << "\n";
 }
 
 void AstVisitor::VisitBlockAst(BlockAst *blockAst) {
   blockAst->printSpace();
   std::cout << "BlockAst <>\n";
-  blockAst->stmts->setSpaces(blockAst->spaces + 1);
-  blockAst->stmts->accept(this);
+//  DEBUG("blockAst->stmts.size() = %d ",  blockAst->blockItems.size());
+  for(auto &item: blockAst->blockItems) {
+	item->setSpaces(blockAst->spaces + 1);
+	item->accept(this);
+  }
+}
+void AstVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
+  block_item_ast->printSpace();
+  std::cout << "BlockItemAst <>\n";
+  block_item_ast->item->setSpaces(block_item_ast->spaces + 1);
+  block_item_ast->item->accept(this);
 }
 
 void AstVisitor::VisitStmtAst(StmtAst *stmtAst) {
   stmtAst->printSpace();
-  std::cout << "StmtAst <>\n";
+  std::cout <<StmtTypeToString(stmtAst->type)<<"StmtAst <>\n";
+  if (stmtAst->type==StmtType::kDecl) {
+	stmtAst->l_val->setSpaces(stmtAst->spaces + 1);
+	stmtAst->l_val->accept(this);
+  }
   stmtAst->expr->setSpaces(stmtAst->spaces + 1);
   stmtAst->expr->accept(this);
+  std::cout << "\n";
 }
 
 void AstVisitor::VisitIdentifierAst(IdentifierAst *identifierAst) {
   identifierAst->printSpace();
-  std::cout << "IdentifierAst:\n ";
-  std::cout << identifierAst->name;
+  std::cout << "IdentifierAst <> ";
+  std::cout << identifierAst->name << "\n";
 }
 
 void AstVisitor::VisitExp(ExpAst *expAst) {
@@ -100,23 +115,67 @@ void AstVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
 
 void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
   primaryExprAst->printSpace();
-  if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::EXP) {
-	std::cout << "PrimaryExpAst <> ()\n";
-	primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
-	primaryExprAst->primaryExpr->accept(this);
-  } else if (primaryExprAst->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
-
-	std::cout << "PrimaryExpAst <>\n";
-	primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
-	primaryExprAst->primaryExpr->accept(this);
-  }
+  std::cout << "PrimaryExpAst <> \n";
+  primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
+  primaryExprAst->primaryExpr->accept(this);
 }
 
 void AstVisitor::VisitNumberAst(NumberAst *numberAst) {
   numberAst->printSpace();
   std::cout << "NumberAst <> " << numberAst->value;
 }
+void AstVisitor::VisitDecl(DeclAst *decl_ast) {
+  decl_ast->printSpace();
+  std::cout << "DeclAst <> \n";
+  decl_ast->decl->setSpaces(decl_ast->spaces + 1);
+  decl_ast->decl->accept(this);
+}
+void AstVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
+  const_decl_ast->printSpace();
+  std::cout << "ConstDeclAst <> const ";
+  std::cout << const_decl_ast->dataType << "\n";
+  for (auto &constDef:const_decl_ast->constDefs) {
+	constDef->setSpaces(const_decl_ast->spaces + 1);
+	constDef->accept(this);
+  }
+}
+void AstVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
+  const_def_ast->printSpace();
+  std::cout << "ConstDefAst <> \n";
+  const_def_ast->ident->setSpaces(const_def_ast->spaces + 1);
+  const_def_ast->ident->accept(this);
+  const_def_ast->const_val->setSpaces(const_def_ast->spaces + 1);
+  const_def_ast->const_val->accept(this);
+  std::cout << "\n";
+}
+void AstVisitor::VisitLVal(LValAst *l_val_ast) {
+  l_val_ast->printSpace();
+  std::cout << "LValAst <> \n";
+  l_val_ast->l_val->setSpaces(l_val_ast->spaces + 1);
+  l_val_ast->l_val->accept(this);
 
+}
+void AstVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
+  var_decl_ast->printSpace();
+  std::cout << "VarDeclAst <>  ";
+  std::cout << var_decl_ast->dataType << "\n";
+  for (auto &varDef:var_decl_ast->varDefs) {
+	varDef->setSpaces(var_decl_ast->spaces + 1);
+	varDef->accept(this);
+  }
+
+}
+void AstVisitor::VisitVarDef(VarDefAst *var_def_ast) {
+  var_def_ast->printSpace();
+  std::cout << "VarDefAst <> \n";
+  var_def_ast->ident->setSpaces(var_def_ast->spaces + 1);
+  var_def_ast->ident->accept(this);
+  if (var_def_ast->is_expr) {
+	var_def_ast->var_expr->setSpaces(var_def_ast->spaces + 1);
+	var_def_ast->var_expr->accept(this);
+  }
+  std::cout << "\n";
+}
 
 // 生成json文件输出图形化显示
 void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
@@ -129,8 +188,7 @@ void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
 void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
   j_son_.BeganWrite("FuncDef");
   func_def_ast->funcType->accept(this);
-  j_son_.BeganWrite(func_def_ast->ident);
-  j_son_.EndWrite();
+  func_def_ast->ident->accept(this);
   func_def_ast->block->accept(this);
   j_son_.EndWrite();
 }
@@ -142,11 +200,20 @@ void AstViewVisitor::VisitFuncTypeAst(FuncTypeAst *func_type_ast) {
 }
 void AstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
   j_son_.BeganWrite("Block");
-  block_ast->stmts->accept(this);
+  for (auto &item: block_ast->blockItems) {
+	item->accept(this);
+  }
   j_son_.EndWrite();
 }
+void AstViewVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
+  j_son_.BeganWrite("BlockItem");
+  block_item_ast->item->accept(this);
+  j_son_.EndWrite();
+}
+
 void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
-  j_son_.BeganWrite("Stmt");
+  std::string type = StmtTypeToString(stmt_ast->type);
+  j_son_.BeganWrite(type+"Stmt");
   stmt_ast->expr->accept(this);
   j_son_.EndWrite();
 }
@@ -187,7 +254,7 @@ void AstViewVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 	primary_expr_ast->primaryExpr->accept(this);
 	j_son_.BeganWrite(")");
 	j_son_.EndWrite();
-  } else if (primary_expr_ast->primaryType == PrimaryExprAst::PrimaryType::NUMBER) {
+  } else {
 	primary_expr_ast->primaryExpr->accept(this);
   }
   j_son_.EndWrite();
@@ -204,6 +271,55 @@ void AstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
   j_son_.EndWrite();
   j_son_.EndWrite();
 }
+void AstViewVisitor::VisitDecl(DeclAst *decl_ast) {
+  j_son_.BeganWrite("Decl");
+  decl_ast->decl->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
+  j_son_.BeganWrite("ConstDecl");
+  j_son_.BeganWrite("const");
+  j_son_.EndWrite();
+  j_son_.BeganWrite(const_decl_ast->dataType);
+  j_son_.EndWrite();
+  for (auto& const_def :const_decl_ast->constDefs) {
+	const_def->accept(this);
+  }
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
+  j_son_.BeganWrite("ConstDef");
+  const_def_ast->ident->accept(this);
+  j_son_.BeganWrite("=");
+  j_son_.EndWrite();
+  const_def_ast->const_val->accept(this);
+  j_son_.EndWrite();
+}
+
+void AstViewVisitor::VisitLVal(LValAst *l_val_ast) {
+  j_son_.BeganWrite("LVal");
+  l_val_ast->l_val->accept(this);
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
+  j_son_.BeganWrite("VarDecl");
+  j_son_.BeganWrite(var_decl_ast->dataType);
+  j_son_.EndWrite();
+  for (auto& var_def :var_decl_ast->varDefs) {
+	var_def->accept(this);
+  }
+  j_son_.EndWrite();
+}
+void AstViewVisitor::VisitVarDef(VarDefAst *var_def_ast) {
+  j_son_.BeganWrite("VarDef");
+  var_def_ast->ident->accept(this);
+  if (var_def_ast->is_expr){
+	j_son_.BeganWrite("=");
+	j_son_.EndWrite();
+	var_def_ast->var_expr->accept(this);
+  }
+  j_son_.EndWrite();
+}
 
 // 生成程序主体
 void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
@@ -216,8 +332,8 @@ void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
 void IRGeneratorVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   DEBUG("IRGeneratorVisitor::VisitFuncDefAst");
   Function function;
-  function.name = funcDefAst->ident;
   programIr->functions.emplace_back(function);
+  funcDefAst->ident->accept(this);
   funcDefAst->funcType->accept(this);
   funcDefAst->block->accept(this);
 }
@@ -241,8 +357,15 @@ void IRGeneratorVisitor::VisitBlockAst(BlockAst *blockAst) {
   block.blockName = "%entry";
   function.blocks.emplace_back(block);//相当于第一个baseblock
   DEBUG("IRGeneratorVisitor::VisitBlockAst");
-  blockAst->stmts->accept(this);
+  for (auto &item: blockAst->blockItems) {
+	item->accept(this);
+  }
   DEBUG("IRGeneratorVisitor::VisitBlockAst");
+}
+
+void IRGeneratorVisitor::VisitBlockItem(BlockItemAst *blockItemAst) {
+  DEBUG("IRGeneratorVisitor::VisitBlockItem");
+  blockItemAst->item->accept(this);
 }
 
 // 生成函数语句
@@ -359,6 +482,21 @@ void IRGeneratorVisitor::VisitNumberAst(NumberAst *numberAst) {
   block.instructions.emplace_back(instruction);
 }
 
-void IRGeneratorVisitor::VisitIdentifierAst(IdentifierAst *) {
-  //标识符，这里暂时不需要
+void IRGeneratorVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
+  //标识符
+  auto &function = programIr->functions.back();
+  function.name = identifier_ast->name;
+}
+
+void IRGeneratorVisitor::VisitDecl(DeclAst *) {
+}
+void IRGeneratorVisitor::VisitConstDecl(ConstDeclAst *) {
+}
+void IRGeneratorVisitor::VisitConstDef(ConstDefAst *) {
+}
+void IRGeneratorVisitor::VisitLVal(LValAst *) {
+}
+void IRGeneratorVisitor::VisitVarDecl(VarDeclAst *) {
+}
+void IRGeneratorVisitor::VisitVarDef(VarDefAst *) {
 }

@@ -151,6 +151,15 @@ LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
 ### 额外:json数据生成和树图格式化
 
 ```
+pip install pytm-cli
+
+```
+
+
+
+
+
+```
      |----B     |----E----|----I
      |          |
      |----C-----|----F         |----J
@@ -211,4 +220,126 @@ A----|                         |
     ]
 }
 ```
+
+### 第五节:支持定义常量
+
+==这里开始注意递归匹配的问题==
+
+```
+Decl          ::= ConstDecl;
+ConstDecl     ::= "const" BType ConstDef {"," ConstDef} ";";
+BType         ::= "int";
+ConstDef      ::= IDENT "=" ConstInitVal;
+ConstInitVal  ::= ConstExp;
+Block         ::= "{" {BlockItem} "}";
+BlockItem     ::= Decl | Stmt;
+LVal          ::= IDENT;
+PrimaryExp    ::= "(" Exp ")" | LVal | Number;
+ConstExp      ::= Exp;
+
+```
+
+```c
+CompUnit  ::= FuncDef;
+
+FuncDef   ::= FuncType IDENT "(" ")" Block;
+FuncType  ::= "int";
+Block         ::= "{" BlockItemUp "}";
+BlockItemUp   ::= BlcokItem | BlockItemUp BlockItem
+BlockItem     ::= Decl | Stmt;
+
+
+// Decl Decl Decl
+
+Stmt      ::= "return" Exp ";";
+Exp         ::= LOrExp;
+Number    	::= INT_CONST;
+PrimaryExp  ::= "(" Exp ")" | LVal | Number;
+Number      ::= INT_CONST;
+UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp;
+UnaryOp     ::= "+" | "-" | "!";
+MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
+RelExp      ::= AddExp | RelExp ("<" | ">" | "<=" | ">=") AddExp;
+EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+LAndExp     ::= EqExp | LAndExp "&&" EqExp;
+LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
+
+
+Decl          ::= ConstDecl ;
+ConstDecl     ::= "const" INT ConstDefUp ";";
+ConstDefUp    ::= ConstDef  | ConstDefUp "," ConstDef
+ConstDef      ::= IDENT "=" Exp;//注意这里需要判断表达式是否是常量
+
+LVal          ::= IDENT; //这一部分需要建立符号表来查找相关内容
+PrimaryExp    ::= "(" Exp ")" | LVal | Number;
+```
+
+
+
+第六节:支持变量和赋值
+
+```
+Decl          ::= ConstDecl | VarDecl;
+ConstDecl     ::= ...;
+BType         ::= ...;
+ConstDef      ::= ...;
+ConstInitVal  ::= ...;
+VarDecl       ::= BType VarDef {"," VarDef} ";";
+VarDef        ::= IDENT | IDENT "=" InitVal;
+InitVal       ::= Exp;
+
+...
+
+Block         ::= ...;
+BlockItem     ::= ...;
+Stmt          ::= LVal "=" Exp ";"
+                | "return" Exp ";";
+```
+
+将其化简并与之前的合并:
+
+```
+CompUnit  ::= FuncDef;
+
+FuncDef   ::= FuncType IDENT "(" ")" Block;
+FuncType  ::= "int";
+Block         ::= "{" BlockItemUp "}";
+BlockItemUp   ::= BlcokItem | BlockItemUp BlockItem
+BlockItem     ::= Decl | Stmt;
+
+
+// Decl Decl Decl
+
+Stmt      ::= "return" Exp ";"
+			|  LVal "=" Exp ";" ;
+	
+Exp         ::= LOrExp;
+Number    	::= INT_CONST;
+PrimaryExp  ::= "(" Exp ")" | LVal | Number;
+Number      ::= INT_CONST;
+UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp;
+UnaryOp     ::= "+" | "-" | "!";
+MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
+RelExp      ::= AddExp | RelExp ("<" | ">" | "<=" | ">=") AddExp;
+EqExp       ::= RelExp | EqExp ("==" | "!=") RelExp;
+LAndExp     ::= EqExp | LAndExp "&&" EqExp;
+LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
+
+
+Decl          ::= ConstDecl | VarDecl ;
+ConstDecl     ::= "const" INT ConstDefUp ";";
+ConstDefUp    ::= ConstDef  | ConstDefUp "," ConstDef
+ConstDef      ::= IDENT "=" Exp;//注意这里需要判断表达式是否是常量
+
+VarDecl		  ::= INT VarDefUp ";";
+VarDefUp      ::= ValDef  | ValDefUp "," ValDef 
+VarDef        ::= IDENT | IDENT "=" Exp;
+
+LVal          ::= IDENT; //这一部分需要建立符号表来查找相关内容
+PrimaryExp    ::= "(" Exp ")" | LVal | Number;
+```
+
+
 

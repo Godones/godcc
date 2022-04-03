@@ -112,46 +112,61 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_INT = 3,                        /* INT  */
-  YYSYMBOL_RETURN = 4,                     /* RETURN  */
-  YYSYMBOL_IDENT = 5,                      /* IDENT  */
-  YYSYMBOL_LT = 6,                         /* LT  */
-  YYSYMBOL_GT = 7,                         /* GT  */
-  YYSYMBOL_EQ = 8,                         /* EQ  */
-  YYSYMBOL_AND = 9,                        /* AND  */
-  YYSYMBOL_OR = 10,                        /* OR  */
-  YYSYMBOL_NE = 11,                        /* NE  */
-  YYSYMBOL_LE = 12,                        /* LE  */
-  YYSYMBOL_GE = 13,                        /* GE  */
-  YYSYMBOL_INT_CONST = 14,                 /* INT_CONST  */
-  YYSYMBOL_15_ = 15,                       /* '('  */
-  YYSYMBOL_16_ = 16,                       /* ')'  */
-  YYSYMBOL_17_ = 17,                       /* '{'  */
-  YYSYMBOL_18_ = 18,                       /* '}'  */
-  YYSYMBOL_19_ = 19,                       /* ';'  */
-  YYSYMBOL_20_ = 20,                       /* '+'  */
-  YYSYMBOL_21_ = 21,                       /* '-'  */
-  YYSYMBOL_22_ = 22,                       /* '*'  */
-  YYSYMBOL_23_ = 23,                       /* '/'  */
-  YYSYMBOL_24_ = 24,                       /* '%'  */
-  YYSYMBOL_25_ = 25,                       /* '!'  */
-  YYSYMBOL_YYACCEPT = 26,                  /* $accept  */
-  YYSYMBOL_CompUnit = 27,                  /* CompUnit  */
-  YYSYMBOL_FuncDef = 28,                   /* FuncDef  */
-  YYSYMBOL_FuncType = 29,                  /* FuncType  */
-  YYSYMBOL_Block = 30,                     /* Block  */
-  YYSYMBOL_Stmt = 31,                      /* Stmt  */
-  YYSYMBOL_Expr = 32,                      /* Expr  */
-  YYSYMBOL_AddExpr = 33,                   /* AddExpr  */
-  YYSYMBOL_RelExpr = 34,                   /* RelExpr  */
-  YYSYMBOL_EqExpr = 35,                    /* EqExpr  */
-  YYSYMBOL_AndExpr = 36,                   /* AndExpr  */
-  YYSYMBOL_OrExpr = 37,                    /* OrExpr  */
-  YYSYMBOL_MulExpr = 38,                   /* MulExpr  */
-  YYSYMBOL_UnaryExp = 39,                  /* UnaryExp  */
-  YYSYMBOL_PrimaryExpr = 40,               /* PrimaryExpr  */
-  YYSYMBOL_UnaryOp = 41,                   /* UnaryOp  */
-  YYSYMBOL_Number = 42                     /* Number  */
+  YYSYMBOL_RETURN = 3,                     /* RETURN  */
+  YYSYMBOL_IDENT = 4,                      /* IDENT  */
+  YYSYMBOL_LT = 5,                         /* LT  */
+  YYSYMBOL_GT = 6,                         /* GT  */
+  YYSYMBOL_EQ = 7,                         /* EQ  */
+  YYSYMBOL_AND = 8,                        /* AND  */
+  YYSYMBOL_OR = 9,                         /* OR  */
+  YYSYMBOL_NE = 10,                        /* NE  */
+  YYSYMBOL_LE = 11,                        /* LE  */
+  YYSYMBOL_GE = 12,                        /* GE  */
+  YYSYMBOL_CONST = 13,                     /* CONST  */
+  YYSYMBOL_INT = 14,                       /* INT  */
+  YYSYMBOL_INT_CONST = 15,                 /* INT_CONST  */
+  YYSYMBOL_16_ = 16,                       /* '('  */
+  YYSYMBOL_17_ = 17,                       /* ')'  */
+  YYSYMBOL_18_ = 18,                       /* '{'  */
+  YYSYMBOL_19_ = 19,                       /* '}'  */
+  YYSYMBOL_20_ = 20,                       /* ';'  */
+  YYSYMBOL_21_ = 21,                       /* ','  */
+  YYSYMBOL_22_ = 22,                       /* '='  */
+  YYSYMBOL_23_ = 23,                       /* ","  */
+  YYSYMBOL_24_ = 24,                       /* '+'  */
+  YYSYMBOL_25_ = 25,                       /* '-'  */
+  YYSYMBOL_26_ = 26,                       /* '*'  */
+  YYSYMBOL_27_ = 27,                       /* '/'  */
+  YYSYMBOL_28_ = 28,                       /* '%'  */
+  YYSYMBOL_29_ = 29,                       /* '!'  */
+  YYSYMBOL_YYACCEPT = 30,                  /* $accept  */
+  YYSYMBOL_CompUnit = 31,                  /* CompUnit  */
+  YYSYMBOL_FuncDef = 32,                   /* FuncDef  */
+  YYSYMBOL_FuncType = 33,                  /* FuncType  */
+  YYSYMBOL_Block = 34,                     /* Block  */
+  YYSYMBOL_BlockItemUp = 35,               /* BlockItemUp  */
+  YYSYMBOL_BlockItem = 36,                 /* BlockItem  */
+  YYSYMBOL_Decl = 37,                      /* Decl  */
+  YYSYMBOL_ConstDecl = 38,                 /* ConstDecl  */
+  YYSYMBOL_ConstDefUp = 39,                /* ConstDefUp  */
+  YYSYMBOL_ConstDef = 40,                  /* ConstDef  */
+  YYSYMBOL_VarDecl = 41,                   /* VarDecl  */
+  YYSYMBOL_VarDefUp = 42,                  /* VarDefUp  */
+  YYSYMBOL_VarDef = 43,                    /* VarDef  */
+  YYSYMBOL_Identifier = 44,                /* Identifier  */
+  YYSYMBOL_Stmt = 45,                      /* Stmt  */
+  YYSYMBOL_Expr = 46,                      /* Expr  */
+  YYSYMBOL_AddExpr = 47,                   /* AddExpr  */
+  YYSYMBOL_RelExpr = 48,                   /* RelExpr  */
+  YYSYMBOL_EqExpr = 49,                    /* EqExpr  */
+  YYSYMBOL_AndExpr = 50,                   /* AndExpr  */
+  YYSYMBOL_OrExpr = 51,                    /* OrExpr  */
+  YYSYMBOL_MulExpr = 52,                   /* MulExpr  */
+  YYSYMBOL_UnaryExp = 53,                  /* UnaryExp  */
+  YYSYMBOL_PrimaryExpr = 54,               /* PrimaryExpr  */
+  YYSYMBOL_LVal = 55,                      /* LVal  */
+  YYSYMBOL_UnaryOp = 56,                   /* UnaryOp  */
+  YYSYMBOL_Number = 57                     /* Number  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -479,19 +494,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   43
+#define YYLAST   81
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  26
+#define YYNTOKENS  30
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  17
+#define YYNNTS  28
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  34
+#define YYNRULES  53
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  60
+#define YYNSTATES  92
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   269
+#define YYMAXUTOK   271
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -508,16 +523,16 @@ static const yytype_int8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    25,     2,     2,     2,    24,     2,     2,
-      15,    16,    22,    20,     2,    21,     2,    23,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    19,
+       2,     2,     2,    29,     2,     2,     2,    28,     2,     2,
+      16,    17,    26,    24,    21,    25,     2,    27,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    20,
+       2,    22,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    17,     2,    18,     2,     2,     2,     2,
+       2,     2,     2,    18,     2,    19,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -531,17 +546,20 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12,    13,    14
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    23
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    64,    64,    82,    93,   101,   109,   117,   125,   128,
-     131,   136,   139,   142,   145,   148,   153,   156,   159,   164,
-     167,   173,   176,   181,   184,   187,   190,   197,   203,   213,
-     219,   228,   233,   238,   246
+       0,    66,    66,    84,    95,   103,   112,   116,   122,   127,
+     136,   141,   148,   156,   160,   166,   175,   183,   187,   194,
+     199,   209,   216,   222,   232,   240,   243,   246,   251,   254,
+     257,   260,   263,   268,   271,   274,   279,   282,   288,   291,
+     296,   299,   302,   305,   312,   318,   328,   334,   340,   349,
+     355,   360,   365,   373
 };
 #endif
 
@@ -557,12 +575,15 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INT", "RETURN",
-  "IDENT", "LT", "GT", "EQ", "AND", "OR", "NE", "LE", "GE", "INT_CONST",
-  "'('", "')'", "'{'", "'}'", "';'", "'+'", "'-'", "'*'", "'/'", "'%'",
-  "'!'", "$accept", "CompUnit", "FuncDef", "FuncType", "Block", "Stmt",
-  "Expr", "AddExpr", "RelExpr", "EqExpr", "AndExpr", "OrExpr", "MulExpr",
-  "UnaryExp", "PrimaryExpr", "UnaryOp", "Number", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "RETURN", "IDENT",
+  "LT", "GT", "EQ", "AND", "OR", "NE", "LE", "GE", "CONST", "INT",
+  "INT_CONST", "'('", "')'", "'{'", "'}'", "';'", "','", "'='", "\",\"",
+  "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "$accept", "CompUnit",
+  "FuncDef", "FuncType", "Block", "BlockItemUp", "BlockItem", "Decl",
+  "ConstDecl", "ConstDefUp", "ConstDef", "VarDecl", "VarDefUp", "VarDef",
+  "Identifier", "Stmt", "Expr", "AddExpr", "RelExpr", "EqExpr", "AndExpr",
+  "OrExpr", "MulExpr", "UnaryExp", "PrimaryExpr", "LVal", "UnaryOp",
+  "Number", YY_NULLPTR
 };
 
 static const char *
@@ -572,7 +593,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-28)
+#define YYPACT_NINF (-33)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -586,12 +607,16 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      10,   -28,    25,   -28,    26,   -28,    15,    16,    17,    29,
-     -28,   -13,    18,   -28,   -13,   -28,   -28,   -28,    19,   -15,
-      -3,     3,    28,    30,     0,   -28,   -28,   -13,   -28,   -28,
-      23,   -28,   -13,   -13,   -13,   -13,   -13,   -13,   -13,   -13,
-     -13,   -13,   -13,   -13,   -13,   -28,   -28,     0,     0,   -15,
-     -15,   -15,   -15,    -3,    -3,     3,    28,   -28,   -28,   -28
+     -11,   -33,    11,   -33,     5,   -33,   -33,    27,    28,    30,
+       4,   -33,    -3,    43,     5,     1,   -33,   -33,   -33,   -33,
+     -33,   -33,    36,   -33,    -3,   -33,   -33,   -33,     3,    25,
+      26,     9,    51,    52,     7,   -33,   -33,   -33,    -3,   -33,
+       5,    24,   -33,    38,   -33,   -33,    -3,    45,   -33,    -3,
+      -3,    -3,    -3,    -3,    -3,    -3,    -3,    -3,    -3,    -3,
+      -3,    -3,   -33,    31,   -33,    44,   -33,     5,    -3,    47,
+     -33,     7,     7,    25,    25,    25,    25,    26,    26,     9,
+      51,   -33,   -33,   -33,   -33,     5,    -3,   -33,   -33,   -33,
+     -33,   -33
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -599,26 +624,32 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     4,     0,     2,     0,     1,     0,     0,     0,     0,
-       3,     0,     0,    34,     0,    31,    32,    33,     0,    11,
-      16,    19,    21,     7,     8,    23,    27,     0,    30,     5,
-       0,     6,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    28,    29,     9,    10,    12,
-      13,    14,    15,    17,    18,    20,    22,    24,    25,    26
+       0,     4,     0,     2,     0,     1,    21,     0,     0,     0,
+       0,     3,     0,     0,     0,     0,     6,     9,    10,    11,
+      49,     8,     0,    53,     0,    50,    51,    52,     0,    28,
+      33,    36,    38,    24,    25,    40,    44,    48,     0,    47,
+       0,     0,    17,    19,     5,     7,     0,     0,    22,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    45,     0,    13,     0,    16,     0,     0,     0,
+      46,    26,    27,    29,    30,    31,    32,    34,    35,    37,
+      39,    41,    42,    43,    12,     0,     0,    18,    20,    23,
+      14,    15
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -28,   -28,   -28,   -28,   -28,   -28,    21,   -16,   -12,     1,
-       2,   -28,    -4,   -27,   -28,   -28,   -28
+     -33,   -33,   -33,   -33,   -33,   -33,    50,   -33,   -33,   -33,
+     -17,   -33,   -33,     2,    -4,   -33,   -22,   -12,    -2,    13,
+      14,   -33,     6,   -32,   -33,    15,   -33,   -33
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,    10,    12,    18,    19,    20,    21,
-      22,    23,    24,    25,    26,    27,    28
+       0,     2,     3,     4,    11,    15,    16,    17,    18,    63,
+      64,    19,    41,    42,    20,    21,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -626,50 +657,66 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      45,    13,    14,    34,    35,    32,    33,    15,    16,    36,
-      37,    38,    17,     1,    39,    57,    58,    59,    49,    50,
-      51,    52,    42,    43,    44,     5,    53,    54,    47,    48,
-       7,     6,     8,    11,     9,    30,    29,    40,    31,    46,
-      41,    55,     0,    56
+       7,     6,    47,     1,    12,     6,    62,    12,     6,     6,
+      43,     5,    23,    24,    13,    14,    55,    13,    14,    56,
+      44,    25,    26,    48,    69,    22,    27,    81,    82,    83,
+      22,    51,    52,    59,    60,    61,    65,    53,    54,    73,
+      74,    75,    76,     8,    66,     9,    88,    67,    10,    49,
+      50,    84,    85,    77,    78,    71,    72,    40,    46,    57,
+      68,    58,    70,    43,    91,    45,    86,    89,    90,    87,
+      79,     0,    80,     0,     0,     0,     0,     0,     0,     0,
+       0,    65
 };
 
 static const yytype_int8 yycheck[] =
 {
-      27,    14,    15,     6,     7,    20,    21,    20,    21,    12,
-      13,     8,    25,     3,    11,    42,    43,    44,    34,    35,
-      36,    37,    22,    23,    24,     0,    38,    39,    32,    33,
-      15,     5,    16,     4,    17,    14,    18,     9,    19,    16,
-      10,    40,    -1,    41
+       4,     4,    24,    14,     3,     4,    38,     3,     4,     4,
+      14,     0,    15,    16,    13,    14,     7,    13,    14,    10,
+      19,    24,    25,    20,    46,    10,    29,    59,    60,    61,
+      15,     5,     6,    26,    27,    28,    40,    11,    12,    51,
+      52,    53,    54,    16,    20,    17,    68,    23,    18,    24,
+      25,    20,    21,    55,    56,    49,    50,    14,    22,     8,
+      22,     9,    17,    67,    86,    15,    22,    20,    85,    67,
+      57,    -1,    58,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    85
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    27,    28,    29,     0,     5,    15,    16,    17,
-      30,     4,    31,    14,    15,    20,    21,    25,    32,    33,
-      34,    35,    36,    37,    38,    39,    40,    41,    42,    18,
-      32,    19,    20,    21,     6,     7,    12,    13,     8,    11,
-       9,    10,    22,    23,    24,    39,    16,    38,    38,    33,
-      33,    33,    33,    34,    34,    35,    36,    39,    39,    39
+       0,    14,    31,    32,    33,     0,     4,    44,    16,    17,
+      18,    34,     3,    13,    14,    35,    36,    37,    38,    41,
+      44,    45,    55,    15,    16,    24,    25,    29,    46,    47,
+      48,    49,    50,    51,    52,    53,    54,    55,    56,    57,
+      14,    42,    43,    44,    19,    36,    22,    46,    20,    24,
+      25,     5,     6,    11,    12,     7,    10,     8,     9,    26,
+      27,    28,    53,    39,    40,    44,    20,    23,    22,    46,
+      17,    52,    52,    47,    47,    47,    47,    48,    48,    49,
+      50,    53,    53,    53,    20,    21,    22,    43,    46,    20,
+      40,    46
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    26,    27,    28,    29,    30,    31,    32,    33,    33,
-      33,    34,    34,    34,    34,    34,    35,    35,    35,    36,
-      36,    37,    37,    38,    38,    38,    38,    39,    39,    40,
-      40,    41,    41,    41,    42
+       0,    30,    31,    32,    33,    34,    35,    35,    36,    36,
+      37,    37,    38,    39,    39,    40,    41,    42,    42,    43,
+      43,    44,    45,    45,    46,    47,    47,    47,    48,    48,
+      48,    48,    48,    49,    49,    49,    50,    50,    51,    51,
+      52,    52,    52,    52,    53,    53,    54,    54,    54,    55,
+      56,    56,    56,    57
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     5,     1,     3,     3,     1,     1,     3,
-       3,     1,     3,     3,     3,     3,     1,     3,     3,     1,
-       3,     1,     3,     1,     3,     3,     3,     1,     2,     3,
-       1,     1,     1,     1,     1
+       0,     2,     1,     5,     1,     3,     1,     2,     1,     1,
+       1,     1,     4,     1,     3,     3,     3,     1,     3,     1,
+       3,     1,     3,     4,     1,     1,     3,     3,     1,     3,
+       3,     3,     3,     1,     3,     3,     1,     3,     1,     3,
+       1,     3,     3,     3,     1,     2,     3,     1,     1,     1,
+       1,     1,     1,     1
 };
 
 
@@ -1135,232 +1182,405 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* CompUnit: FuncDef  */
-#line 64 "/home/godcc/frontend/sysy.y"
+#line 66 "/home/godcc/frontend/sysy.y"
             {
     auto compUnit = make_shared<CompUnitAst>();
     compUnit->funcDef = shared_ptr<Ast>((yyvsp[0].ast_val));
     ast = compUnit;
   }
-#line 1145 "/home/godcc/frontend/parser.cpp"
+#line 1192 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 3: /* FuncDef: FuncType IDENT '(' ')' Block  */
-#line 82 "/home/godcc/frontend/sysy.y"
-                                 {
+  case 3: /* FuncDef: FuncType Identifier '(' ')' Block  */
+#line 84 "/home/godcc/frontend/sysy.y"
+                                      {
   	auto funcDef = new FuncDefAst();
 	funcDef->funcType = shared_ptr<Ast>((yyvsp[-4].ast_val));
-	funcDef->ident = *shared_ptr<string>((yyvsp[-3].str_val));
+	funcDef->ident = shared_ptr<Ast>((yyvsp[-3].ast_val));
 	funcDef->block = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = funcDef;
   }
-#line 1157 "/home/godcc/frontend/parser.cpp"
+#line 1204 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 4: /* FuncType: INT  */
-#line 93 "/home/godcc/frontend/sysy.y"
+#line 95 "/home/godcc/frontend/sysy.y"
         {
     auto funcType = new FuncTypeAst();
     funcType->type = string("int");
     (yyval.ast_val) = funcType;
   }
-#line 1167 "/home/godcc/frontend/parser.cpp"
+#line 1214 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 5: /* Block: '{' Stmt '}'  */
-#line 101 "/home/godcc/frontend/sysy.y"
-                 {
+  case 5: /* Block: '{' BlockItemUp '}'  */
+#line 103 "/home/godcc/frontend/sysy.y"
+                        {
     auto block = new BlockAst();
-    block->stmts = shared_ptr<Ast>((yyvsp[-1].ast_val));
+    auto blockItemUp = shared_ptr<Ast>((yyvsp[-1].ast_val));
+    block->blockItems = BlockAst::GetFromBlockItemUp(dynamic_cast<BlockUpAst*>(blockItemUp.get()));
     (yyval.ast_val) = block;
   }
-#line 1177 "/home/godcc/frontend/parser.cpp"
+#line 1225 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 6: /* Stmt: RETURN Expr ';'  */
-#line 109 "/home/godcc/frontend/sysy.y"
+  case 6: /* BlockItemUp: BlockItem  */
+#line 112 "/home/godcc/frontend/sysy.y"
+           {
+	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = blockItemUp;
+ }
+#line 1234 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 7: /* BlockItemUp: BlockItemUp BlockItem  */
+#line 116 "/home/godcc/frontend/sysy.y"
+                       {
+	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>((yyvsp[-1].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = blockItemUp;
+}
+#line 1243 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 8: /* BlockItem: Stmt  */
+#line 122 "/home/godcc/frontend/sysy.y"
+     {
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = blockItem;
+}
+#line 1253 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 9: /* BlockItem: Decl  */
+#line 127 "/home/godcc/frontend/sysy.y"
+     {
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = blockItem;
+}
+#line 1263 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 10: /* Decl: ConstDecl  */
+#line 136 "/home/godcc/frontend/sysy.y"
+          {
+	auto decl = new DeclAst();
+	decl->decl = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = decl;
+}
+#line 1273 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 11: /* Decl: VarDecl  */
+#line 141 "/home/godcc/frontend/sysy.y"
+        {
+	auto decl = new DeclAst();
+	decl->decl = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = decl;
+}
+#line 1283 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 12: /* ConstDecl: CONST INT ConstDefUp ';'  */
+#line 148 "/home/godcc/frontend/sysy.y"
+                         {
+	auto constDecl = new ConstDeclAst();
+	constDecl->constDefs=  ConstDeclAst::GetFromConstDefUpAst(dynamic_cast<ConstDefUpAst*>(shared_ptr<Ast>((yyvsp[-1].ast_val)).get()));
+	constDecl->dataType = *((yyvsp[-2].str_val));
+	(yyval.ast_val) = constDecl;
+}
+#line 1294 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 13: /* ConstDefUp: ConstDef  */
+#line 156 "/home/godcc/frontend/sysy.y"
+         {
+	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = constDeclUp;
+}
+#line 1303 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 14: /* ConstDefUp: ConstDefUp ',' ConstDef  */
+#line 160 "/home/godcc/frontend/sysy.y"
+                        {
+	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = constDeclUp;
+}
+#line 1312 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 15: /* ConstDef: Identifier '=' Expr  */
+#line 166 "/home/godcc/frontend/sysy.y"
+                    {
+	auto constDef = new ConstDefAst();
+	constDef->ident = shared_ptr<Ast>((yyvsp[-2].ast_val));
+	constDef->const_val = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = constDef;
+}
+#line 1323 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 16: /* VarDecl: INT VarDefUp ';'  */
+#line 175 "/home/godcc/frontend/sysy.y"
+                 {
+	auto varDecl = new VarDeclAst();
+	varDecl->varDefs=  VarDeclAst::GetFromVarDefUpAst(dynamic_cast<VarDefUpAst*>(shared_ptr<Ast>((yyvsp[-1].ast_val)).get()));
+	varDecl->dataType =  *((yyvsp[-2].str_val));
+	(yyval.ast_val) = varDecl;
+}
+#line 1334 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 17: /* VarDefUp: VarDef  */
+#line 183 "/home/godcc/frontend/sysy.y"
+       {
+	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+        (yyval.ast_val) = varDeclUp;
+}
+#line 1343 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 18: /* VarDefUp: VarDefUp "," VarDef  */
+#line 187 "/home/godcc/frontend/sysy.y"
+                     {
+	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+        (yyval.ast_val) = varDeclUp;
+}
+#line 1352 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 19: /* VarDef: Identifier  */
+#line 194 "/home/godcc/frontend/sysy.y"
+           {
+	auto varDef = new VarDefAst();
+	varDef->ident = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = varDef;
+}
+#line 1362 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 20: /* VarDef: Identifier '=' Expr  */
+#line 199 "/home/godcc/frontend/sysy.y"
+                    {
+	auto varDef = new VarDefAst();
+	varDef->ident =  shared_ptr<Ast>((yyvsp[-2].ast_val));
+	varDef->var_expr =  shared_ptr<Ast>((yyvsp[0].ast_val));
+	varDef->is_expr = true;
+	(yyval.ast_val) = varDef;
+}
+#line 1374 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 21: /* Identifier: IDENT  */
+#line 209 "/home/godcc/frontend/sysy.y"
+      {
+	auto identifier=  new IdentifierAst();
+	identifier->name = *((yyvsp[0].str_val));
+	(yyval.ast_val) = identifier;
+}
+#line 1384 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 22: /* Stmt: RETURN Expr ';'  */
+#line 216 "/home/godcc/frontend/sysy.y"
                     {
     auto stmt = new StmtAst();
     stmt->expr = shared_ptr<Ast>((yyvsp[-1].ast_val));
+    stmt->type = StmtType::kReturn;
     (yyval.ast_val) = stmt;
   }
-#line 1187 "/home/godcc/frontend/parser.cpp"
+#line 1395 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 7: /* Expr: OrExpr  */
-#line 117 "/home/godcc/frontend/sysy.y"
+  case 23: /* Stmt: LVal '=' Expr ';'  */
+#line 222 "/home/godcc/frontend/sysy.y"
+                   {
+	auto stmt = new StmtAst();
+    	stmt->expr = shared_ptr<Ast>((yyvsp[-1].ast_val));
+    	stmt->l_val =  shared_ptr<Ast>((yyvsp[-3].ast_val));
+    	stmt->type = StmtType::kDecl;
+    	(yyval.ast_val) = stmt;
+ }
+#line 1407 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 24: /* Expr: OrExpr  */
+#line 232 "/home/godcc/frontend/sysy.y"
            {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
     (yyval.ast_val) = Expr;
   }
-#line 1197 "/home/godcc/frontend/parser.cpp"
+#line 1417 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 8: /* AddExpr: MulExpr  */
-#line 125 "/home/godcc/frontend/sysy.y"
+  case 25: /* AddExpr: MulExpr  */
+#line 240 "/home/godcc/frontend/sysy.y"
          {
   (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1205 "/home/godcc/frontend/parser.cpp"
+#line 1425 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 9: /* AddExpr: AddExpr '+' MulExpr  */
-#line 128 "/home/godcc/frontend/sysy.y"
+  case 26: /* AddExpr: AddExpr '+' MulExpr  */
+#line 243 "/home/godcc/frontend/sysy.y"
                     {
   (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"+");
 }
-#line 1213 "/home/godcc/frontend/parser.cpp"
+#line 1433 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 10: /* AddExpr: AddExpr '-' MulExpr  */
-#line 131 "/home/godcc/frontend/sysy.y"
+  case 27: /* AddExpr: AddExpr '-' MulExpr  */
+#line 246 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"-");
 }
-#line 1221 "/home/godcc/frontend/parser.cpp"
+#line 1441 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 11: /* RelExpr: AddExpr  */
-#line 136 "/home/godcc/frontend/sysy.y"
+  case 28: /* RelExpr: AddExpr  */
+#line 251 "/home/godcc/frontend/sysy.y"
         {
  (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1229 "/home/godcc/frontend/parser.cpp"
+#line 1449 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 12: /* RelExpr: RelExpr LT AddExpr  */
-#line 139 "/home/godcc/frontend/sysy.y"
+  case 29: /* RelExpr: RelExpr LT AddExpr  */
+#line 254 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"<");
 }
-#line 1237 "/home/godcc/frontend/parser.cpp"
+#line 1457 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 13: /* RelExpr: RelExpr GT AddExpr  */
-#line 142 "/home/godcc/frontend/sysy.y"
+  case 30: /* RelExpr: RelExpr GT AddExpr  */
+#line 257 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),">");
 }
-#line 1245 "/home/godcc/frontend/parser.cpp"
+#line 1465 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 14: /* RelExpr: RelExpr LE AddExpr  */
-#line 145 "/home/godcc/frontend/sysy.y"
+  case 31: /* RelExpr: RelExpr LE AddExpr  */
+#line 260 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"<=");
 }
-#line 1253 "/home/godcc/frontend/parser.cpp"
+#line 1473 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 15: /* RelExpr: RelExpr GE AddExpr  */
-#line 148 "/home/godcc/frontend/sysy.y"
+  case 32: /* RelExpr: RelExpr GE AddExpr  */
+#line 263 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),">=");
 }
-#line 1261 "/home/godcc/frontend/parser.cpp"
+#line 1481 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 16: /* EqExpr: RelExpr  */
-#line 153 "/home/godcc/frontend/sysy.y"
+  case 33: /* EqExpr: RelExpr  */
+#line 268 "/home/godcc/frontend/sysy.y"
          {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1269 "/home/godcc/frontend/parser.cpp"
+#line 1489 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 17: /* EqExpr: EqExpr EQ RelExpr  */
-#line 156 "/home/godcc/frontend/sysy.y"
+  case 34: /* EqExpr: EqExpr EQ RelExpr  */
+#line 271 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"==");
 }
-#line 1277 "/home/godcc/frontend/parser.cpp"
+#line 1497 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 18: /* EqExpr: EqExpr NE RelExpr  */
-#line 159 "/home/godcc/frontend/sysy.y"
+  case 35: /* EqExpr: EqExpr NE RelExpr  */
+#line 274 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"!=");
 }
-#line 1285 "/home/godcc/frontend/parser.cpp"
+#line 1505 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 19: /* AndExpr: EqExpr  */
-#line 164 "/home/godcc/frontend/sysy.y"
+  case 36: /* AndExpr: EqExpr  */
+#line 279 "/home/godcc/frontend/sysy.y"
        {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1293 "/home/godcc/frontend/parser.cpp"
+#line 1513 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 20: /* AndExpr: AndExpr AND EqExpr  */
-#line 167 "/home/godcc/frontend/sysy.y"
+  case 37: /* AndExpr: AndExpr AND EqExpr  */
+#line 282 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"&&");
 }
-#line 1301 "/home/godcc/frontend/parser.cpp"
+#line 1521 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 21: /* OrExpr: AndExpr  */
-#line 173 "/home/godcc/frontend/sysy.y"
+  case 38: /* OrExpr: AndExpr  */
+#line 288 "/home/godcc/frontend/sysy.y"
         {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1309 "/home/godcc/frontend/parser.cpp"
+#line 1529 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 22: /* OrExpr: OrExpr OR AndExpr  */
-#line 176 "/home/godcc/frontend/sysy.y"
+  case 39: /* OrExpr: OrExpr OR AndExpr  */
+#line 291 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"||");
 }
-#line 1317 "/home/godcc/frontend/parser.cpp"
+#line 1537 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 23: /* MulExpr: UnaryExp  */
-#line 181 "/home/godcc/frontend/sysy.y"
+  case 40: /* MulExpr: UnaryExp  */
+#line 296 "/home/godcc/frontend/sysy.y"
          {
   (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
 }
-#line 1325 "/home/godcc/frontend/parser.cpp"
+#line 1545 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 24: /* MulExpr: MulExpr '*' UnaryExp  */
-#line 184 "/home/godcc/frontend/sysy.y"
+  case 41: /* MulExpr: MulExpr '*' UnaryExp  */
+#line 299 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"*");
 }
-#line 1333 "/home/godcc/frontend/parser.cpp"
+#line 1553 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 25: /* MulExpr: MulExpr '/' UnaryExp  */
-#line 187 "/home/godcc/frontend/sysy.y"
+  case 42: /* MulExpr: MulExpr '/' UnaryExp  */
+#line 302 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"/");
 }
-#line 1341 "/home/godcc/frontend/parser.cpp"
+#line 1561 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 26: /* MulExpr: MulExpr '%' UnaryExp  */
-#line 190 "/home/godcc/frontend/sysy.y"
+  case 43: /* MulExpr: MulExpr '%' UnaryExp  */
+#line 305 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),"%");
 }
-#line 1349 "/home/godcc/frontend/parser.cpp"
+#line 1569 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 27: /* UnaryExp: PrimaryExpr  */
-#line 197 "/home/godcc/frontend/sysy.y"
+  case 44: /* UnaryExp: PrimaryExpr  */
+#line 312 "/home/godcc/frontend/sysy.y"
                 {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
   	unaryExp->unaryType = UnaryExprAst::UnaryType::PRIMARY;
   	(yyval.ast_val) = unaryExp;
   }
-#line 1360 "/home/godcc/frontend/parser.cpp"
+#line 1580 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 28: /* UnaryExp: UnaryOp UnaryExp  */
-#line 203 "/home/godcc/frontend/sysy.y"
+  case 45: /* UnaryExp: UnaryOp UnaryExp  */
+#line 318 "/home/godcc/frontend/sysy.y"
                    {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -1368,73 +1588,94 @@ yyreduce:
 	unaryExp->unaryType = UnaryExprAst::UnaryType::UNARY;
 	(yyval.ast_val) = unaryExp;
   }
-#line 1372 "/home/godcc/frontend/parser.cpp"
+#line 1592 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 29: /* PrimaryExpr: '(' Expr ')'  */
-#line 213 "/home/godcc/frontend/sysy.y"
+  case 46: /* PrimaryExpr: '(' Expr ')'  */
+#line 328 "/home/godcc/frontend/sysy.y"
                  {
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
   primaryAst->primaryType = PrimaryExprAst::PrimaryType::EXP;
   (yyval.ast_val) = primaryAst;
   }
-#line 1383 "/home/godcc/frontend/parser.cpp"
+#line 1603 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 30: /* PrimaryExpr: Number  */
-#line 219 "/home/godcc/frontend/sysy.y"
+  case 47: /* PrimaryExpr: Number  */
+#line 334 "/home/godcc/frontend/sysy.y"
           {
   auto primaryAst = new PrimaryExprAst();
     primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
     primaryAst->primaryType = PrimaryExprAst::PrimaryType::NUMBER;
     (yyval.ast_val) = primaryAst;
   }
-#line 1394 "/home/godcc/frontend/parser.cpp"
+#line 1614 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 31: /* UnaryOp: '+'  */
-#line 228 "/home/godcc/frontend/sysy.y"
+  case 48: /* PrimaryExpr: LVal  */
+#line 340 "/home/godcc/frontend/sysy.y"
+       {
+  auto primaryAst = new PrimaryExprAst();
+      primaryAst->primaryType = PrimaryExprAst::PrimaryType::IDENTIFIER;
+      primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
+      (yyval.ast_val) = primaryAst;
+  }
+#line 1625 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 49: /* LVal: Identifier  */
+#line 349 "/home/godcc/frontend/sysy.y"
+           {
+	auto lval = new LValAst();
+	lval->l_val = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = lval;
+}
+#line 1635 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 50: /* UnaryOp: '+'  */
+#line 355 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "+";
    (yyval.ast_val) = unaryOpAst;
  }
-#line 1404 "/home/godcc/frontend/parser.cpp"
+#line 1645 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 32: /* UnaryOp: '-'  */
-#line 233 "/home/godcc/frontend/sysy.y"
+  case 51: /* UnaryOp: '-'  */
+#line 360 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "-";
    (yyval.ast_val) = unaryOpAst;
  }
-#line 1414 "/home/godcc/frontend/parser.cpp"
+#line 1655 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 33: /* UnaryOp: '!'  */
-#line 238 "/home/godcc/frontend/sysy.y"
+  case 52: /* UnaryOp: '!'  */
+#line 365 "/home/godcc/frontend/sysy.y"
        {
   auto unaryOpAst = new UnaryOpAst();
   unaryOpAst->op = "!";
   (yyval.ast_val) = unaryOpAst;
  }
-#line 1424 "/home/godcc/frontend/parser.cpp"
+#line 1665 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 34: /* Number: INT_CONST  */
-#line 246 "/home/godcc/frontend/sysy.y"
+  case 53: /* Number: INT_CONST  */
+#line 373 "/home/godcc/frontend/sysy.y"
               {
   auto numberAst = new NumberAst();
   numberAst->value = ((yyvsp[0].int_val));
   (yyval.ast_val) = numberAst;
   }
-#line 1434 "/home/godcc/frontend/parser.cpp"
+#line 1675 "/home/godcc/frontend/parser.cpp"
     break;
 
 
-#line 1438 "/home/godcc/frontend/parser.cpp"
+#line 1679 "/home/godcc/frontend/parser.cpp"
 
       default: break;
     }
@@ -1627,11 +1868,12 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 253 "/home/godcc/frontend/sysy.y"
+#line 380 "/home/godcc/frontend/sysy.y"
 
 
 // 定义错误处理函数, 其中第二个参数是错误信息
 // parser 如果发生错误 (例如输入的程序出现了语法错误), 就会调用这个函数
 void yyerror(shared_ptr<Ast> &ast, const char *s) {
-  cerr << "error: " << s << endl;
+//  printf("%d:%d '%s'\n",yylloc.first_lien,yylloc.first_colunmn,s);
+	printf("%s\n",s);
 }

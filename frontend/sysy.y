@@ -36,8 +36,8 @@ using namespace std;
 
 // lexer 返回的所有 token 种类的声明
 // 注意 IDENT 和 INT_CONST 会返回 token 的值, 分别对应 str_val 和 int_val
-%token INT RETURN
-%token <str_val> IDENT LT GT EQ AND OR NE LE GE
+%token RETURN
+%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT
 %token <int_val> INT_CONST
 //Lt,//<
 //Gt,//>
@@ -50,7 +50,9 @@ using namespace std;
 
 // 非终结符的类型定义
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
-%type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr
+%type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr Decl ConstDecl ConstDefUp
+ConstDef BlockItemUp BlockItem LVal Identifier
+%type <ast_val>  VarDecl VarDef VarDefUp
 //%type <int_val>
 //%type <str_val>
 %%
@@ -79,10 +81,10 @@ CompUnit
 // 虽然此处你看不出用 shared_ptr 和手动 delete 的区别, 但当我们定义了 AST 之后
 // 这种写法会省下很多内存管理的负担
 FuncDef
-  : FuncType IDENT '(' ')' Block {
+  : FuncType Identifier '(' ')' Block {
   	auto funcDef = new FuncDefAst();
 	funcDef->funcType = shared_ptr<Ast>($1);
-	funcDef->ident = *shared_ptr<string>($2);
+	funcDef->ident = shared_ptr<Ast>($2);
 	funcDef->block = shared_ptr<Ast>($5);
 	$$ = funcDef;
   }
@@ -98,19 +100,132 @@ FuncType
   ;
 
 Block
-  : '{' Stmt '}' {
+  : '{' BlockItemUp '}' {
     auto block = new BlockAst();
-    block->stmts = shared_ptr<Ast>($2);
+    auto blockItemUp = shared_ptr<Ast>($2);
+    block->blockItems = BlockAst::GetFromBlockItemUp(dynamic_cast<BlockUpAst*>(blockItemUp.get()));
     $$ = block;
   }
   ;
+
+ BlockItemUp
+ :BlockItem{
+	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>($1));
+	$$ = blockItemUp;
+ }
+|BlockItemUp BlockItem {
+	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($2));
+	$$ = blockItemUp;
+};
+
+BlockItem
+:Stmt{
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>($1);
+	$$ = blockItem;
+}
+|Decl{
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>($1);
+	$$ = blockItem;
+};
+
+
+
+Decl
+:ConstDecl{
+	auto decl = new DeclAst();
+	decl->decl = shared_ptr<Ast>($1);
+	$$ = decl;
+}
+|VarDecl{
+	auto decl = new DeclAst();
+	decl->decl = shared_ptr<Ast>($1);
+	$$ = decl;
+};
+
+ConstDecl
+:CONST INT ConstDefUp ';'{
+	auto constDecl = new ConstDeclAst();
+	constDecl->constDefs=  ConstDeclAst::GetFromConstDefUpAst(dynamic_cast<ConstDefUpAst*>(shared_ptr<Ast>($3).get()));
+	constDecl->dataType = *($2);
+	$$ = constDecl;
+};
+
+ConstDefUp
+:ConstDef{
+	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>($1));
+	$$ = constDeclUp;
+}
+|ConstDefUp ',' ConstDef{
+	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	$$ = constDeclUp;
+};
+
+ConstDef
+:Identifier '=' Expr{
+	auto constDef = new ConstDefAst();
+	constDef->ident = shared_ptr<Ast>($1);
+	constDef->const_val = shared_ptr<Ast>($3);
+	$$ = constDef;
+};
+
+
+VarDecl
+:INT VarDefUp ';'{
+	auto varDecl = new VarDeclAst();
+	varDecl->varDefs=  VarDeclAst::GetFromVarDefUpAst(dynamic_cast<VarDefUpAst*>(shared_ptr<Ast>($2).get()));
+	varDecl->dataType =  *($1);
+	$$ = varDecl;
+};
+
+VarDefUp
+:VarDef{
+	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>($1));
+        $$ = varDeclUp;
+}
+|VarDefUp "," VarDef {
+	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+        $$ = varDeclUp;
+}
+;
+
+VarDef
+:Identifier{
+	auto varDef = new VarDefAst();
+	varDef->ident = shared_ptr<Ast>($1);
+	$$ = varDef;
+}
+|Identifier '=' Expr{
+	auto varDef = new VarDefAst();
+	varDef->ident =  shared_ptr<Ast>($1);
+	varDef->var_expr =  shared_ptr<Ast>($3);
+	varDef->is_expr = true;
+	$$ = varDef;
+};
+
+
+Identifier
+:IDENT{
+	auto identifier=  new IdentifierAst();
+	identifier->name = *($1);
+	$$ = identifier;
+};
 
 Stmt
   : RETURN Expr ';' {
     auto stmt = new StmtAst();
     stmt->expr = shared_ptr<Ast>($2);
+    stmt->type = StmtType::kReturn;
     $$ = stmt;
   }
+| LVal '=' Expr ';'{
+	auto stmt = new StmtAst();
+    	stmt->expr = shared_ptr<Ast>($3);
+    	stmt->l_val =  shared_ptr<Ast>($1);
+    	stmt->type = StmtType::kDecl;
+    	$$ = stmt;
+ }
   ;
 
 Expr
@@ -222,8 +337,20 @@ PrimaryExpr
     primaryAst->primaryType = PrimaryExprAst::PrimaryType::NUMBER;
     $$ = primaryAst;
   }
+  |LVal{
+  auto primaryAst = new PrimaryExprAst();
+      primaryAst->primaryType = PrimaryExprAst::PrimaryType::IDENTIFIER;
+      primaryAst->primaryExpr = shared_ptr<Ast>($1);
+      $$ = primaryAst;
+  }
 ;
 
+LVal
+:Identifier{
+	auto lval = new LValAst();
+	lval->l_val = shared_ptr<Ast>($1);
+	$$ = lval;
+}
 UnaryOp
  : '+' {
  auto unaryOpAst = new UnaryOpAst();
@@ -255,5 +382,6 @@ Number
 // 定义错误处理函数, 其中第二个参数是错误信息
 // parser 如果发生错误 (例如输入的程序出现了语法错误), 就会调用这个函数
 void yyerror(shared_ptr<Ast> &ast, const char *s) {
-  cerr << "error: " << s << endl;
+//  printf("%d:%d '%s'\n",yylloc.first_lien,yylloc.first_colunmn,s);
+	printf("%s\n",s);
 }

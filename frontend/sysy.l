@@ -14,8 +14,13 @@ using namespace std;
 void file_out(const char* word,const char* type);
 static int began_colum= 0;
 static int token_num=0;
-
-
+/*
+#define YY_USER_ACTION \
+yylloc.first_line = yylloc.last_line = yylineno; \
+yylloc.first_column = began_colum; \
+yylloc.last_column = began_colum + yyleng - 1; \
+began_colum += yyleng;
+*/
 %}
 
 /*空格和注释等*/
@@ -33,56 +38,74 @@ Hex 0[xX][0-9a-fA-F]+
 \n              {began_colum=0;}
 {WhiteSpace}    {began_colum += yyleng;}
 {LineComment}   {}
+
 "int"           {
                     file_out("int","int");
+                    yylval.str_val=new string("int");
                     began_colum +=yyleng;
                     return INT;
                 }
+"const"         {
+                    file_out("const","const");
+                     yylval.str_val=new string("const");
+                    began_colum +=yyleng;
+                    return CONST;
+                }
+
  "<"            {
                     file_out("<","<");
+                     yylval.str_val=new string("<");
                     began_colum +=yyleng;
                     return LT;
                 }
  ">"            {
                     file_out(">",">");
+                     yylval.str_val=new string(">");
                     began_colum +=yyleng;
                     return GT;
                 }
 "<="            {
                     file_out("<=","<=");
+                     yylval.str_val=new string("<=");
                     began_colum +=yyleng;
                     return LE;
                 }
 ">="            {
                     file_out(">=",">=");
+                     yylval.str_val=new string(">=");
                     began_colum +=yyleng;
                     return GE;
                 }
 
 "=="            {
                     file_out("==","==");
+                     yylval.str_val=new string("==");
                     began_colum +=yyleng;
                     return EQ;
                 }
 "!="            {
                     file_out("!=","!=");
+                     yylval.str_val=new string("!=");
                     began_colum +=yyleng;
                     return NE;
                 }
 "&&"            {
                     file_out("&&","&&");
                     began_colum +=yyleng;
+                     yylval.str_val=new string("&&");
                     return AND;
                 }
 
 "||"            {
                     file_out("||","||");
+                     yylval.str_val=new string("||");
                     began_colum +=yyleng;
                     return OR;
                 }
 
 "return"        {
                      file_out("return","return");
+                      yylval.str_val=new string("return");
                      began_colum +=yyleng;
                      return RETURN;
                 }
@@ -110,6 +133,12 @@ Hex 0[xX][0-9a-fA-F]+
                     began_colum +=yyleng;
                     return INT_CONST;
                 }
+";"             {
+                    file_out(";",";");
+                    began_colum +=yyleng;
+                    return ';';
+                }
+
 .               {
                     file_out(yytext,yytext);
                     began_colum +=yyleng;

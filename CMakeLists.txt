@@ -64,7 +64,8 @@ add_custom_target(
 
 add_custom_target(
 	tree
-	COMMAND cp test.json /mnt/d/2022.2-2022.7/Comiler/lab4
+	COMMAND pytm-cli -i test.json -d TB -t 1
+	COMMAND wslview TreeMap.html
 )
 link_directories(${PROJECT_SOURCE_DIR}/googletest)
 add_executable(main main.cpp)

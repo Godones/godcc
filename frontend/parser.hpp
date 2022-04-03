@@ -62,18 +62,19 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    INT = 258,                     /* INT  */
-    RETURN = 259,                  /* RETURN  */
-    IDENT = 260,                   /* IDENT  */
-    LT = 261,                      /* LT  */
-    GT = 262,                      /* GT  */
-    EQ = 263,                      /* EQ  */
-    AND = 264,                     /* AND  */
-    OR = 265,                      /* OR  */
-    NE = 266,                      /* NE  */
-    LE = 267,                      /* LE  */
-    GE = 268,                      /* GE  */
-    INT_CONST = 269                /* INT_CONST  */
+    RETURN = 258,                  /* RETURN  */
+    IDENT = 259,                   /* IDENT  */
+    LT = 260,                      /* LT  */
+    GT = 261,                      /* GT  */
+    EQ = 262,                      /* EQ  */
+    AND = 263,                     /* AND  */
+    OR = 264,                      /* OR  */
+    NE = 265,                      /* NE  */
+    LE = 266,                      /* LE  */
+    GE = 267,                      /* GE  */
+    CONST = 268,                   /* CONST  */
+    INT = 269,                     /* INT  */
+    INT_CONST = 270                /* INT_CONST  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -88,7 +89,7 @@ union YYSTYPE
   int int_val;
   Ast *ast_val;
 
-#line 92 "/home/godcc/frontend/parser.hpp"
+#line 93 "/home/godcc/frontend/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

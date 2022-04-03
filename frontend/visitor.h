@@ -16,6 +16,7 @@ class CompUnitAst;
 class FuncDefAst;
 class FuncTypeAst;
 class BlockAst;
+class BlockItemAst;
 class StmtAst;
 class ExpAst;
 class UnaryExprAst;
@@ -24,6 +25,15 @@ class BinaryExprAst;
 class NumberAst;
 class PrimaryExprAst;
 class IdentifierAst;
+class DeclAst;
+class ConstDeclAst;
+class ConstDefAst;
+class LValAst;
+
+class VarDeclAst;
+class VarDefAst;
+class VarDefUpAst;
+
 class GodJSon;
 
 class Visitor {
@@ -32,8 +42,18 @@ class Visitor {
   virtual void VisitFuncDefAst(FuncDefAst *) = 0;
   virtual void VisitFuncTypeAst(FuncTypeAst *) = 0;
   virtual void VisitBlockAst(BlockAst *) = 0;
+  virtual void VisitBlockItem(BlockItemAst *) = 0;
   virtual void VisitStmtAst(StmtAst *) = 0;
   virtual void VisitExp(ExpAst *) = 0;
+
+  virtual void VisitDecl(DeclAst *) = 0;
+  virtual void VisitConstDecl(ConstDeclAst *) = 0;
+  virtual void VisitConstDef(ConstDefAst *) = 0;
+  virtual void VisitLVal(LValAst *) = 0;
+
+  virtual void VisitVarDecl(VarDeclAst *) = 0;
+  virtual void VisitVarDef(VarDefAst *) = 0;
+
   virtual void VisitBinaryExpAst(BinaryExprAst *) =0;
   virtual void VisitUnaryExpAst(UnaryExprAst *) = 0;
   virtual void VisitUnaryOpAst(UnaryOpAst *) = 0;
@@ -48,8 +68,18 @@ class AstVisitor : public Visitor {
   void VisitFuncDefAst(FuncDefAst *) override;
   void VisitFuncTypeAst(FuncTypeAst *) override;
   void VisitBlockAst(BlockAst *) override;
+  void VisitBlockItem(BlockItemAst *) override;
   void VisitStmtAst(StmtAst *) override;
   void VisitExp(ExpAst *) override;
+
+  void VisitDecl(DeclAst *) override;
+  void VisitConstDecl(ConstDeclAst *) override;
+  void VisitConstDef(ConstDefAst *) override;
+  void VisitLVal(LValAst *) override;
+
+  void VisitVarDecl(VarDeclAst *) override;
+  void VisitVarDef(VarDefAst *) override;
+
   void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
@@ -66,8 +96,19 @@ class AstViewVisitor:public Visitor{
   void VisitFuncDefAst(FuncDefAst *) override;
   void VisitFuncTypeAst(FuncTypeAst *) override;
   void VisitBlockAst(BlockAst *) override;
+  void VisitBlockItem(BlockItemAst *) override;
   void VisitStmtAst(StmtAst *) override;
   void VisitExp(ExpAst *) override;
+
+
+  void VisitDecl(DeclAst *) override;
+  void VisitConstDecl(ConstDeclAst *) override;
+  void VisitConstDef(ConstDefAst *) override;
+  void VisitLVal(LValAst *) override;
+
+  void VisitVarDecl(VarDeclAst *) override;
+  void VisitVarDef(VarDefAst *) override;
+
   void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
@@ -102,8 +143,19 @@ class IRGeneratorVisitor : public Visitor {
   void VisitFuncDefAst(FuncDefAst *) override;
   void VisitFuncTypeAst(FuncTypeAst *) override;
   void VisitBlockAst(BlockAst *) override;
+  void VisitBlockItem(BlockItemAst *) override;
   void VisitStmtAst(StmtAst *) override;
   void VisitExp(ExpAst *) override;
+
+
+  void VisitDecl(DeclAst *) override;
+  void VisitConstDecl(ConstDeclAst *) override;
+  void VisitConstDef(ConstDefAst *) override;
+  void VisitLVal(LValAst *) override;
+
+  void VisitVarDecl(VarDeclAst *) override;
+  void VisitVarDef(VarDefAst *) override;
+
   void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;

@@ -2,7 +2,7 @@ build/*
 scanner_example.tokens
 *.out
 *.s
-.idea
+.idea/*
 .vscode
 cmake-build-debug
 googletest-release-1.11.0
