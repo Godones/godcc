@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string_view>
 #include <vector>
-#include "log/log.h"
+#include "../log/log.h"
 
 class Program;
 class Function;

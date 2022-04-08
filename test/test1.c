@@ -2,9 +2,13 @@
 int main() {
   const int a = 2+2*3/11%44;
   int x = 2;
-  x = 5;
-  x = 7;
-  5;
-
+  int y = 3;
+  ;
+  2+3;
+  {
+	int x = 2;
+	int y = 3;
+	x+y;
+  }
   return a;
 }

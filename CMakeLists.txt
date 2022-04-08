@@ -39,15 +39,16 @@ add_custom_command(
 #add_custom_target(PARSER ALL DEPENDS ${parser_path})
 #add_dependencies(LEXER PARSER)
 
+aux_source_directory(frontend FRONTENDCPP)
+
 add_library(test STATIC
 	test/Tparser.cpp
 	log/log.cpp
-	frontend/ast.cpp
-	frontend/visitor.cpp
 	IR/IR.cpp
 	IR/irvisitor.cpp
 	backend/asm.cpp
 	json/json.cpp
+	${FRONTENDCPP}
 	${parser_path}
 	${lexer_path}
 	)

@@ -9,15 +9,44 @@ const char * StmtTypeToString(StmtType &type){
   switch (type) {
 	case StmtType::kReturn: return "Return";
 	case StmtType::kDecl: return "Decl";
+	case StmtType::kExpr: return "Expr";
+	case StmtType::kBlock: return "Block";
+	case StmtType::kIf: return "If";
+	case StmtType::kWhile: return "While";
+	case StmtType::kBreak: return "Break";
+	case StmtType::kContinue: return "Continue";
   }
   return "";
 }
-
+const char * BinaryTypeToString(BinaryType &type){
+  switch (type) {
+	case BinaryType::kLor: return "Lor";
+	case BinaryType::kAnd: return "And";
+	case BinaryType::kEq: return "Eq";
+	case BinaryType::kRel: return "Rel";
+	case BinaryType::kMul: return "Mul";
+	case BinaryType::kAdd: return "Add";
+  }
+  return "";
+}
+const char *UnaryTypeToString(UnaryType &type){
+  switch (type) {
+	case UnaryType::kPrimary: return "Primary";
+	case UnaryType::kUnary: return "Unary";
+	case UnaryType::kCall: return "Call";
+  }
+  return "";
+}
 void CompUnitAst::accept(Visitor *visitor) {
   visitor->VisitCompUnitAst(this);
 }
+CompUnitAst::CompUnitAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	:comp_unit(std::move(left)), comp_unit_Item(std::move(right)) {}
+CompUnitAst::CompUnitAst(std::shared_ptr<Ast> right)
+	:comp_unit(nullptr), comp_unit_Item(std::move(right)) {}
 
 void FuncDefAst::accept(Visitor *visitor) {
+
   visitor->VisitFuncDefAst(this);
 }
 
@@ -85,15 +114,16 @@ void IdentifierAst::accept(Visitor *visitor) {
 void BinaryExprAst::accept(Visitor *visitor) {
   visitor->VisitBinaryExpAst(this);
 }
-BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op)
+BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right,BinaryType type,std::string_view op)
 	: left(std::move(left)),
 	  right(std::move(right)),
-	  op(op),
-	  is_two_op(true) {}
-BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> right)
-	: right(std::move(right)),
-	  is_two_op(false) {}
+	  type(type),
+	  op(op) {}
 
+
+BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> right,BinaryType type)
+	: right(std::move(right)),
+	  type(type){}
 
 void DeclAst::accept(Visitor *visitor) {
   visitor->VisitDecl(this);
@@ -165,4 +195,91 @@ std::shared_ptr<Ast> VarDefUpAst::getVarDef() const {
 
 void VarDefAst::accept(Visitor *visitor) {
   visitor->VisitVarDef(this);
+}
+void IfStmtAst::accept(Visitor *visitor) {
+  visitor->VisitIfStmt(this);
+}
+void WhileStmtAst::accept(Visitor *visitor) {
+  visitor->VisitWhileStmt(this);
+}
+
+
+std::deque<std::shared_ptr<Ast>> FuncFParamAst::GetParamsFromFuncFParaUp(FuncFParamUpAst *func_f_param_up_ast) {
+  if (func_f_param_up_ast == nullptr) {
+	return {};
+  }
+  std::deque<std::shared_ptr<Ast>> func_f_params;
+  func_f_params.push_front(func_f_param_up_ast->getFuncFParam());
+  while (func_f_param_up_ast->isFuncFParamUp) {
+	func_f_param_up_ast = dynamic_cast<FuncFParamUpAst*>(func_f_param_up_ast->funcFParamUp.get());
+	func_f_params.push_front(func_f_param_up_ast->getFuncFParam());
+  }
+  return func_f_params;
+}
+
+void FuncFParamAst::accept(Visitor *visitor) {
+  visitor->VisitFuncFParamAst(this);
+}
+FuncFParamUpAst::FuncFParamUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: funcFParamUp(std::move(left)),
+	  funcFParamDef(std::move(right)),
+	  isFuncFParamUp(true){}
+FuncFParamUpAst::FuncFParamUpAst(std::shared_ptr<Ast> left)
+	: funcFParamDef(std::move(left)){}
+void FuncFParamUpAst::accept(Visitor *) {}
+std::shared_ptr<Ast> FuncFParamUpAst::getFuncFParam() const {
+  return funcFParamDef;
+}
+void FuncFParamDefAst::accept(Visitor *visitor) {
+  visitor->VisitFuncFParamDefAst(this);
+}
+void FuncRParamAst::accept(Visitor *visitor) {
+  visitor->VisitFuncRParamAst(this);
+}
+std::deque<std::shared_ptr<Ast>> FuncRParamAst::GetParamsFromFuncRParaUp(FuncRParamUpAst *func_r_param_up_ast) {
+  if (func_r_param_up_ast== nullptr){
+	return {};
+  }
+  std::deque<std::shared_ptr<Ast>> func_r_params;
+  func_r_params.push_front(func_r_param_up_ast->getFuncRParam());
+  while (func_r_param_up_ast->isFuncFParamUp) {
+	func_r_param_up_ast = dynamic_cast<FuncRParamUpAst*>(func_r_param_up_ast->funcRParamUp.get());
+	func_r_params.push_front(func_r_param_up_ast->getFuncRParam());
+  }
+  return func_r_params;
+}
+FuncRParamUpAst::FuncRParamUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: funcRParamUp(std::move(left)),
+	 expr(std::move(right)),
+	 isFuncFParamUp(true){}
+FuncRParamUpAst::FuncRParamUpAst(std::shared_ptr<Ast> left)
+	  :expr(std::move(left)){}
+void FuncRParamUpAst::accept(Visitor *) {}
+std::shared_ptr<Ast> FuncRParamUpAst::getFuncRParam() const {
+  return expr;
+}
+void TranslationUnitAst::accept(Visitor *visitor) {
+  visitor->VisitTranslationUnit(this);
+}
+
+ArrayExprListAst::ArrayExprListAst(std::shared_ptr<Ast> right)
+	: array_expr(std::move(right)){}
+ArrayExprListAst::ArrayExprListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: array_expr(std::move(right)),
+	  array_expr_list(std::move(left)){}
+void ArrayExprListAst::accept(Visitor *visitor) {
+	visitor->VisitArrayExprList(this);
+}
+InitValAst::InitValAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: init_val_list(std::move(right)),
+	  init_val(std::move(left)){}
+InitValAst::InitValAst(std::shared_ptr<Ast> right)
+	: init_val_list(std::move(right)){}
+
+
+void InitValAst::accept(Visitor *visitor) {
+  visitor->VisitInitVal(this);
+}
+void InitValListAst::accept(Visitor *visitor) {
+  visitor->VisitInitValList(this);
 }

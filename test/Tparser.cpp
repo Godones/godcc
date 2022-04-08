@@ -10,8 +10,11 @@ extern int yyparse(std::shared_ptr<Ast> &ast);
 extern FILE *yyout;
 
 
-void openFile(){
-  yyin = fopen("../test/hello.c", "r");
+
+static  std::vector<const char *> file_names = {"../test/test1.c","../test/test2.c","../test/test3.c","../test/test4.c","../test/test5.c"};
+
+void openFile(const char * file_name){
+  yyin = fopen(file_name, "r");
   if (yyin == nullptr) {
 	std::cout << "open file "
 			  << "../test/hello.c"
@@ -28,21 +31,27 @@ void openFile(){
   }
 }
 
-auto parser()-> decltype(std::make_shared<Ast>()) {
+auto parser(const char * file_name)-> decltype(std::make_shared<Ast>()) {
   static std::shared_ptr<Ast> ast = nullptr;
   if (ast!=nullptr) {
 	return ast;
   }
-  openFile();
+  openFile(file_name);
   int result = yyparse(ast);
   assert(!result);
-//  fclose(yyin);
-//  fclose(yyout);
   return ast;
 }
-int testParser() {
-  openFile();
-  auto ast = parser();
+
+void test_parse_correct(){
+  for (auto &file_name:file_names){
+	auto ast = parser(file_name);
+	assert(ast);
+  }
+}
+
+
+int test_ast_text() {
+  auto ast = parser(file_names.back());
   auto visitor = AstVisitor();
   ast->accept(&visitor);
   std::cout << "\n";
@@ -50,8 +59,7 @@ int testParser() {
 }
 
 void testIRCodeGen() {
-  openFile();
-  auto ast = parser();
+  auto ast = parser(file_names.back());
   auto visitor = IRGeneratorVisitor();
   ast->accept(&visitor);
   auto ir_code = visitor.programIr;
@@ -59,9 +67,8 @@ void testIRCodeGen() {
   ir_code->accept(&visitor_default);
 }
 
-void testAsmCodeGen() {
-  openFile();
-  auto ast = parser();
+void test_ast_ir() {
+  auto ast = parser(file_names.back());
   auto visitor = IRGeneratorVisitor();
   ast->accept(&visitor);
   auto ir_code = visitor.programIr;
@@ -69,9 +76,8 @@ void testAsmCodeGen() {
   ir_code->accept(&asmCodeGen);
 }
 
-void testAsmViewGen(){
-  openFile();
-  auto ast = parser();
+void test_ast_tree(){
+  auto ast = parser(file_names.back());
   auto visitor = AstViewVisitor();
   ast->accept(&visitor);
   auto asmCodeGen = CodeGenVisitor();

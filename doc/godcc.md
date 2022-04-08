@@ -277,7 +277,7 @@ PrimaryExp    ::= "(" Exp ")" | LVal | Number;
 
 
 
-第六节:支持变量和赋值
+### 第六节:支持变量和赋值
 
 ```
 Decl          ::= ConstDecl | VarDecl;
@@ -340,6 +340,115 @@ VarDef        ::= IDENT | IDENT "=" Exp;
 LVal          ::= IDENT; //这一部分需要建立符号表来查找相关内容
 PrimaryExp    ::= "(" Exp ")" | LVal | Number;
 ```
+
+
+
+### 第七节:支持语句块和作用域
+
+```
+Stmt ::= LVal "=" Exp ";"
+       | [Exp] ";"
+       | Block
+       | "return" [Exp] ";";
+ []表示重复0或1次
+
+```
+
+### 第八节：支持if语句
+
+```
+Stmt ::= LVal "=" Exp ";"
+       | [Exp] ";"
+       | Block
+       | "return" [Exp] ";";
+       |"if" "(" Exp ")" Stmt ["else" Stmt]
+       | "while" "(" Exp ")" Stmt
+       | "break" ";"
+       | "continue" ";"
+```
+
+
+
+### 第九节：支持函数定义和调用
+
+```c
+CompUnit    ::= [CompUnit] FuncDef;
+
+FuncDef     ::= FuncType IDENT "(" [FuncFParams] ")" Block;
+FuncType    ::= "void" | "int";
+FuncFParams ::= FuncFParam {"," FuncFParam};
+FuncFParam  ::= BType IDENT;
+
+UnaryExp    ::= ...
+              | IDENT "(" [FuncRParams] ")"
+              | ...;
+FuncRParams ::= Exp {"," Exp};
+
+
+// 修改
+// 需要像之前的的BlockItem一样把函数递归解析放到一个集合中
+// 函数参数也是
+CompUnit    ::= FuncDefUp
+FuncDefUp   ::= FuncDef
+    		  | FuncDefUp Funcdef
+FuncDef     ::= FuncType IDENT "(" [FuncFParams] ")" Block;
+FuncType    ::= "void" | "int";
+FuncFParams ::= FuncFParamUp
+FuncFParamUp ::= FuncFParam
+    		   |FuncFParamUp ',' FuncFParam
+FuncFParam  ::= INT IDENT;
+UnaryExp    ::= ...
+              | IDENT "(" [FuncRParams] ")"
+              | ...;
+FuncRParams ::= FuncRParamUp
+FuncRParamUp 	::= Exp
+    		    |   FuncRParamUp ',' Exp
+```
+
+```c
+// 支持全局变量
+CompUnit ::= [CompUnit] (Decl | FuncDef);
+
+// 修改后的语法
+TranslationUnit ::= Compunit
+Compunit ::= CompunitItem
+			| Compunit CompunitItem
+CompunitItem  ::= Decl | FuncDef
+```
+
+
+
+### 第十节：支持多维数组定义
+
+```c
+ConstDef   ::= IDENT {"[" ConstExp "]"} "=" ConstInitVal;
+ConstInitVal ::= ConstExp | "{" [ConstInitVal {"," ConstInitVal}] "}";
+VarDef     ::= IDENT {"[" ConstExp "]"}
+			| IDENT {"[" ConstExp "]"} "=" InitVal;
+InitVal    ::= Exp | "{" [InitVal {"," InitVal}] "}";
+ConstExp ::= Exp;
+LVal          ::= IDENT {"[" Exp "]"};
+```
+
+==这部分不再变化==
+
+```c
+ConstDef   ::= IDENT [ArrayExpList] "=" InitValList;
+ArrayExpList  ::= "[" Exp "]"
+	  		  | ArrayExpList "[" Exp "]"
+InitValList ::= Exp
+			  |  "{" "}"
+			  |  "{" InitVal "}"
+
+InitVal  ::= InitValList
+	      |  InitVal "," InitValList
+VarDef     ::= IDENT [ArrayExpList]
+			 | IDENT [ArrayExpList] "=" InitValList;
+//理论上 InitVal 与 ConstInitVal 不一样
+LVal ::= IDENT [ArrayExpList]
+```
+
+
 
 
 

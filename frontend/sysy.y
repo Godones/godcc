@@ -37,7 +37,7 @@ using namespace std;
 // lexer 返回的所有 token 种类的声明
 // 注意 IDENT 和 INT_CONST 会返回 token 的值, 分别对应 str_val 和 int_val
 %token RETURN
-%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT
+%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT IF ELSE WHILE BREAK CONTINUE VOID
 %token <int_val> INT_CONST
 //Lt,//<
 //Gt,//>
@@ -52,10 +52,27 @@ using namespace std;
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
 %type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr Decl ConstDecl ConstDefUp
 ConstDef BlockItemUp BlockItem LVal Identifier
-%type <ast_val>  VarDecl VarDef VarDefUp
+%type <ast_val>  VarDecl VarDef VarDefUp CompUnitItem FuncFParams FuncFParamUp FuncFParamDef
+%type <ast_val>  FuncRParams FuncRParamUp CompUnit ArrayExpList
+%type <ast_val> InitValList  InitVal
 //%type <int_val>
 //%type <str_val>
+
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
+
 %%
+
+TranslationUnitAst
+:CompUnit{
+  auto trans  = new TranslationUnitAst();
+  trans->comp_unit = shared_ptr<Ast>($1);
+  ast = shared_ptr<Ast>(trans);
+ }
+ ;
+
 
 // 开始符, CompUnit ::= FuncDef, 大括号后声明了解析完成后 parser 要做的事情
 // 之前我们定义了 FuncDef 会返回一个 str_val, 也就是字符串指针
@@ -63,12 +80,25 @@ ConstDef BlockItemUp BlockItem LVal Identifier
 // 此时我们应该把 FuncDef 返回的结果收集起来, 作为 AST 传给调用 parser 的函数
 // $1 指代规则里第一个符号的返回值, 也就是 FuncDef 的返回值
 CompUnit
-  : FuncDef {
-    auto compUnit = make_shared<CompUnitAst>();
-    compUnit->funcDef = shared_ptr<Ast>($1);
-    ast = compUnit;
-  }
-  ;
+:CompUnitItem{
+    auto compUnit = new CompUnitAst(shared_ptr<Ast>($1));
+    $$ = compUnit;
+}
+|CompUnit CompUnitItem{
+	auto compUnit = new CompUnitAst(shared_ptr<Ast>($1), shared_ptr<Ast>($2));
+	$$ = compUnit;
+}
+;
+
+CompUnitItem
+:FuncDef{
+ 	$$ = $1;
+}
+|Decl{
+	$$ = $1;
+};
+
+
 
 // FuncDef ::= FuncType IDENT '(' ')' Block;
 // 我们这里可以直接写 '(' 和 ')', 因为之前在 lexer 里已经处理了单个字符的情况
@@ -81,22 +111,64 @@ CompUnit
 // 虽然此处你看不出用 shared_ptr 和手动 delete 的区别, 但当我们定义了 AST 之后
 // 这种写法会省下很多内存管理的负担
 FuncDef
-  : FuncType Identifier '(' ')' Block {
+  : FuncType Identifier '(' FuncFParams ')' Block {
   	auto funcDef = new FuncDefAst();
 	funcDef->funcType = shared_ptr<Ast>($1);
 	funcDef->ident = shared_ptr<Ast>($2);
-	funcDef->block = shared_ptr<Ast>($5);
+	funcDef->funcParam = shared_ptr<Ast>($4);
+	funcDef->block = shared_ptr<Ast>($6);
 	$$ = funcDef;
   }
+  | FuncType Identifier '('  ')' Block {
+     	auto funcDef = new FuncDefAst();
+   	funcDef->funcType = shared_ptr<Ast>($1);
+   	funcDef->ident = shared_ptr<Ast>($2);
+   	funcDef->block = shared_ptr<Ast>($5);
+   	$$ = funcDef;
+     }
   ;
 
-// 同上, 不再解释
+FuncFParams
+:FuncFParamUp{
+	auto funcFP = new FuncFParamAst();
+	funcFP->params = FuncFParamAst::GetParamsFromFuncFParaUp(dynamic_cast<FuncFParamUpAst*>(shared_ptr<Ast>($1).get()));
+	$$ = funcFP;
+};
+
+FuncFParamUp
+:FuncFParamDef {
+	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>($1));
+	$$ = funcFPUp;
+}
+|FuncFParamUp ',' FuncFParamDef{
+	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	$$ = funcFPUp;
+};
+
+
+FuncFParamDef
+:INT  Identifier{
+	auto funcParaDef = new FuncFParamDefAst();
+	funcParaDef->type = *($1);
+	funcParaDef->ident = shared_ptr<Ast>($2);
+	$$ = funcParaDef;
+
+};
+
+
+
+//
 FuncType
-  : INT {
+: INT {
     auto funcType = new FuncTypeAst();
     funcType->type = string("int");
     $$ = funcType;
   }
+|VOID {
+	auto funcType = new FuncTypeAst();
+	funcType->type = string("void");
+	$$ = funcType;
+}
   ;
 
 Block
@@ -163,19 +235,60 @@ ConstDefUp
 };
 
 ConstDef
-:Identifier '=' Expr{
+:Identifier ArrayExpList '=' InitValList{
+	auto constDef = new ConstDefAst();
+	constDef->ident = shared_ptr<Ast>($1);
+	constDef->array_expr_list = shared_ptr<Ast>($2);
+	constDef->const_val = shared_ptr<Ast>($4);
+	$$ = constDef;
+}
+|Identifier '=' InitValList{
 	auto constDef = new ConstDefAst();
 	constDef->ident = shared_ptr<Ast>($1);
 	constDef->const_val = shared_ptr<Ast>($3);
 	$$ = constDef;
+}
+;
+ArrayExpList
+: '[' Expr ']'{
+ 	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>($2));
+ 	$$ = array_expr;
+}
+| ArrayExpList '[' Expr ']'{
+	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+ 	$$ = array_expr;
+};
+
+InitValList
+:Expr{
+	auto init_val_list = new InitValListAst();
+	init_val_list->expr_init_val = shared_ptr<Ast>($1);
+	$$ = init_val_list;
+}
+|'{' '}' {}
+|'{' InitVal '}'{
+	auto init_val_list = new InitValListAst();
+	init_val_list->expr_init_val = shared_ptr<Ast>($2);
+	$$ = init_val_list;
+};
+
+InitVal
+:InitValList{
+	auto init_val = new InitValAst(shared_ptr<Ast>($1));
+	$$ = init_val;
+}
+|InitVal ',' InitValList{
+	auto init_val = new InitValAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	$$ = init_val;
 };
 
 
+
 VarDecl
-:INT VarDefUp ';'{
+:FuncType VarDefUp ';'{
 	auto varDecl = new VarDeclAst();
 	varDecl->varDefs=  VarDeclAst::GetFromVarDefUpAst(dynamic_cast<VarDefUpAst*>(shared_ptr<Ast>($2).get()));
-	varDecl->dataType =  *($1);
+	varDecl->dataType =  shared_ptr<Ast>($1);
 	$$ = varDecl;
 };
 
@@ -196,10 +309,24 @@ VarDef
 	varDef->ident = shared_ptr<Ast>($1);
 	$$ = varDef;
 }
-|Identifier '=' Expr{
+|Identifier ArrayExpList{
+	auto varDef = new VarDefAst();
+	varDef->ident = shared_ptr<Ast>($1);
+	varDef->array_expr_list = shared_ptr<Ast>($2);
+	$$ = varDef;
+}
+|Identifier '=' InitValList{
 	auto varDef = new VarDefAst();
 	varDef->ident =  shared_ptr<Ast>($1);
 	varDef->var_expr =  shared_ptr<Ast>($3);
+	varDef->is_expr = true;
+	$$ = varDef;
+}
+|Identifier ArrayExpList '=' InitValList{
+	auto varDef = new VarDefAst();
+	varDef->ident =  shared_ptr<Ast>($1);
+	varDef->array_expr_list = shared_ptr<Ast>($2);
+	varDef->var_expr =  shared_ptr<Ast>($4);
 	varDef->is_expr = true;
 	$$ = varDef;
 };
@@ -213,12 +340,34 @@ Identifier
 };
 
 Stmt
-  : RETURN Expr ';' {
-    auto stmt = new StmtAst();
-    stmt->expr = shared_ptr<Ast>($2);
-    stmt->type = StmtType::kReturn;
-    $$ = stmt;
-  }
+: RETURN Expr ';' {
+	auto stmt = new StmtAst();
+	stmt->expr = shared_ptr<Ast>($2);
+	stmt->type = StmtType::kReturn;
+	$$ = stmt;
+}
+| RETURN ';'{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kReturn;
+	$$ = stmt;
+}
+|Expr ';'{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kExpr;
+	stmt->expr = shared_ptr<Ast>($1);
+	$$ = stmt;
+}
+|';'{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kExpr;
+	$$ = stmt;
+}
+|Block{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kBlock;
+	stmt->expr = shared_ptr<Ast>($1);
+	$$ = stmt;
+}
 | LVal '=' Expr ';'{
 	auto stmt = new StmtAst();
     	stmt->expr = shared_ptr<Ast>($3);
@@ -226,7 +375,45 @@ Stmt
     	stmt->type = StmtType::kDecl;
     	$$ = stmt;
  }
-  ;
+|IF '(' Expr ')' Stmt %prec LOWER_THAN_ELSE{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kIf;
+	auto ifStmt = new IfStmtAst();
+	ifStmt->expr = shared_ptr<Ast>($3);
+	ifStmt->stmt =  shared_ptr<Ast>($5);
+	stmt-> expr = shared_ptr<Ast>(ifStmt);
+	$$ = stmt;
+}
+|IF '(' Expr ')' Stmt ELSE Stmt{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kIf;
+	auto ifStmt = new IfStmtAst();
+	ifStmt->expr = shared_ptr<Ast>($3);
+	ifStmt->stmt =  shared_ptr<Ast>($5);
+	ifStmt->elseStmt = shared_ptr<Ast>($7);
+	stmt-> expr = shared_ptr<Ast>(ifStmt);
+	$$ = stmt;
+}
+|WHILE '(' Expr ')' Stmt{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kWhile;
+	auto whileStmt = new WhileStmtAst();
+	whileStmt->expr = shared_ptr<Ast>($3);
+	whileStmt->stmt =  shared_ptr<Ast>($5);
+	stmt->expr = shared_ptr<Ast>(whileStmt);
+	$$ = stmt;
+}
+|BREAK ';'{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kBreak;
+	$$ = stmt;
+}
+|CONTINUE ';'{
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kContinue;
+	$$ = stmt;
+}
+ ;
 
 Expr
   : OrExpr {
@@ -238,72 +425,72 @@ Expr
 
 AddExpr
 :MulExpr {
-  $$ = new BinaryExprAst( shared_ptr<Ast>($1));
+  $$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAdd);
 }
 |AddExpr '+' MulExpr{
-  $$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"+");
+  $$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"+");
 }
 |AddExpr '-' MulExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"-");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"-");
 };
 
 RelExpr
 :AddExpr{
- $$ = new BinaryExprAst( shared_ptr<Ast>($1));
+ $$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kRel);
 }
 | RelExpr LT AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"<");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<");
 }
 | RelExpr GT AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),">");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">");
 }
 | RelExpr LE AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"<=");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<=");
 }
 | RelExpr GE AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),">=");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">=");
 };
 
 EqExpr
 :RelExpr {
-$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kEq);
 }
 |EqExpr EQ RelExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"==");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"==");
 }
 |EqExpr NE RelExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"!=");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"!=");
 };
 
 AndExpr
 :EqExpr{
-$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAnd);
 }
 |AndExpr  AND EqExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"&&");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAnd,"&&");
 };
 
 
 OrExpr
 :AndExpr{
-$$ = new BinaryExprAst( shared_ptr<Ast>($1));
+$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kLor);
 }
 |OrExpr OR AndExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"||");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kLor,"||");
 };
 
 MulExpr
 :UnaryExp{
-  $$ = new BinaryExprAst(shared_ptr<Ast>($1));
+  $$ = new BinaryExprAst(shared_ptr<Ast>($1),BinaryType::kMul);
 }
 |MulExpr '*' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"*");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"*");
 }
 |MulExpr '/' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"/");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"/");
 }
 |MulExpr '%' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),"%");
+$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"%");
 }
 ;
 
@@ -312,34 +499,65 @@ UnaryExp
   : PrimaryExpr {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>($1);
-  	unaryExp->unaryType = UnaryExprAst::UnaryType::PRIMARY;
+  	unaryExp->unaryType = UnaryType::kPrimary;
   	$$ = unaryExp;
   }
   |UnaryOp UnaryExp{
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
         unaryExp->unaryExpr = shared_ptr<Ast>($2);
-	unaryExp->unaryType = UnaryExprAst::UnaryType::UNARY;
+	unaryExp->unaryType = UnaryType::kUnary;
 	$$ = unaryExp;
   }
+| Identifier '(' ')'{
+	auto unaryExp = new UnaryExprAst();
+	unaryExp->unaryOp = shared_ptr<Ast>($1);
+	unaryExp->unaryType = UnaryType::kCall;
+	$$ = unaryExp;
+}
+|Identifier '(' FuncRParams ')'{
+	auto unaryExp = new UnaryExprAst();
+	unaryExp->unaryOp = shared_ptr<Ast>($1);
+        unaryExp->unaryExpr = shared_ptr<Ast>($3);
+	unaryExp->unaryType = UnaryType::kCall;
+	$$ = unaryExp;
+}
+;
+
+FuncRParams
+:FuncRParamUp{
+	auto funcRP = new FuncRParamAst();
+	funcRP->params = FuncRParamAst::GetParamsFromFuncRParaUp(dynamic_cast<FuncRParamUpAst*>(shared_ptr<Ast>($1).get()));
+	$$ = funcRP;
+}
+;
+FuncRParamUp
+:Expr{
+	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>($1));
+	$$ = funcRPUp;
+}
+|FuncRParamUp ',' Expr{
+	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	$$ = funcRPUp;
+}
 ;
 
 PrimaryExpr
   : '(' Expr ')' {
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>($2);
-  primaryAst->primaryType = PrimaryExprAst::PrimaryType::EXP;
+  primaryAst->primaryType = PrimaryType::EXP;
   $$ = primaryAst;
   }
   |Number {
   auto primaryAst = new PrimaryExprAst();
     primaryAst->primaryExpr = shared_ptr<Ast>($1);
-    primaryAst->primaryType = PrimaryExprAst::PrimaryType::NUMBER;
+    primaryAst->primaryType = PrimaryType::NUMBER;
     $$ = primaryAst;
   }
   |LVal{
-  auto primaryAst = new PrimaryExprAst();
-      primaryAst->primaryType = PrimaryExprAst::PrimaryType::IDENTIFIER;
+      auto primaryAst = new PrimaryExprAst();
+      primaryAst->primaryType = PrimaryType::IDENTIFIER;
       primaryAst->primaryExpr = shared_ptr<Ast>($1);
       $$ = primaryAst;
   }
@@ -351,6 +569,15 @@ LVal
 	lval->l_val = shared_ptr<Ast>($1);
 	$$ = lval;
 }
+| Identifier ArrayExpList{
+	auto lval = new LValAst();
+	lval->l_val = shared_ptr<Ast>($1);
+	lval->array_expr_list = shared_ptr<Ast>($2);
+	$$ = lval;
+}
+;
+
+
 UnaryOp
  : '+' {
  auto unaryOpAst = new UnaryOpAst();

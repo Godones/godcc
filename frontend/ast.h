@@ -12,13 +12,26 @@
 #include "visitor.h"
 
 class Visitor;
+class TranslationUnitAst;
 class CompUnitAst;
 class FuncDefAst;
 class FuncTypeAst;
+
+
+class FuncFParamAst;
+class FuncFParamUpAst;
+class FuncFParamDefAst;
+class FuncRParamAst;
+class FuncRParamUpAst;
+
+
 class BlockAst;
 class BlockUpAst;
 class BlockItemAst;
 class StmtAst;
+class IfStmtAst;
+class WhileStmtAst;
+
 class ExpAst;
 class BinaryExprAst;
 class UnaryExprAst;
@@ -36,6 +49,9 @@ class VarDeclAst;
 class VarDefAst;
 class VarDefUpAst;
 
+class InitValListAst;
+class InitValAst;
+class ArrayExprListAst;
 
 class Ast {
  public:
@@ -53,37 +69,97 @@ class Ast {
   virtual void accept(Visitor *) = 0;
 };
 
+
+class TranslationUnitAst : public Ast {
+ public:
+  std::shared_ptr<Ast> comp_unit;
+  ~TranslationUnitAst() override = default;
+  void accept(Visitor *visitor) override ;
+};
+
+//CompUnit ::= T
+//	| CompUnit T
+//	T  ::= Decl | FuncDef
 class CompUnitAst : public Ast {
  public:
-  std::shared_ptr<Ast> funcDef;
-
+  std::shared_ptr<Ast> comp_unit;
+  std::shared_ptr<Ast> comp_unit_Item;
  public:
   ~CompUnitAst() override = default;
-
+  CompUnitAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
+  CompUnitAst(std::shared_ptr<Ast> right);
   void accept(Visitor *) override;
 };
+
 
 class FuncDefAst : public Ast {
  public:
   std::shared_ptr<Ast> funcType;//类型
   std::shared_ptr<Ast> ident;            //标识符
-								//    std::shared_ptr<><Ast> param;//参数
+  std::shared_ptr<Ast> funcParam;//参数列表 -->需要判空
   std::shared_ptr<Ast> block;   //函数体
  public:
   ~FuncDefAst() override = default;
+  void accept(Visitor *) override;
+};
 
+class FuncFParamAst : public Ast {
+ public:
+  std::deque<std::shared_ptr<Ast>> 	params;
+  ~FuncFParamAst() override = default;
+  void accept(Visitor *) override;
+  static std::deque<std::shared_ptr<Ast>> GetParamsFromFuncFParaUp(FuncFParamUpAst *);
+};
+
+class FuncFParamUpAst : public Ast {
+ public:
+  std::shared_ptr<Ast> funcFParamUp;
+  std::shared_ptr<Ast> funcFParamDef;
+  bool isFuncFParamUp = false;
+  FuncFParamUpAst(std::shared_ptr<Ast> left,std::shared_ptr<Ast> right);
+  FuncFParamUpAst(std::shared_ptr<Ast> left);
+  void accept(Visitor *) override;
+  std::shared_ptr<Ast>getFuncFParam() const;
+};
+
+
+class FuncFParamDefAst : public Ast {
+ public:
+  std::string_view type;
+  std::shared_ptr<Ast> ident;
+ public:
+  ~FuncFParamDefAst() override = default;
   void accept(Visitor *) override;
 };
 
 class FuncTypeAst : public Ast {
  public:
   std::string type;
-  //    std::shared_ptr<><Ast> param;
  public:
   ~FuncTypeAst() override = default;
-
   void accept(Visitor *) override;
 };
+
+class FuncRParamAst : public Ast {
+ public:
+  std::deque<std::shared_ptr<Ast>> params;
+  ~FuncRParamAst() override = default;
+  void accept(Visitor *) override;
+  static std::deque<std::shared_ptr<Ast>> GetParamsFromFuncRParaUp(FuncRParamUpAst *);
+};
+
+class FuncRParamUpAst : public Ast {
+ public:
+  std::shared_ptr<Ast> funcRParamUp;
+  std::shared_ptr<Ast> expr;
+  bool isFuncFParamUp = false;
+  FuncRParamUpAst(std::shared_ptr<Ast> left,std::shared_ptr<Ast> right);
+  FuncRParamUpAst(std::shared_ptr<Ast> left);
+  void accept(Visitor *) override;
+  std::shared_ptr<Ast>getFuncRParam() const;
+};
+
+
 
 
 // Block         ::= "{" {BlockItem} "}";
@@ -121,18 +197,48 @@ public:
 enum class StmtType {
   kReturn,
   kDecl,
+  kBlock,
+  kExpr,
+  kIf,
+  kWhile,
+  kBreak,
+  kContinue,
 };
 
+// TODO!(需要处理不同的stmt)
 const char * StmtTypeToString(StmtType &type);
-
+// Stmt ::= LVal "=" Exp ";"
+//	      | [Exp] ";"
+//	      | Block
+//		  | "return" [Exp] ";";
+//		  |"if" "(" Exp ")" Stmt ["else" Stmt]
+// []表示重复0或1次
 class StmtAst : public Ast {
  public:
   StmtType type;
-  std::shared_ptr<Ast> l_val;
-  std::shared_ptr<Ast> expr;
+  std::shared_ptr<Ast> l_val = nullptr;
+  std::shared_ptr<Ast> expr = nullptr;
   ~StmtAst() override = default;
   void accept(Visitor *) override;
 };
+
+class IfStmtAst : public Ast {
+ public:
+  std::shared_ptr<Ast> expr;
+  std::shared_ptr<Ast> stmt;
+  std::shared_ptr<Ast> elseStmt;
+  ~IfStmtAst() override = default;
+  void accept(Visitor *) override;
+};
+
+class WhileStmtAst : public Ast {
+ public:
+  std::shared_ptr<Ast> expr;
+  std::shared_ptr<Ast> stmt;
+  ~WhileStmtAst() override = default;
+  void accept(Visitor *) override;
+};
+
 
 // 表达式节点
 class ExpAst : public Ast {
@@ -152,29 +258,38 @@ class ExpAst : public Ast {
 // LAndExp     ::= RelExp | LAndExp "&&" RelExp;
 // LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
 
+enum class BinaryType{
+  kLor,
+  kAnd,
+  kEq,
+  kRel,
+  kMul,
+  kAdd,
+};
+const char * BinaryTypeToString(BinaryType &type);
 class BinaryExprAst : public Ast {
  public:
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
+  BinaryType type;
   std::string_view op;
-  bool is_two_op = false;
-
  public:
   ~BinaryExprAst() override = default;
   virtual void accept(Visitor *) override;
-  BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, std::string_view op);
-  BinaryExprAst(std::shared_ptr<Ast> right);
+  BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, BinaryType type,std::string_view op);
+  BinaryExprAst(std::shared_ptr<Ast> right, BinaryType type);
 };
 
 
-
+enum class UnaryType {
+  kPrimary,
+  kUnary,
+  kCall,
+};
 // 一元表达式
+// UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp | IDENT "(" [FuncRParams] ")";
+const char * UnaryTypeToString(UnaryType &type);
 class UnaryExprAst : public Ast {
- public:
-  enum class UnaryType {
-	PRIMARY,
-	UNARY,
-  };
  public:
   std::shared_ptr<Ast> unaryOp;  //符号 --只有类型为unary时才有
   std::shared_ptr<Ast> unaryExpr;//表达式
@@ -183,13 +298,13 @@ class UnaryExprAst : public Ast {
   void accept(Visitor *) override;
 };
 
+enum class PrimaryType {
+  EXP,//(exp) --- 带括号的表达式
+  NUMBER,
+  IDENTIFIER,
+};
 class PrimaryExprAst : public Ast {
  public:
-  enum class PrimaryType {
-	EXP,//(exp) --- 带括号的表达式
-	NUMBER,
-	IDENTIFIER,
-  };
  public:
   PrimaryType primaryType;
   std::shared_ptr<Ast> primaryExpr;
@@ -260,15 +375,48 @@ class ConstDefUpAst: public Ast{
 class ConstDefAst : public Ast{
  public:
   std::shared_ptr<Ast> ident; //标识符
+  std::shared_ptr<Ast> array_expr_list; // a [][] = {1,2,3}
   std::shared_ptr<Ast> const_val; //常量值 == 常量表达式
   ~ConstDefAst() override = default;
   void accept(Visitor *) override;
 };
 
+//ArrayExpList  ::=  ""
+//	::= "[" Exp "]"
+//	| ArrayExpList "[" Exp "]"
+class ArrayExprListAst:public Ast{
+ public:
+  	std::shared_ptr<Ast> array_expr_list;
+	std::shared_ptr<Ast> array_expr;
+	~ArrayExprListAst() override = default;
+	ArrayExprListAst(std::shared_ptr<Ast>left, std::shared_ptr<Ast>right);
+	ArrayExprListAst(std::shared_ptr<Ast>right);
+	void accept(Visitor *) override;
+};
+
+class InitValAst:public Ast{
+ public:
+  std::shared_ptr<Ast> init_val;
+  std::shared_ptr<Ast> init_val_list;
+  ~InitValAst() override = default;
+  InitValAst(std::shared_ptr<Ast>left, std::shared_ptr<Ast>right);
+  InitValAst(std::shared_ptr<Ast>right);
+  void accept(Visitor *) override;
+};
+
+class InitValListAst:public Ast{
+ public:
+  std::shared_ptr<Ast> expr_init_val;
+  ~InitValListAst() override = default;
+  void accept(Visitor *) override;
+};
+
+
+
 class VarDeclAst : public Ast{
  public:
   std::deque<std::shared_ptr<Ast>> varDefs;
-  std::string_view dataType;
+  std::shared_ptr<Ast> dataType;
   ~VarDeclAst() override = default;
   static std::deque<std::shared_ptr<Ast>> GetFromVarDefUpAst(VarDefUpAst*);
   void accept(Visitor *) override;
@@ -290,6 +438,7 @@ class VarDefAst : public Ast{
  public:
   bool is_expr = false;
   std::shared_ptr<Ast> ident; //标识符
+  std::shared_ptr<Ast> array_expr_list;
   std::shared_ptr<Ast> var_expr; //表达式
   ~VarDefAst() override = default;
   void accept(Visitor *) override;
@@ -300,6 +449,7 @@ class VarDefAst : public Ast{
 class LValAst : public Ast{
  public:
   std::shared_ptr<Ast> l_val;// --> IdentifierAst
+  std::shared_ptr<Ast> array_expr_list; //a[][]
   ~LValAst() override = default;
   void accept(Visitor *) override;
 };

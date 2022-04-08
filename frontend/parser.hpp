@@ -74,7 +74,14 @@ extern int yydebug;
     GE = 267,                      /* GE  */
     CONST = 268,                   /* CONST  */
     INT = 269,                     /* INT  */
-    INT_CONST = 270                /* INT_CONST  */
+    IF = 270,                      /* IF  */
+    ELSE = 271,                    /* ELSE  */
+    WHILE = 272,                   /* WHILE  */
+    BREAK = 273,                   /* BREAK  */
+    CONTINUE = 274,                /* CONTINUE  */
+    VOID = 275,                    /* VOID  */
+    INT_CONST = 276,               /* INT_CONST  */
+    LOWER_THAN_ELSE = 277          /* LOWER_THAN_ELSE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -89,7 +96,7 @@ union YYSTYPE
   int int_val;
   Ast *ast_val;
 
-#line 93 "/home/godcc/frontend/parser.hpp"
+#line 100 "/home/godcc/frontend/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -10,14 +10,25 @@
 #include "../IR/IR.h"
 #include "../log/log.h"
 #include "ast.h"
-#include "../json/json.h"
+#include <algorithm>
 
 class CompUnitAst;
+class TranslationUnitAst;
+
 class FuncDefAst;
 class FuncTypeAst;
+
+class FuncFParamAst;
+class FuncFParamDefAst;
+class FuncRParamAst;
+
 class BlockAst;
 class BlockItemAst;
+
 class StmtAst;
+class WhileStmtAst;
+class IfStmtAst;
+
 class ExpAst;
 class UnaryExprAst;
 class UnaryOpAst;
@@ -26,6 +37,7 @@ class NumberAst;
 class PrimaryExprAst;
 class IdentifierAst;
 class DeclAst;
+
 class ConstDeclAst;
 class ConstDefAst;
 class LValAst;
@@ -34,16 +46,29 @@ class VarDeclAst;
 class VarDefAst;
 class VarDefUpAst;
 
-class GodJSon;
+class ArrayExprListAst;
+class InitValListAst;
+class InitValAst;
 
 class Visitor {
  public:
+  virtual void VisitTranslationUnit(TranslationUnitAst *ast) = 0;
   virtual void VisitCompUnitAst(CompUnitAst *) = 0;
+
   virtual void VisitFuncDefAst(FuncDefAst *) = 0;
   virtual void VisitFuncTypeAst(FuncTypeAst *) = 0;
+  virtual void VisitFuncFParamAst(FuncFParamAst *) = 0;
+  virtual void VisitFuncFParamDefAst(FuncFParamDefAst *) = 0;
+  virtual void VisitFuncRParamAst(FuncRParamAst *) = 0;
+
   virtual void VisitBlockAst(BlockAst *) = 0;
   virtual void VisitBlockItem(BlockItemAst *) = 0;
+
+
   virtual void VisitStmtAst(StmtAst *) = 0;
+  virtual void VisitIfStmt(IfStmtAst *) = 0;
+  virtual void VisitWhileStmt(WhileStmtAst *) = 0;
+
   virtual void VisitExp(ExpAst *) = 0;
 
   virtual void VisitDecl(DeclAst *) = 0;
@@ -54,6 +79,10 @@ class Visitor {
   virtual void VisitVarDecl(VarDeclAst *) = 0;
   virtual void VisitVarDef(VarDefAst *) = 0;
 
+  virtual void VisitArrayExprList(ArrayExprListAst*) =0;
+  virtual void VisitInitValList(InitValListAst *) =0;
+  virtual void VisitInitVal(InitValAst *) =0;
+
   virtual void VisitBinaryExpAst(BinaryExprAst *) =0;
   virtual void VisitUnaryExpAst(UnaryExprAst *) = 0;
   virtual void VisitUnaryOpAst(UnaryOpAst *) = 0;
@@ -62,108 +91,7 @@ class Visitor {
   virtual void VisitIdentifierAst(IdentifierAst *) = 0;
 };
 
-class AstVisitor : public Visitor {
- public:
-  void VisitCompUnitAst(CompUnitAst *) override;
-  void VisitFuncDefAst(FuncDefAst *) override;
-  void VisitFuncTypeAst(FuncTypeAst *) override;
-  void VisitBlockAst(BlockAst *) override;
-  void VisitBlockItem(BlockItemAst *) override;
-  void VisitStmtAst(StmtAst *) override;
-  void VisitExp(ExpAst *) override;
-
-  void VisitDecl(DeclAst *) override;
-  void VisitConstDecl(ConstDeclAst *) override;
-  void VisitConstDef(ConstDefAst *) override;
-  void VisitLVal(LValAst *) override;
-
-  void VisitVarDecl(VarDeclAst *) override;
-  void VisitVarDef(VarDefAst *) override;
-
-  void VisitBinaryExpAst(BinaryExprAst *) override;
-  void VisitUnaryExpAst(UnaryExprAst *) override;
-  void VisitUnaryOpAst(UnaryOpAst *) override;
-  void VisitPrimaryExpAst(PrimaryExprAst *) override;
-  void VisitNumberAst(NumberAst *) override;
-  void VisitIdentifierAst(IdentifierAst *) override;
-};
-
-class AstViewVisitor:public Visitor{
- private:
-  GodJSon j_son_;
- public:
-  void VisitCompUnitAst(CompUnitAst *) override;
-  void VisitFuncDefAst(FuncDefAst *) override;
-  void VisitFuncTypeAst(FuncTypeAst *) override;
-  void VisitBlockAst(BlockAst *) override;
-  void VisitBlockItem(BlockItemAst *) override;
-  void VisitStmtAst(StmtAst *) override;
-  void VisitExp(ExpAst *) override;
-
-
-  void VisitDecl(DeclAst *) override;
-  void VisitConstDecl(ConstDeclAst *) override;
-  void VisitConstDef(ConstDefAst *) override;
-  void VisitLVal(LValAst *) override;
-
-  void VisitVarDecl(VarDeclAst *) override;
-  void VisitVarDef(VarDefAst *) override;
-
-  void VisitBinaryExpAst(BinaryExprAst *) override;
-  void VisitUnaryExpAst(UnaryExprAst *) override;
-  void VisitUnaryOpAst(UnaryOpAst *) override;
-  void VisitPrimaryExpAst(PrimaryExprAst *) override;
-  void VisitNumberAst(NumberAst *) override;
-  void VisitIdentifierAst(IdentifierAst *) override;
-};
-//// 符号表建立
-//class BuildSymbolVisitor : public Visitor {
-//public:
-//    void VisitCompUnitAst( CompUnitAst*) override;
-//    void VisitFuncDefAst( FuncDefAst*)  override;
-//    void VisitFuncTypeAst( FuncTypeAst*)  override;
-//    void VisitBlockAst( BlockAst*) override;
-//    void VisitStmtAst( StmtAst*) override;
-//    void VisitExp(ExpAst*) override;
-//    void VisitUnaryExpAst(UnaryExprAst*) override;
-//    void VisitBinaryExpAst(BinaryExprAst*) override;
-//    void VisitUnaryOpAst(UnaryOpAst*) override;
-//    void VisitPrimaryExpAst(PrimaryExprAst*) override;
-//    void VisitNumberAst(NumberAst*) override;
-//    void VisitIdentifierAst( IdentifierAst*) override;
-//};
-
-// 中间代码生成
-class IRGeneratorVisitor : public Visitor {
- public:
-  std::shared_ptr<Program> programIr = nullptr;
-  unsigned int register_num_ = 0;//记录分配的寄存器
- public:
-  void VisitCompUnitAst(CompUnitAst *) override;
-  void VisitFuncDefAst(FuncDefAst *) override;
-  void VisitFuncTypeAst(FuncTypeAst *) override;
-  void VisitBlockAst(BlockAst *) override;
-  void VisitBlockItem(BlockItemAst *) override;
-  void VisitStmtAst(StmtAst *) override;
-  void VisitExp(ExpAst *) override;
-
-
-  void VisitDecl(DeclAst *) override;
-  void VisitConstDecl(ConstDeclAst *) override;
-  void VisitConstDef(ConstDefAst *) override;
-  void VisitLVal(LValAst *) override;
-
-  void VisitVarDecl(VarDeclAst *) override;
-  void VisitVarDef(VarDefAst *) override;
-
-  void VisitBinaryExpAst(BinaryExprAst *) override;
-  void VisitUnaryExpAst(UnaryExprAst *) override;
-  void VisitUnaryOpAst(UnaryOpAst *) override;
-  void VisitPrimaryExpAst(PrimaryExprAst *) override;
-  void VisitNumberAst(NumberAst *) override;
-  void VisitIdentifierAst(IdentifierAst *) override;
-};
-
 BinaryOp to_BinaryOp(const std::string_view &op);
+
 
 #endif//GODCC_VISITOR_H

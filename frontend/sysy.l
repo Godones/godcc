@@ -45,13 +45,48 @@ Hex 0[xX][0-9a-fA-F]+
                     began_colum +=yyleng;
                     return INT;
                 }
+"void"           {
+                    file_out("void","void");
+                    yylval.str_val=new string("void");
+                    began_colum +=yyleng;
+                    return VOID;
+                }
 "const"         {
                     file_out("const","const");
                      yylval.str_val=new string("const");
                     began_colum +=yyleng;
                     return CONST;
                 }
-
+"if"            {
+                    file_out("if","if");
+                    yylval.str_val=new string("if");
+                    began_colum +=yyleng;
+                    return IF;
+                }
+"else"          {
+                    file_out("else","else");
+                    yylval.str_val=new string("else");
+                    began_colum +=yyleng;
+                    return ELSE;
+                }
+"while"         {
+                    file_out("while","while");
+                    yylval.str_val=new string("while");
+                    began_colum +=yyleng;
+                    return WHILE;
+                }
+"break"          {
+                    file_out("break","break");
+                    yylval.str_val=new string("break");
+                    began_colum +=yyleng;
+                    return BREAK;
+                }
+"continue"       {
+                    file_out("continue","continue");
+                    yylval.str_val=new string("continue");
+                    began_colum +=yyleng;
+                    return CONTINUE;
+                }
  "<"            {
                     file_out("<","<");
                      yylval.str_val=new string("<");
@@ -63,6 +98,31 @@ Hex 0[xX][0-9a-fA-F]+
                      yylval.str_val=new string(">");
                     began_colum +=yyleng;
                     return GT;
+                }
+
+ "["            {
+                    file_out("[","[");
+                     yylval.str_val=new string("[");
+                    began_colum +=yyleng;
+                    return '[';
+                }
+ "]"            {
+                    file_out("[","[");
+                     yylval.str_val=new string("[");
+                    began_colum +=yyleng;
+                    return ']';
+                 }
+ "{"            {
+                    file_out("{","{");
+                     yylval.str_val=new string("{");
+                    began_colum +=yyleng;
+                    return '{';
+                 }
+ "}"              {
+                     file_out("}","}");
+                     yylval.str_val=new string("}");
+                    began_colum +=yyleng;
+                    return '}';
                 }
 "<="            {
                     file_out("<=","<=");
