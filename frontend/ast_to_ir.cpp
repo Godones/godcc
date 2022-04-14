@@ -43,9 +43,7 @@ void IRGeneratorVisitor::VisitBlockAst(BlockAst *blockAst) {
   block.blockName = "%entry";
   function.blocks.emplace_back(block);//相当于第一个baseblock
   DEBUG("IRGeneratorVisitor::VisitBlockAst");
-  for (auto &item: blockAst->blockItems) {
-	item->accept(this);
-  }
+  blockAst->block_item_list->accept(this);
   DEBUG("IRGeneratorVisitor::VisitBlockAst");
 }
 
@@ -192,9 +190,9 @@ void IRGeneratorVisitor::VisitWhileStmt(WhileStmtAst *) {
 }
 void IRGeneratorVisitor::VisitFuncFParamAst(FuncFParamAst *) {
 }
-void IRGeneratorVisitor::VisitFuncFParamDefAst(FuncFParamDefAst *) {
+void IRGeneratorVisitor::VisitVarDefList(VarDefListAst *) {
 }
-void IRGeneratorVisitor::VisitFuncRParamAst(FuncRParamAst *) {
+void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *) {
 }
 void IRGeneratorVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
 }
@@ -203,4 +201,10 @@ void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *) {
 void IRGeneratorVisitor::VisitInitVal(InitValAst *) {
 }
 void IRGeneratorVisitor::VisitInitValList(InitValListAst *) {
+}
+void IRGeneratorVisitor::VisitFuncFParamListAst(FuncFParamListAst *) {
+}
+void IRGeneratorVisitor::VisitBlockItemListAst(BlockItemListAst *) {
+}
+void IRGeneratorVisitor::VisitConstDefList(ConstDefListAst *) {
 }

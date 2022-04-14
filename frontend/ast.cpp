@@ -8,7 +8,7 @@
 const char * StmtTypeToString(StmtType &type){
   switch (type) {
 	case StmtType::kReturn: return "Return";
-	case StmtType::kDecl: return "Decl";
+	case StmtType::kAssign: return "Assign";
 	case StmtType::kExpr: return "Expr";
 	case StmtType::kBlock: return "Block";
 	case StmtType::kIf: return "If";
@@ -37,6 +37,11 @@ const char *UnaryTypeToString(UnaryType &type){
   }
   return "";
 }
+
+void TranslationUnitAst::accept(Visitor *visitor) {
+  visitor->VisitTranslationUnit(this);
+}
+
 void CompUnitAst::accept(Visitor *visitor) {
   visitor->VisitCompUnitAst(this);
 }
@@ -57,28 +62,16 @@ void FuncTypeAst::accept(Visitor *visitor) {
 void BlockAst::accept(Visitor *visitor) {
   visitor->VisitBlockAst(this);
 }
-// 递归从BlockItemUp中将表达式抽取到一个列表中
-std::deque<std::shared_ptr<Ast>> BlockAst::GetFromBlockItemUp(BlockUpAst*block_up_ast) {
-  if (block_up_ast == nullptr) {
-	return {};
-  }
-  std::deque<std::shared_ptr<Ast>> block_items;
-  block_items.push_front(block_up_ast->getBlockItem());
-  while (block_up_ast->isBlockUp) {
-	block_up_ast = dynamic_cast<BlockUpAst*>(block_up_ast->blockUp.get());
-	block_items.push_front(block_up_ast->getBlockItem());
-  }
-  return block_items;
-}
-BlockUpAst::BlockUpAst(std::shared_ptr<Ast>left,std::shared_ptr<Ast>right)
-	:blockUp(std::move(left)),blockItem(std::move(right)),isBlockUp(true) {}
 
-BlockUpAst::BlockUpAst(std::shared_ptr<Ast>left)
-	:blockItem(std::move(left)), isBlockUp(false) {}
+BlockItemListAst::BlockItemListAst(std::shared_ptr<Ast>left,std::shared_ptr<Ast>right)
+	:block_item_list(std::move(left)),block_item(std::move(right)){}
 
-std::shared_ptr<Ast> BlockUpAst::getBlockItem() const{
-  return blockItem;
+BlockItemListAst::BlockItemListAst(std::shared_ptr<Ast>left)
+	:block_item(std::move(left)) {}
+void BlockItemListAst::accept(Visitor *visitor) {
+  visitor->VisitBlockItemListAst(this);
 }
+
 void BlockItemAst::accept(Visitor  *visitor) {
   visitor->VisitBlockItem(this);
 }
@@ -114,7 +107,7 @@ void IdentifierAst::accept(Visitor *visitor) {
 void BinaryExprAst::accept(Visitor *visitor) {
   visitor->VisitBinaryExpAst(this);
 }
-BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right,BinaryType type,std::string_view op)
+BinaryExprAst::BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right,BinaryType type,const char * op)
 	: left(std::move(left)),
 	  right(std::move(right)),
 	  type(type),
@@ -132,18 +125,6 @@ void DeclAst::accept(Visitor *visitor) {
 void ConstDeclAst::accept(Visitor *visitor) {
   visitor->VisitConstDecl(this);
 }
-std::deque<std::shared_ptr<Ast>> ConstDeclAst::GetFromConstDefUpAst(ConstDefUpAst *const_def_up_ast) {
-  if (const_def_up_ast == nullptr) {
-	return {};
-  }
-  std::deque<std::shared_ptr<Ast>> const_defs;
-  const_defs.push_front(const_def_up_ast->getConstDef());
-  while (const_def_up_ast->isConstDefUp) {
-	const_def_up_ast = dynamic_cast<ConstDefUpAst*>(const_def_up_ast->constDefUp.get());
-	const_defs.push_front(const_def_up_ast->getConstDef());
-  }
-  return const_defs;
-}
 
 void ConstDefAst::accept(Visitor *visitor) {
   visitor->VisitConstDef(this);
@@ -152,46 +133,32 @@ void LValAst::accept(Visitor *visitor) {
   visitor->VisitLVal(this);
 }
 
-ConstDefUpAst::ConstDefUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
-	: constDefUp(std::move(left)),
-	  constDef(std::move(right)),
-	  isConstDefUp(true){}
-ConstDefUpAst::ConstDefUpAst(std::shared_ptr<Ast> right): constDef(std::move(right)){}
-
-// 带up的都为空实现，因为这些只是中间辅助手段
-// 最后并不会用到
-void BlockUpAst::accept(Visitor *) {}
-void ConstDefUpAst::accept(Visitor *visitor) {}
-void VarDefUpAst::accept(Visitor *visitor) {}
+ConstDefListAst::ConstDefListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: const_def_list(std::move(left)),
+	  const_def(std::move(right)){}
+ConstDefListAst::ConstDefListAst(std::shared_ptr<Ast> right): const_def(std::move(right)){}
 
 
-
-std::shared_ptr<Ast> ConstDefUpAst::getConstDef() const {
-  return constDef;
+void ConstDefListAst::accept(Visitor *visitor) {
+  visitor->VisitConstDefList(this);
 }
-std::deque<std::shared_ptr<Ast>> VarDeclAst::GetFromVarDefUpAst(VarDefUpAst *val_def_up_ast) {
-  if (val_def_up_ast == nullptr) {
-	return {};
-  }
-  std::deque<std::shared_ptr<Ast>> val_defs;
-  val_defs.push_front(val_def_up_ast->getVarDef());
-  while (val_def_up_ast->isVarDefUp) {
-	val_def_up_ast = dynamic_cast<VarDefUpAst*>(val_def_up_ast->varDefUp.get());
-	val_defs.push_front(val_def_up_ast->getVarDef());
-  }
-  return val_defs;
-}
+
+
 void VarDeclAst::accept(Visitor *visitor) {
   visitor->VisitVarDecl(this);
 }
-VarDefUpAst::VarDefUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
-	: varDefUp(std::move(left)),
-	  varDef(std::move(right)),
-	  isVarDefUp(true){}
-VarDefUpAst::VarDefUpAst(std::shared_ptr<Ast> right): varDef(std::move(right)){}
-std::shared_ptr<Ast> VarDefUpAst::getVarDef() const {
-  return varDef;
+VarDefListAst::VarDefListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: varDefList(std::move(left)),
+	  varDef(std::move(right)){}
+
+
+VarDefListAst::VarDefListAst(std::shared_ptr<Ast> right)
+: varDef(std::move(right)){}
+
+void VarDefListAst::accept(Visitor *visitor) {
+  visitor->VisitVarDefList(this);
 }
+
 
 void VarDefAst::accept(Visitor *visitor) {
   visitor->VisitVarDef(this);
@@ -203,64 +170,30 @@ void WhileStmtAst::accept(Visitor *visitor) {
   visitor->VisitWhileStmt(this);
 }
 
-
-std::deque<std::shared_ptr<Ast>> FuncFParamAst::GetParamsFromFuncFParaUp(FuncFParamUpAst *func_f_param_up_ast) {
-  if (func_f_param_up_ast == nullptr) {
-	return {};
-  }
-  std::deque<std::shared_ptr<Ast>> func_f_params;
-  func_f_params.push_front(func_f_param_up_ast->getFuncFParam());
-  while (func_f_param_up_ast->isFuncFParamUp) {
-	func_f_param_up_ast = dynamic_cast<FuncFParamUpAst*>(func_f_param_up_ast->funcFParamUp.get());
-	func_f_params.push_front(func_f_param_up_ast->getFuncFParam());
-  }
-  return func_f_params;
-}
-
 void FuncFParamAst::accept(Visitor *visitor) {
   visitor->VisitFuncFParamAst(this);
 }
-FuncFParamUpAst::FuncFParamUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
-	: funcFParamUp(std::move(left)),
-	  funcFParamDef(std::move(right)),
-	  isFuncFParamUp(true){}
-FuncFParamUpAst::FuncFParamUpAst(std::shared_ptr<Ast> left)
-	: funcFParamDef(std::move(left)){}
-void FuncFParamUpAst::accept(Visitor *) {}
-std::shared_ptr<Ast> FuncFParamUpAst::getFuncFParam() const {
-  return funcFParamDef;
+FuncFParamListAst::FuncFParamListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: funcFParamList(std::move(left)),
+	  funcFParam(std::move(right)){}
+FuncFParamListAst::FuncFParamListAst(std::shared_ptr<Ast> left)
+	: funcFParam(std::move(left)){}
+
+
+void FuncFParamListAst::accept(Visitor *visitor) {
+  visitor->VisitFuncFParamListAst(this);
 }
-void FuncFParamDefAst::accept(Visitor *visitor) {
-  visitor->VisitFuncFParamDefAst(this);
-}
-void FuncRParamAst::accept(Visitor *visitor) {
-  visitor->VisitFuncRParamAst(this);
-}
-std::deque<std::shared_ptr<Ast>> FuncRParamAst::GetParamsFromFuncRParaUp(FuncRParamUpAst *func_r_param_up_ast) {
-  if (func_r_param_up_ast== nullptr){
-	return {};
-  }
-  std::deque<std::shared_ptr<Ast>> func_r_params;
-  func_r_params.push_front(func_r_param_up_ast->getFuncRParam());
-  while (func_r_param_up_ast->isFuncFParamUp) {
-	func_r_param_up_ast = dynamic_cast<FuncRParamUpAst*>(func_r_param_up_ast->funcRParamUp.get());
-	func_r_params.push_front(func_r_param_up_ast->getFuncRParam());
-  }
-  return func_r_params;
-}
-FuncRParamUpAst::FuncRParamUpAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
-	: funcRParamUp(std::move(left)),
-	 expr(std::move(right)),
-	 isFuncFParamUp(true){}
-FuncRParamUpAst::FuncRParamUpAst(std::shared_ptr<Ast> left)
+
+FuncRParamListAst::FuncRParamListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right)
+	: funcRParamListAst(std::move(left)),
+	 expr(std::move(right)){}
+FuncRParamListAst::FuncRParamListAst(std::shared_ptr<Ast> left)
 	  :expr(std::move(left)){}
-void FuncRParamUpAst::accept(Visitor *) {}
-std::shared_ptr<Ast> FuncRParamUpAst::getFuncRParam() const {
-  return expr;
+void FuncRParamListAst::accept(Visitor *Visitor) {
+  Visitor->VisitFuncRParamListAst(this);
 }
-void TranslationUnitAst::accept(Visitor *visitor) {
-  visitor->VisitTranslationUnit(this);
-}
+
+
 
 ArrayExprListAst::ArrayExprListAst(std::shared_ptr<Ast> right)
 	: array_expr(std::move(right)){}

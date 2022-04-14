@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "../IR/IR.h"
-#include "../log/log.h"
+#include "tools/log.h"
 #include "ast.h"
 #include <algorithm>
 
@@ -19,10 +19,12 @@ class FuncDefAst;
 class FuncTypeAst;
 
 class FuncFParamAst;
-class FuncFParamDefAst;
-class FuncRParamAst;
+class FuncFParamListAst;
+
+class FuncRParamListAst;
 
 class BlockAst;
+class BlockItemListAst;
 class BlockItemAst;
 
 class StmtAst;
@@ -39,12 +41,13 @@ class IdentifierAst;
 class DeclAst;
 
 class ConstDeclAst;
+class ConstDefListAst;
 class ConstDefAst;
 class LValAst;
 
 class VarDeclAst;
 class VarDefAst;
-class VarDefUpAst;
+class VarDefListAst;
 
 class ArrayExprListAst;
 class InitValListAst;
@@ -57,11 +60,13 @@ class Visitor {
 
   virtual void VisitFuncDefAst(FuncDefAst *) = 0;
   virtual void VisitFuncTypeAst(FuncTypeAst *) = 0;
+  virtual void VisitFuncFParamListAst(FuncFParamListAst *) = 0;
   virtual void VisitFuncFParamAst(FuncFParamAst *) = 0;
-  virtual void VisitFuncFParamDefAst(FuncFParamDefAst *) = 0;
-  virtual void VisitFuncRParamAst(FuncRParamAst *) = 0;
+
+  virtual void VisitFuncRParamListAst(FuncRParamListAst *) = 0;
 
   virtual void VisitBlockAst(BlockAst *) = 0;
+  virtual void VisitBlockItemListAst(BlockItemListAst *) = 0;
   virtual void VisitBlockItem(BlockItemAst *) = 0;
 
 
@@ -73,12 +78,14 @@ class Visitor {
 
   virtual void VisitDecl(DeclAst *) = 0;
   virtual void VisitConstDecl(ConstDeclAst *) = 0;
+  virtual void VisitConstDefList(ConstDefListAst *) = 0;
   virtual void VisitConstDef(ConstDefAst *) = 0;
   virtual void VisitLVal(LValAst *) = 0;
 
   virtual void VisitVarDecl(VarDeclAst *) = 0;
+  virtual void VisitVarDefList(VarDefListAst *) = 0;
   virtual void VisitVarDef(VarDefAst *) = 0;
-
+  
   virtual void VisitArrayExprList(ArrayExprListAst*) =0;
   virtual void VisitInitValList(InitValListAst *) =0;
   virtual void VisitInitVal(InitValAst *) =0;

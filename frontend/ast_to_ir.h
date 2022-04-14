@@ -19,11 +19,13 @@ class IRGeneratorVisitor : public Visitor {
   void VisitFuncDefAst(FuncDefAst *) override;
   void VisitFuncTypeAst(FuncTypeAst *) override;
   void VisitFuncFParamAst(FuncFParamAst *) override;
-  void VisitFuncFParamDefAst(FuncFParamDefAst *) override;
-  void VisitFuncRParamAst(FuncRParamAst *) override;
+  void VisitFuncFParamListAst(FuncFParamListAst *) override;
+
+  void VisitFuncRParamListAst(FuncRParamListAst *) override;
 
 
   void VisitBlockAst(BlockAst *) override;
+  void VisitBlockItemListAst(BlockItemListAst *) override;
   void VisitBlockItem(BlockItemAst *) override;
 
   void VisitStmtAst(StmtAst *) override;
@@ -35,11 +37,13 @@ class IRGeneratorVisitor : public Visitor {
 
   void VisitDecl(DeclAst *) override;
   void VisitConstDecl(ConstDeclAst *) override;
+  void VisitConstDefList(ConstDefListAst *) override;
   void VisitConstDef(ConstDefAst *) override;
   void VisitLVal(LValAst *) override;
 
   void VisitVarDecl(VarDeclAst *) override;
   void VisitVarDef(VarDefAst *) override;
+  void VisitVarDefList(VarDefListAst *) override;
 
   void VisitArrayExprList(ArrayExprListAst*) override;
   void VisitInitVal(InitValAst *) override;

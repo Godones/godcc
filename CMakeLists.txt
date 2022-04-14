@@ -24,7 +24,9 @@ endif ()
 
 add_custom_command(
 	OUTPUT ${parser_path} ${parser_hpp_path}
-	COMMAND bison -d -o ${parser_path} ${FRONTEND}/sysy.y
+	COMMAND bison -d -Wcounterexamples -o ${parser_path} ${FRONTEND}/sysy.y
+	COMMAND bison -d ${FRONTEND}/sysy.y --graph
+	COMMAND bison ${FRONTEND}/sysy.y -W
 	DEPENDS ${FRONTEND}/sysy.y
 )
 #SET_SOURCE_FILES_PROPERTIES(${lexer_path} GENERATED)
@@ -43,18 +45,19 @@ aux_source_directory(frontend FRONTENDCPP)
 
 add_library(test STATIC
 	test/Tparser.cpp
-	log/log.cpp
+	tools/log.cpp
 	IR/IR.cpp
 	IR/irvisitor.cpp
 	backend/asm.cpp
-	json/json.cpp
+	tools/json.cpp
+	tools/dot.cpp
 	${FRONTENDCPP}
 	${parser_path}
 	${lexer_path}
 	)
 
 #添加子目录
-add_subdirectory(json)
+add_subdirectory(tools)
 
 
 # 生成可执行文件
@@ -65,10 +68,14 @@ add_custom_target(
 
 add_custom_target(
 	tree
-	COMMAND pytm-cli -i test.json -d TB -t 1
-	COMMAND wslview TreeMap.html
+#	COMMAND pytm-cli -i test.json -d TB -t 1
+	COMMAND dot -Tpdf ast_Tree.dot -o ast_Tree.pdf
+	COMMAND dot -Tpng ast_Tree.dot -o ast_Tree.png
+	COMMAND dot -Tpdf cst_Tree.dot -o cst_Tree.pdf
+	COMMAND dot -Tpng cst_Tree.dot -o cst_Tree.png
+	COMMAND wslview ast_Tree.pdf && wslview cst_tree.pdf
 )
-link_directories(${PROJECT_SOURCE_DIR}/googletest)
+
 add_executable(main main.cpp)
 target_link_libraries(main test)
 

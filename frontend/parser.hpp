@@ -95,8 +95,9 @@ union YYSTYPE
   std::string *str_val;
   int int_val;
   Ast *ast_val;
+  const char * cstr_val;
 
-#line 100 "/home/godcc/frontend/parser.hpp"
+#line 101 "/home/godcc/frontend/parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

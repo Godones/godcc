@@ -28,7 +28,7 @@ build/lexer.o: frontend/lexer.cpp
 build/parser.o: frontend/parser.cpp
 	@echo "Compiling parser..."
 	$(CXX) -c frontend/parser.cpp -o build/parser.o
-build/log.o: log/log.cpp
+build/log.o: tools/log.cpp
 	@echo "Compiling log..."
 	$(CXX) -c log/log.cpp -o build/log.o
 build/test.o: test/Tparser.cpp

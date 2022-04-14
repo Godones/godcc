@@ -32,6 +32,7 @@ using namespace std;
   std::string *str_val;
   int int_val;
   Ast *ast_val;
+  const char * cstr_val;
 }
 
 // lexer 返回的所有 token 种类的声明
@@ -50,10 +51,10 @@ using namespace std;
 
 // 非终结符的类型定义
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
-%type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr Decl ConstDecl ConstDefUp
-ConstDef BlockItemUp BlockItem LVal Identifier
-%type <ast_val>  VarDecl VarDef VarDefUp CompUnitItem FuncFParams FuncFParamUp FuncFParamDef
-%type <ast_val>  FuncRParams FuncRParamUp CompUnit ArrayExpList
+%type <ast_val> AddExpr MulExpr RelExpr EqExpr AndExpr OrExpr Decl ConstDecl ConstDefList
+ConstDef BlockItemList BlockItem LVal Identifier
+%type <ast_val>  VarDecl VarDef VarDefList CompUnitItem FuncFParamList  FuncFParam
+%type <ast_val>  FuncRParamList  CompUnit ArrayExpList
 %type <ast_val> InitValList  InitVal
 //%type <int_val>
 //%type <str_val>
@@ -111,11 +112,11 @@ CompUnitItem
 // 虽然此处你看不出用 shared_ptr 和手动 delete 的区别, 但当我们定义了 AST 之后
 // 这种写法会省下很多内存管理的负担
 FuncDef
-  : FuncType Identifier '(' FuncFParams ')' Block {
+  : FuncType Identifier '(' FuncFParamList ')' Block {
   	auto funcDef = new FuncDefAst();
 	funcDef->funcType = shared_ptr<Ast>($1);
 	funcDef->ident = shared_ptr<Ast>($2);
-	funcDef->funcParam = shared_ptr<Ast>($4);
+	funcDef->funcParamList = shared_ptr<Ast>($4);
 	funcDef->block = shared_ptr<Ast>($6);
 	$$ = funcDef;
   }
@@ -128,32 +129,50 @@ FuncDef
      }
   ;
 
-FuncFParams
-:FuncFParamUp{
-	auto funcFP = new FuncFParamAst();
-	funcFP->params = FuncFParamAst::GetParamsFromFuncFParaUp(dynamic_cast<FuncFParamUpAst*>(shared_ptr<Ast>($1).get()));
-	$$ = funcFP;
-};
 
-FuncFParamUp
-:FuncFParamDef {
-	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>($1));
-	$$ = funcFPUp;
+FuncFParamList
+:FuncFParam {
+	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>($1));
+	$$ = func_fpl;
 }
-|FuncFParamUp ',' FuncFParamDef{
-	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
-	$$ = funcFPUp;
+|FuncFParamList ',' FuncFParam{
+	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	$$ = func_fpl;
 };
 
 
-FuncFParamDef
-:INT  Identifier{
-	auto funcParaDef = new FuncFParamDefAst();
-	funcParaDef->type = *($1);
+FuncFParam
+:FuncType  Identifier{
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>($1);
 	funcParaDef->ident = shared_ptr<Ast>($2);
+	funcParaDef->first_no_dim = false;
 	$$ = funcParaDef;
-
-};
+}
+| FuncType Identifier '[' ']'{
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>($1);
+	funcParaDef->ident = shared_ptr<Ast>($2);
+	funcParaDef->first_no_dim = true;
+	$$ = funcParaDef;
+}
+|FuncType Identifier '[' ']' ArrayExpList{
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>($1);
+	funcParaDef->ident = shared_ptr<Ast>($2);
+	funcParaDef->first_no_dim = true;
+	funcParaDef->array_expr_list = shared_ptr<Ast>($5);
+	$$ = funcParaDef;
+}
+|FuncType Identifier  ArrayExpList{
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>($1);
+	funcParaDef->ident = shared_ptr<Ast>($2);
+	funcParaDef->first_no_dim = false;
+	funcParaDef->array_expr_list = shared_ptr<Ast>($3);
+	$$ = funcParaDef;
+}
+;
 
 
 
@@ -161,32 +180,31 @@ FuncFParamDef
 FuncType
 : INT {
     auto funcType = new FuncTypeAst();
-    funcType->type = string("int");
+    funcType->type = "int";
     $$ = funcType;
   }
 |VOID {
 	auto funcType = new FuncTypeAst();
-	funcType->type = string("void");
+	funcType->type = "void";
 	$$ = funcType;
 }
   ;
 
 Block
-  : '{' BlockItemUp '}' {
-    auto block = new BlockAst();
-    auto blockItemUp = shared_ptr<Ast>($2);
-    block->blockItems = BlockAst::GetFromBlockItemUp(dynamic_cast<BlockUpAst*>(blockItemUp.get()));
-    $$ = block;
+  : '{' BlockItemList '}' {
+	auto block = new BlockAst();
+	block-> block_item_list= shared_ptr<Ast>($2);
+	$$ = block;
   }
   ;
 
- BlockItemUp
+ BlockItemList
  :BlockItem{
-	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>($1));
+	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>($1));
 	$$ = blockItemUp;
  }
-|BlockItemUp BlockItem {
-	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($2));
+|BlockItemList BlockItem {
+	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($2));
 	$$ = blockItemUp;
 };
 
@@ -217,20 +235,20 @@ Decl
 };
 
 ConstDecl
-:CONST INT ConstDefUp ';'{
+:CONST FuncType ConstDefList ';'{
 	auto constDecl = new ConstDeclAst();
-	constDecl->constDefs=  ConstDeclAst::GetFromConstDefUpAst(dynamic_cast<ConstDefUpAst*>(shared_ptr<Ast>($3).get()));
-	constDecl->dataType = *($2);
+	constDecl->const_def_list= shared_ptr<Ast>($3);
+	constDecl->data_type = shared_ptr<Ast>($2);
 	$$ = constDecl;
 };
 
-ConstDefUp
+ConstDefList
 :ConstDef{
-	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>($1));
+	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>($1));
 	$$ = constDeclUp;
 }
-|ConstDefUp ',' ConstDef{
-	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+|ConstDefList ',' ConstDef{
+	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
 	$$ = constDeclUp;
 };
 
@@ -265,7 +283,10 @@ InitValList
 	init_val_list->expr_init_val = shared_ptr<Ast>($1);
 	$$ = init_val_list;
 }
-|'{' '}' {}
+|'{' '}' {
+	auto init_val_list = new InitValListAst();
+	$$ = init_val_list;
+}
 |'{' InitVal '}'{
 	auto init_val_list = new InitValListAst();
 	init_val_list->expr_init_val = shared_ptr<Ast>($2);
@@ -285,20 +306,20 @@ InitVal
 
 
 VarDecl
-:FuncType VarDefUp ';'{
+:FuncType VarDefList ';'{
 	auto varDecl = new VarDeclAst();
-	varDecl->varDefs=  VarDeclAst::GetFromVarDefUpAst(dynamic_cast<VarDefUpAst*>(shared_ptr<Ast>($2).get()));
+	varDecl->var_def_list = shared_ptr<Ast>($2);
 	varDecl->dataType =  shared_ptr<Ast>($1);
 	$$ = varDecl;
 };
 
-VarDefUp
+VarDefList
 :VarDef{
-	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>($1));
+	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>($1));
         $$ = varDeclUp;
 }
-|VarDefUp "," VarDef {
-	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+|VarDefList "," VarDef {
+	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
         $$ = varDeclUp;
 }
 ;
@@ -319,7 +340,6 @@ VarDef
 	auto varDef = new VarDefAst();
 	varDef->ident =  shared_ptr<Ast>($1);
 	varDef->var_expr =  shared_ptr<Ast>($3);
-	varDef->is_expr = true;
 	$$ = varDef;
 }
 |Identifier ArrayExpList '=' InitValList{
@@ -327,7 +347,6 @@ VarDef
 	varDef->ident =  shared_ptr<Ast>($1);
 	varDef->array_expr_list = shared_ptr<Ast>($2);
 	varDef->var_expr =  shared_ptr<Ast>($4);
-	varDef->is_expr = true;
 	$$ = varDef;
 };
 
@@ -335,7 +354,7 @@ VarDef
 Identifier
 :IDENT{
 	auto identifier=  new IdentifierAst();
-	identifier->name = *($1);
+	identifier->name = ($1)->c_str();
 	$$ = identifier;
 };
 
@@ -372,7 +391,7 @@ Stmt
 	auto stmt = new StmtAst();
     	stmt->expr = shared_ptr<Ast>($3);
     	stmt->l_val =  shared_ptr<Ast>($1);
-    	stmt->type = StmtType::kDecl;
+    	stmt->type = StmtType::kAssign;
     	$$ = stmt;
  }
 |IF '(' Expr ')' Stmt %prec LOWER_THAN_ELSE{
@@ -515,29 +534,23 @@ UnaryExp
 	unaryExp->unaryType = UnaryType::kCall;
 	$$ = unaryExp;
 }
-|Identifier '(' FuncRParams ')'{
+|Identifier '(' FuncRParamList ')'{
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
-        unaryExp->unaryExpr = shared_ptr<Ast>($3);
+    	unaryExp->unaryExpr = shared_ptr<Ast>($3);
 	unaryExp->unaryType = UnaryType::kCall;
 	$$ = unaryExp;
 }
 ;
 
-FuncRParams
-:FuncRParamUp{
-	auto funcRP = new FuncRParamAst();
-	funcRP->params = FuncRParamAst::GetParamsFromFuncRParaUp(dynamic_cast<FuncRParamUpAst*>(shared_ptr<Ast>($1).get()));
-	$$ = funcRP;
-}
-;
-FuncRParamUp
+
+FuncRParamList
 :Expr{
-	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>($1));
+	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>($1));
 	$$ = funcRPUp;
 }
-|FuncRParamUp ',' Expr{
-	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+|FuncRParamList ',' Expr{
+	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
 	$$ = funcRPUp;
 }
 ;

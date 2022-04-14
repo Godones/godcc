@@ -135,12 +135,12 @@ enum yysymbol_kind_t
   YYSYMBOL_23_ = 23,                       /* '('  */
   YYSYMBOL_24_ = 24,                       /* ')'  */
   YYSYMBOL_25_ = 25,                       /* ','  */
-  YYSYMBOL_26_ = 26,                       /* '{'  */
-  YYSYMBOL_27_ = 27,                       /* '}'  */
-  YYSYMBOL_28_ = 28,                       /* ';'  */
-  YYSYMBOL_29_ = 29,                       /* '='  */
-  YYSYMBOL_30_ = 30,                       /* '['  */
-  YYSYMBOL_31_ = 31,                       /* ']'  */
+  YYSYMBOL_26_ = 26,                       /* '['  */
+  YYSYMBOL_27_ = 27,                       /* ']'  */
+  YYSYMBOL_28_ = 28,                       /* '{'  */
+  YYSYMBOL_29_ = 29,                       /* '}'  */
+  YYSYMBOL_30_ = 30,                       /* ';'  */
+  YYSYMBOL_31_ = 31,                       /* '='  */
   YYSYMBOL_32_ = 32,                       /* ","  */
   YYSYMBOL_33_ = 33,                       /* '+'  */
   YYSYMBOL_34_ = 34,                       /* '-'  */
@@ -153,39 +153,37 @@ enum yysymbol_kind_t
   YYSYMBOL_CompUnit = 41,                  /* CompUnit  */
   YYSYMBOL_CompUnitItem = 42,              /* CompUnitItem  */
   YYSYMBOL_FuncDef = 43,                   /* FuncDef  */
-  YYSYMBOL_FuncFParams = 44,               /* FuncFParams  */
-  YYSYMBOL_FuncFParamUp = 45,              /* FuncFParamUp  */
-  YYSYMBOL_FuncFParamDef = 46,             /* FuncFParamDef  */
-  YYSYMBOL_FuncType = 47,                  /* FuncType  */
-  YYSYMBOL_Block = 48,                     /* Block  */
-  YYSYMBOL_BlockItemUp = 49,               /* BlockItemUp  */
-  YYSYMBOL_BlockItem = 50,                 /* BlockItem  */
-  YYSYMBOL_Decl = 51,                      /* Decl  */
-  YYSYMBOL_ConstDecl = 52,                 /* ConstDecl  */
-  YYSYMBOL_ConstDefUp = 53,                /* ConstDefUp  */
-  YYSYMBOL_ConstDef = 54,                  /* ConstDef  */
-  YYSYMBOL_ArrayExpList = 55,              /* ArrayExpList  */
-  YYSYMBOL_InitValList = 56,               /* InitValList  */
-  YYSYMBOL_InitVal = 57,                   /* InitVal  */
-  YYSYMBOL_VarDecl = 58,                   /* VarDecl  */
-  YYSYMBOL_VarDefUp = 59,                  /* VarDefUp  */
-  YYSYMBOL_VarDef = 60,                    /* VarDef  */
-  YYSYMBOL_Identifier = 61,                /* Identifier  */
-  YYSYMBOL_Stmt = 62,                      /* Stmt  */
-  YYSYMBOL_Expr = 63,                      /* Expr  */
-  YYSYMBOL_AddExpr = 64,                   /* AddExpr  */
-  YYSYMBOL_RelExpr = 65,                   /* RelExpr  */
-  YYSYMBOL_EqExpr = 66,                    /* EqExpr  */
-  YYSYMBOL_AndExpr = 67,                   /* AndExpr  */
-  YYSYMBOL_OrExpr = 68,                    /* OrExpr  */
-  YYSYMBOL_MulExpr = 69,                   /* MulExpr  */
-  YYSYMBOL_UnaryExp = 70,                  /* UnaryExp  */
-  YYSYMBOL_FuncRParams = 71,               /* FuncRParams  */
-  YYSYMBOL_FuncRParamUp = 72,              /* FuncRParamUp  */
-  YYSYMBOL_PrimaryExpr = 73,               /* PrimaryExpr  */
-  YYSYMBOL_LVal = 74,                      /* LVal  */
-  YYSYMBOL_UnaryOp = 75,                   /* UnaryOp  */
-  YYSYMBOL_Number = 76                     /* Number  */
+  YYSYMBOL_FuncFParamList = 44,            /* FuncFParamList  */
+  YYSYMBOL_FuncFParam = 45,                /* FuncFParam  */
+  YYSYMBOL_FuncType = 46,                  /* FuncType  */
+  YYSYMBOL_Block = 47,                     /* Block  */
+  YYSYMBOL_BlockItemList = 48,             /* BlockItemList  */
+  YYSYMBOL_BlockItem = 49,                 /* BlockItem  */
+  YYSYMBOL_Decl = 50,                      /* Decl  */
+  YYSYMBOL_ConstDecl = 51,                 /* ConstDecl  */
+  YYSYMBOL_ConstDefList = 52,              /* ConstDefList  */
+  YYSYMBOL_ConstDef = 53,                  /* ConstDef  */
+  YYSYMBOL_ArrayExpList = 54,              /* ArrayExpList  */
+  YYSYMBOL_InitValList = 55,               /* InitValList  */
+  YYSYMBOL_InitVal = 56,                   /* InitVal  */
+  YYSYMBOL_VarDecl = 57,                   /* VarDecl  */
+  YYSYMBOL_VarDefList = 58,                /* VarDefList  */
+  YYSYMBOL_VarDef = 59,                    /* VarDef  */
+  YYSYMBOL_Identifier = 60,                /* Identifier  */
+  YYSYMBOL_Stmt = 61,                      /* Stmt  */
+  YYSYMBOL_Expr = 62,                      /* Expr  */
+  YYSYMBOL_AddExpr = 63,                   /* AddExpr  */
+  YYSYMBOL_RelExpr = 64,                   /* RelExpr  */
+  YYSYMBOL_EqExpr = 65,                    /* EqExpr  */
+  YYSYMBOL_AndExpr = 66,                   /* AndExpr  */
+  YYSYMBOL_OrExpr = 67,                    /* OrExpr  */
+  YYSYMBOL_MulExpr = 68,                   /* MulExpr  */
+  YYSYMBOL_UnaryExp = 69,                  /* UnaryExp  */
+  YYSYMBOL_FuncRParamList = 70,            /* FuncRParamList  */
+  YYSYMBOL_PrimaryExpr = 71,               /* PrimaryExpr  */
+  YYSYMBOL_LVal = 72,                      /* LVal  */
+  YYSYMBOL_UnaryOp = 73,                   /* UnaryOp  */
+  YYSYMBOL_Number = 74                     /* Number  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -513,16 +511,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   203
+#define YYLAST   224
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  39
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  38
+#define YYNNTS  36
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  88
+#define YYNRULES  89
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  156
+#define YYNSTATES  158
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   278
@@ -544,14 +542,14 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,    38,     2,     2,     2,    37,     2,     2,
       23,    24,    35,    33,    25,    34,     2,    36,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    28,
-       2,    29,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    30,
+       2,    31,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    30,     2,    31,     2,     2,     2,     2,     2,     2,
+       2,    26,     2,    27,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    26,     2,    27,     2,     2,     2,     2,
+       2,     2,     2,    28,     2,    29,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -573,15 +571,15 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    69,    69,    83,    87,    94,    97,   114,   122,   132,
-     139,   143,   150,   162,   167,   175,   184,   188,   194,   199,
-     208,   213,   220,   228,   232,   238,   245,   253,   257,   263,
-     268,   269,   276,   280,   288,   296,   300,   307,   312,   318,
-     325,   336,   343,   349,   354,   360,   365,   371,   378,   387,
-     397,   406,   411,   419,   427,   430,   433,   438,   441,   444,
-     447,   450,   455,   458,   461,   466,   469,   475,   478,   483,
-     486,   489,   492,   499,   505,   512,   518,   528,   535,   539,
-     546,   552,   558,   567,   572,   582,   587,   592,   600
+       0,    70,    70,    84,    88,    95,    98,   115,   123,   134,
+     138,   145,   152,   159,   167,   181,   186,   194,   202,   206,
+     212,   217,   226,   231,   238,   246,   250,   256,   263,   271,
+     275,   281,   286,   290,   297,   301,   309,   317,   321,   328,
+     333,   339,   345,   355,   362,   368,   373,   379,   384,   390,
+     397,   406,   416,   425,   430,   438,   446,   449,   452,   457,
+     460,   463,   466,   469,   474,   477,   480,   485,   488,   494,
+     497,   502,   505,   508,   511,   518,   524,   531,   537,   548,
+     552,   559,   565,   571,   580,   585,   595,   600,   605,   613
 };
 #endif
 
@@ -600,15 +598,15 @@ static const char *const yytname[] =
   "\"end of file\"", "error", "\"invalid token\"", "RETURN", "IDENT",
   "LT", "GT", "EQ", "AND", "OR", "NE", "LE", "GE", "CONST", "INT", "IF",
   "ELSE", "WHILE", "BREAK", "CONTINUE", "VOID", "INT_CONST",
-  "LOWER_THAN_ELSE", "'('", "')'", "','", "'{'", "'}'", "';'", "'='",
-  "'['", "']'", "\",\"", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'",
+  "LOWER_THAN_ELSE", "'('", "')'", "','", "'['", "']'", "'{'", "'}'",
+  "';'", "'='", "\",\"", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'",
   "$accept", "TranslationUnitAst", "CompUnit", "CompUnitItem", "FuncDef",
-  "FuncFParams", "FuncFParamUp", "FuncFParamDef", "FuncType", "Block",
-  "BlockItemUp", "BlockItem", "Decl", "ConstDecl", "ConstDefUp",
-  "ConstDef", "ArrayExpList", "InitValList", "InitVal", "VarDecl",
-  "VarDefUp", "VarDef", "Identifier", "Stmt", "Expr", "AddExpr", "RelExpr",
-  "EqExpr", "AndExpr", "OrExpr", "MulExpr", "UnaryExp", "FuncRParams",
-  "FuncRParamUp", "PrimaryExpr", "LVal", "UnaryOp", "Number", YY_NULLPTR
+  "FuncFParamList", "FuncFParam", "FuncType", "Block", "BlockItemList",
+  "BlockItem", "Decl", "ConstDecl", "ConstDefList", "ConstDef",
+  "ArrayExpList", "InitValList", "InitVal", "VarDecl", "VarDefList",
+  "VarDef", "Identifier", "Stmt", "Expr", "AddExpr", "RelExpr", "EqExpr",
+  "AndExpr", "OrExpr", "MulExpr", "UnaryExp", "FuncRParamList",
+  "PrimaryExpr", "LVal", "UnaryOp", "Number", YY_NULLPTR
 };
 
 static const char *
@@ -618,7 +616,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-138)
+#define YYPACT_NINF (-72)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -632,22 +630,22 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      57,    -3,  -138,  -138,    22,    57,  -138,  -138,    47,  -138,
-    -138,  -138,    47,  -138,  -138,  -138,     2,  -138,    66,     8,
-    -138,    52,  -138,    47,    -5,   144,   158,    89,    47,  -138,
-     144,    91,  -138,   107,    47,    30,    54,    58,  -138,  -138,
-     158,    71,  -138,  -138,  -138,  -138,   -15,  -138,   110,    20,
-      13,    79,    82,    75,  -138,  -138,  -138,   158,  -138,    72,
-     144,   158,  -138,  -138,   144,  -138,   112,  -138,    30,    92,
-      98,  -138,  -138,    19,   164,    83,   158,   158,   158,   158,
-     158,   158,   158,   158,   158,   158,   158,   158,   158,  -138,
-    -138,  -138,   103,  -138,    24,   116,   124,   121,   126,  -138,
-      47,  -138,    46,  -138,  -138,  -138,   130,   131,  -138,  -138,
-    -138,   144,  -138,  -138,  -138,   139,   150,    75,    75,   110,
-     110,   110,   110,    20,    20,    13,    79,  -138,  -138,  -138,
-    -138,  -138,   141,   158,   158,  -138,  -138,  -138,  -138,  -138,
-     158,  -138,  -138,   158,  -138,   156,   159,   161,  -138,   138,
-     138,  -138,   168,  -138,   138,  -138
+      11,    -5,   -72,   -72,    58,    11,   -72,   -72,    25,   -72,
+     -72,   -72,    25,   -72,   -72,   -72,   -11,   -72,   -13,    31,
+     -72,    20,   -72,    25,    -8,    91,    29,    48,    25,   -72,
+      29,    62,   -72,    63,    43,    53,   -72,    25,   -72,    91,
+     -72,   -72,   -72,    -6,    38,    77,    32,    92,    89,    98,
+     187,   -72,   -72,   -72,    91,   -72,    26,   -72,   -72,    91,
+      29,   -72,   -72,    29,   141,   -72,    43,    -5,    75,   104,
+      49,    87,   -72,    91,    91,    91,    91,    91,    91,    91,
+      91,    91,    91,    91,    91,    91,   -72,   -72,   -72,    61,
+     108,   -72,   -72,   169,   107,   118,   113,   116,   -72,    25,
+     -72,   119,   -72,   -72,   -72,   120,   132,   -72,   -72,   183,
+      87,   -72,   -72,   -72,    95,   187,   187,    77,    77,    77,
+      77,    32,    32,    92,    89,   -72,   -72,   -72,    29,   -72,
+     -72,   -72,   121,    91,    91,   -72,   -72,   -72,   -72,   -72,
+      91,   139,   -72,    91,   -72,   -72,   144,   146,   142,    87,
+     -72,   163,   163,   -72,   167,   -72,   163,   -72
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -655,40 +653,40 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,    13,    14,     0,     2,     3,     5,     0,     6,
-      20,    21,     0,     1,     4,    41,     0,    35,    37,     0,
-      23,     0,    34,     0,     0,     0,     0,    38,     0,    22,
-       0,     0,    36,    37,     0,     0,     0,     9,    10,    88,
-       0,     0,    85,    86,    87,    39,    83,    29,    57,    62,
-      65,    67,    53,    54,    69,    73,    82,     0,    81,     0,
-       0,     0,    24,    26,     0,    12,     0,     8,     0,     0,
-       0,    30,    32,     0,     0,    84,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    74,
-      27,    40,     0,    25,     0,     0,     0,     0,     0,    45,
-       0,    46,     0,    16,    19,    18,     0,    82,     7,    11,
-      80,     0,    31,    75,    78,     0,    77,    55,    56,    58,
-      59,    60,    61,    63,    64,    66,    68,    70,    71,    72,
-      28,    43,     0,     0,     0,    51,    52,    15,    17,    44,
-       0,    33,    76,     0,    42,     0,     0,     0,    79,     0,
-       0,    47,    48,    50,     0,    49
+       0,     0,    15,    16,     0,     2,     3,     5,     0,     6,
+      22,    23,     0,     1,     4,    43,     0,    37,    39,     0,
+      25,     0,    36,     0,     0,     0,     0,    40,     0,    24,
+       0,     0,    38,    39,     0,     0,     9,     0,    89,     0,
+      86,    87,    88,    84,     0,    59,    64,    67,    69,    55,
+      56,    71,    75,    83,     0,    82,     0,    41,    31,     0,
+       0,    26,    28,     0,     0,     8,     0,     0,    11,     0,
+       0,    85,    29,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    76,    32,    34,     0,
+       0,    42,    27,     0,     0,     0,     0,     0,    47,     0,
+      48,     0,    18,    21,    20,     0,    83,     7,    10,     0,
+      14,    81,    77,    79,     0,    57,    58,    60,    61,    62,
+      63,    65,    66,    68,    70,    72,    73,    74,     0,    33,
+      30,    45,     0,     0,     0,    53,    54,    17,    19,    46,
+       0,    12,    78,     0,    35,    44,     0,     0,     0,    13,
+      80,     0,     0,    49,    50,    52,     0,    51
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -138,  -138,  -138,   181,  -138,  -138,  -138,   125,   -63,   -25,
-    -138,    88,   -60,  -138,  -138,   165,   -17,   -23,  -138,  -138,
-    -138,   172,    -7,  -137,   -26,    21,    69,   115,   118,  -138,
-      97,   -33,  -138,  -138,  -138,   -64,  -138,  -138
+     -72,   -72,   -72,   180,   -72,   -72,   122,     2,   -26,   -72,
+      93,   -59,   -72,   -72,   160,   -20,   -28,   -72,   -72,   -72,
+     172,    -1,   -71,   -25,   136,    37,   117,   123,   -72,   103,
+      21,   -72,   -72,   -60,   -72,   -72
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,     6,     7,    36,    37,    38,     8,   101,
-     102,   103,     9,    10,    19,    20,    27,    45,    73,    11,
-      16,    17,    46,   105,    47,    48,    49,    50,    51,    52,
-      53,    54,   115,   116,    55,    56,    57,    58
+       0,     4,     5,     6,     7,    35,    36,     8,   100,   101,
+     102,     9,    10,    19,    20,    27,    57,    89,    11,    16,
+      17,    43,   104,    58,    45,    46,    47,    48,    49,    50,
+      51,   114,    52,    53,    54,    55
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -696,102 +694,106 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      59,    18,   107,   100,    31,    21,   104,    63,    74,    34,
-      67,    12,   152,   153,    70,    26,    33,   155,    72,    35,
-      82,    21,    13,    83,    89,    78,    79,    65,    15,    75,
-      22,    80,    81,    28,    23,    92,    29,    91,   107,   100,
-     106,    93,   104,   108,   111,    39,   112,    40,   114,    94,
-      15,    15,   131,   127,   128,   129,    66,    42,    43,     1,
-       2,    95,    44,    96,    97,    98,     3,    39,   132,    40,
-       1,     2,    66,   137,    99,    15,   106,     3,    68,    42,
-      43,    30,    26,    69,    44,   107,   107,    84,   141,    24,
-     107,    85,    39,    33,    40,    25,    26,    41,    71,   119,
-     120,   121,   122,    90,    42,    43,    34,   145,   146,    44,
-      86,    87,    88,    61,   147,    94,    15,   148,    60,    61,
-      64,    61,   110,   106,   106,     1,     2,    95,   106,    96,
-      97,    98,     3,    39,   130,    40,    25,    26,    66,   133,
-      99,    94,    15,    76,    77,    42,    43,   134,    15,   135,
-      44,   123,   124,    95,   136,    96,    97,    98,   139,    39,
-     140,    40,    15,   142,    66,    39,    99,    40,    15,   144,
-      41,    42,    43,   117,   118,   143,    44,    42,    43,    39,
-     149,    40,    44,   150,   154,    39,    14,    40,   113,   151,
-     138,    42,    43,    62,   109,    32,    44,    42,    43,   125,
-       0,     0,    44,   126
+      44,    31,    62,    12,   106,   103,     2,    18,    65,     2,
+      24,    21,     3,    25,    69,     3,    34,    70,    26,    22,
+      25,    23,    33,    71,     1,     2,    37,    21,    88,    15,
+      15,     3,    91,    15,    90,    92,    68,    75,    76,   105,
+     107,   106,   103,    77,    78,   113,    25,    38,   110,    39,
+      38,    30,    39,    15,    56,    87,    28,    56,    13,    40,
+      41,    29,    40,    41,    42,    72,    99,    42,   132,    37,
+      38,    64,    39,   112,    59,    86,   105,    66,    67,    60,
+     154,   155,    40,    41,    44,   157,   128,    42,    59,    25,
+     129,   106,   106,    63,    26,    15,   106,    81,    33,    79,
+     144,   109,    80,    99,   125,   126,   127,    82,   146,   147,
+      73,    74,    38,    59,    39,   148,   121,   122,   150,   142,
+     143,   149,    93,    15,    40,    41,   105,   105,   111,    42,
+     133,   105,     1,     2,    94,   130,    95,    96,    97,     3,
+      38,   134,    39,   135,    93,    15,   136,    64,   137,    98,
+     139,   145,    40,    41,     1,     2,    94,    42,    95,    96,
+      97,     3,    38,   140,    39,    25,    93,    15,   151,    64,
+     152,    98,   153,    15,    40,    41,   115,   116,    94,    42,
+      95,    96,    97,   156,    38,    14,    39,    15,    61,   108,
+      38,    64,    39,    98,   138,    32,    40,    41,   123,   131,
+       0,    42,    40,    41,    38,   124,    39,    42,     0,     0,
+     141,   117,   118,   119,   120,     0,    40,    41,     0,     0,
+       0,    42,    83,    84,    85
 };
 
 static const yytype_int16 yycheck[] =
 {
-      26,     8,    66,    66,    21,    12,    66,    30,    23,    14,
-      35,    14,   149,   150,    40,    30,    23,   154,    41,    24,
-       7,    28,     0,    10,    57,     5,     6,    34,     4,    46,
-      28,    11,    12,    25,    32,    61,    28,    60,   102,   102,
-      66,    64,   102,    68,    25,    21,    27,    23,    74,     3,
-       4,     4,    28,    86,    87,    88,    26,    33,    34,    13,
-      14,    15,    38,    17,    18,    19,    20,    21,    94,    23,
-      13,    14,    26,    27,    28,     4,   102,    20,    24,    33,
-      34,    29,    30,    25,    38,   149,   150,     8,   111,    23,
-     154,     9,    21,   100,    23,    29,    30,    26,    27,    78,
-      79,    80,    81,    31,    33,    34,    14,   133,   134,    38,
-      35,    36,    37,    30,   140,     3,     4,   143,    29,    30,
-      29,    30,    24,   149,   150,    13,    14,    15,   154,    17,
-      18,    19,    20,    21,    31,    23,    29,    30,    26,    23,
-      28,     3,     4,    33,    34,    33,    34,    23,     4,    28,
-      38,    82,    83,    15,    28,    17,    18,    19,    28,    21,
-      29,    23,     4,    24,    26,    21,    28,    23,     4,    28,
-      26,    33,    34,    76,    77,    25,    38,    33,    34,    21,
-      24,    23,    38,    24,    16,    21,     5,    23,    24,    28,
-     102,    33,    34,    28,    69,    23,    38,    33,    34,    84,
-      -1,    -1,    38,    85
+      25,    21,    30,     1,    64,    64,    14,     8,    34,    14,
+      23,    12,    20,    26,    39,    20,    24,    23,    31,    30,
+      26,    32,    23,    43,    13,    14,    24,    28,    56,     4,
+       4,    20,    60,     4,    59,    63,    37,     5,     6,    64,
+      66,   101,   101,    11,    12,    70,    26,    21,    68,    23,
+      21,    31,    23,     4,    28,    29,    25,    28,     0,    33,
+      34,    30,    33,    34,    38,    27,    64,    38,    93,    67,
+      21,    28,    23,    24,    26,    54,   101,    24,    25,    31,
+     151,   152,    33,    34,   109,   156,    25,    38,    26,    26,
+      29,   151,   152,    31,    31,     4,   156,     8,    99,     7,
+     128,    26,    10,   101,    83,    84,    85,     9,   133,   134,
+      33,    34,    21,    26,    23,   140,    79,    80,   143,    24,
+      25,   141,     3,     4,    33,    34,   151,   152,    24,    38,
+      23,   156,    13,    14,    15,    27,    17,    18,    19,    20,
+      21,    23,    23,    30,     3,     4,    30,    28,    29,    30,
+      30,    30,    33,    34,    13,    14,    15,    38,    17,    18,
+      19,    20,    21,    31,    23,    26,     3,     4,    24,    28,
+      24,    30,    30,     4,    33,    34,    73,    74,    15,    38,
+      17,    18,    19,    16,    21,     5,    23,     4,    28,    67,
+      21,    28,    23,    30,   101,    23,    33,    34,    81,    30,
+      -1,    38,    33,    34,    21,    82,    23,    38,    -1,    -1,
+      27,    75,    76,    77,    78,    -1,    33,    34,    -1,    -1,
+      -1,    38,    35,    36,    37
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    13,    14,    20,    40,    41,    42,    43,    47,    51,
-      52,    58,    14,     0,    42,     4,    59,    60,    61,    53,
-      54,    61,    28,    32,    23,    29,    30,    55,    25,    28,
-      29,    55,    60,    61,    14,    24,    44,    45,    46,    21,
-      23,    26,    33,    34,    38,    56,    61,    63,    64,    65,
-      66,    67,    68,    69,    70,    73,    74,    75,    76,    63,
-      29,    30,    54,    56,    29,    61,    26,    48,    24,    25,
-      63,    27,    56,    57,    23,    55,    33,    34,     5,     6,
-      11,    12,     7,    10,     8,     9,    35,    36,    37,    70,
-      31,    56,    63,    56,     3,    15,    17,    18,    19,    28,
-      47,    48,    49,    50,    51,    62,    63,    74,    48,    46,
-      24,    25,    27,    24,    63,    71,    72,    69,    69,    64,
-      64,    64,    64,    65,    65,    66,    67,    70,    70,    70,
-      31,    28,    63,    23,    23,    28,    28,    27,    50,    28,
-      29,    56,    24,    25,    28,    63,    63,    63,    63,    24,
-      24,    28,    62,    62,    16,    62
+       0,    13,    14,    20,    40,    41,    42,    43,    46,    50,
+      51,    57,    46,     0,    42,     4,    58,    59,    60,    52,
+      53,    60,    30,    32,    23,    26,    31,    54,    25,    30,
+      31,    54,    59,    60,    24,    44,    45,    46,    21,    23,
+      33,    34,    38,    60,    62,    63,    64,    65,    66,    67,
+      68,    69,    71,    72,    73,    74,    28,    55,    62,    26,
+      31,    53,    55,    31,    28,    47,    24,    25,    60,    62,
+      23,    54,    27,    33,    34,     5,     6,    11,    12,     7,
+      10,     8,     9,    35,    36,    37,    69,    29,    55,    56,
+      62,    55,    55,     3,    15,    17,    18,    19,    30,    46,
+      47,    48,    49,    50,    61,    62,    72,    47,    45,    26,
+      54,    24,    24,    62,    70,    68,    68,    63,    63,    63,
+      63,    64,    64,    65,    66,    69,    69,    69,    25,    29,
+      27,    30,    62,    23,    23,    30,    30,    29,    49,    30,
+      31,    27,    24,    25,    55,    30,    62,    62,    62,    54,
+      62,    24,    24,    30,    61,    61,    16,    61
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    39,    40,    41,    41,    42,    42,    43,    43,    44,
-      45,    45,    46,    47,    47,    48,    49,    49,    50,    50,
-      51,    51,    52,    53,    53,    54,    54,    55,    55,    56,
-      56,    56,    57,    57,    58,    59,    59,    60,    60,    60,
-      60,    61,    62,    62,    62,    62,    62,    62,    62,    62,
-      62,    62,    62,    63,    64,    64,    64,    65,    65,    65,
-      65,    65,    66,    66,    66,    67,    67,    68,    68,    69,
-      69,    69,    69,    70,    70,    70,    70,    71,    72,    72,
-      73,    73,    73,    74,    74,    75,    75,    75,    76
+      44,    45,    45,    45,    45,    46,    46,    47,    48,    48,
+      49,    49,    50,    50,    51,    52,    52,    53,    53,    54,
+      54,    55,    55,    55,    56,    56,    57,    58,    58,    59,
+      59,    59,    59,    60,    61,    61,    61,    61,    61,    61,
+      61,    61,    61,    61,    61,    62,    63,    63,    63,    64,
+      64,    64,    64,    64,    65,    65,    65,    66,    66,    67,
+      67,    68,    68,    68,    68,    69,    69,    69,    69,    70,
+      70,    71,    71,    71,    72,    72,    73,    73,    73,    74
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     2,     1,     1,     6,     5,     1,
-       1,     3,     2,     1,     1,     3,     1,     2,     1,     1,
-       1,     1,     4,     1,     3,     4,     3,     3,     4,     1,
-       2,     3,     1,     3,     3,     1,     3,     1,     2,     3,
-       4,     1,     3,     2,     2,     1,     1,     4,     5,     7,
-       5,     2,     2,     1,     1,     3,     3,     1,     3,     3,
-       3,     3,     1,     3,     3,     1,     3,     1,     3,     1,
-       3,     3,     3,     1,     2,     3,     4,     1,     1,     3,
-       3,     1,     1,     1,     2,     1,     1,     1,     1
+       3,     2,     4,     5,     3,     1,     1,     3,     1,     2,
+       1,     1,     1,     1,     4,     1,     3,     4,     3,     3,
+       4,     1,     2,     3,     1,     3,     3,     1,     3,     1,
+       2,     3,     4,     1,     3,     2,     2,     1,     1,     4,
+       5,     7,     5,     2,     2,     1,     1,     3,     3,     1,
+       3,     3,     3,     3,     1,     3,     3,     1,     3,     1,
+       3,     1,     3,     3,     3,     1,     2,     3,     4,     1,
+       3,     3,     1,     1,     1,     2,     1,     1,     1,     1
 };
 
 
@@ -1257,64 +1259,64 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* TranslationUnitAst: CompUnit  */
-#line 69 "/home/godcc/frontend/sysy.y"
+#line 70 "/home/godcc/frontend/sysy.y"
          {
   auto trans  = new TranslationUnitAst();
   trans->comp_unit = shared_ptr<Ast>((yyvsp[0].ast_val));
   ast = shared_ptr<Ast>(trans);
  }
-#line 1267 "/home/godcc/frontend/parser.cpp"
+#line 1269 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 3: /* CompUnit: CompUnitItem  */
-#line 83 "/home/godcc/frontend/sysy.y"
+#line 84 "/home/godcc/frontend/sysy.y"
              {
     auto compUnit = new CompUnitAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
     (yyval.ast_val) = compUnit;
 }
-#line 1276 "/home/godcc/frontend/parser.cpp"
+#line 1278 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 4: /* CompUnit: CompUnit CompUnitItem  */
-#line 87 "/home/godcc/frontend/sysy.y"
+#line 88 "/home/godcc/frontend/sysy.y"
                       {
 	auto compUnit = new CompUnitAst(shared_ptr<Ast>((yyvsp[-1].ast_val)), shared_ptr<Ast>((yyvsp[0].ast_val)));
 	(yyval.ast_val) = compUnit;
 }
-#line 1285 "/home/godcc/frontend/parser.cpp"
+#line 1287 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 5: /* CompUnitItem: FuncDef  */
-#line 94 "/home/godcc/frontend/sysy.y"
+#line 95 "/home/godcc/frontend/sysy.y"
         {
  	(yyval.ast_val) = (yyvsp[0].ast_val);
 }
-#line 1293 "/home/godcc/frontend/parser.cpp"
+#line 1295 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 6: /* CompUnitItem: Decl  */
-#line 97 "/home/godcc/frontend/sysy.y"
+#line 98 "/home/godcc/frontend/sysy.y"
      {
 	(yyval.ast_val) = (yyvsp[0].ast_val);
 }
-#line 1301 "/home/godcc/frontend/parser.cpp"
+#line 1303 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 7: /* FuncDef: FuncType Identifier '(' FuncFParams ')' Block  */
-#line 114 "/home/godcc/frontend/sysy.y"
-                                                  {
+  case 7: /* FuncDef: FuncType Identifier '(' FuncFParamList ')' Block  */
+#line 115 "/home/godcc/frontend/sysy.y"
+                                                     {
   	auto funcDef = new FuncDefAst();
 	funcDef->funcType = shared_ptr<Ast>((yyvsp[-5].ast_val));
 	funcDef->ident = shared_ptr<Ast>((yyvsp[-4].ast_val));
-	funcDef->funcParam = shared_ptr<Ast>((yyvsp[-2].ast_val));
+	funcDef->funcParamList = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	funcDef->block = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = funcDef;
   }
-#line 1314 "/home/godcc/frontend/parser.cpp"
+#line 1316 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 8: /* FuncDef: FuncType Identifier '(' ')' Block  */
-#line 122 "/home/godcc/frontend/sysy.y"
+#line 123 "/home/godcc/frontend/sysy.y"
                                        {
      	auto funcDef = new FuncDefAst();
    	funcDef->funcType = shared_ptr<Ast>((yyvsp[-4].ast_val));
@@ -1322,169 +1324,196 @@ yyreduce:
    	funcDef->block = shared_ptr<Ast>((yyvsp[0].ast_val));
    	(yyval.ast_val) = funcDef;
      }
-#line 1326 "/home/godcc/frontend/parser.cpp"
+#line 1328 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 9: /* FuncFParams: FuncFParamUp  */
-#line 132 "/home/godcc/frontend/sysy.y"
-             {
-	auto funcFP = new FuncFParamAst();
-	funcFP->params = FuncFParamAst::GetParamsFromFuncFParaUp(dynamic_cast<FuncFParamUpAst*>(shared_ptr<Ast>((yyvsp[0].ast_val)).get()));
-	(yyval.ast_val) = funcFP;
+  case 9: /* FuncFParamList: FuncFParam  */
+#line 134 "/home/godcc/frontend/sysy.y"
+            {
+	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = func_fpl;
 }
-#line 1336 "/home/godcc/frontend/parser.cpp"
+#line 1337 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 10: /* FuncFParamUp: FuncFParamDef  */
-#line 139 "/home/godcc/frontend/sysy.y"
-               {
-	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = funcFPUp;
+  case 10: /* FuncFParamList: FuncFParamList ',' FuncFParam  */
+#line 138 "/home/godcc/frontend/sysy.y"
+                              {
+	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = func_fpl;
 }
-#line 1345 "/home/godcc/frontend/parser.cpp"
+#line 1346 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 11: /* FuncFParamUp: FuncFParamUp ',' FuncFParamDef  */
-#line 143 "/home/godcc/frontend/sysy.y"
-                               {
-	auto funcFPUp = new FuncFParamUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = funcFPUp;
-}
-#line 1354 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 12: /* FuncFParamDef: INT Identifier  */
-#line 150 "/home/godcc/frontend/sysy.y"
-                {
-	auto funcParaDef = new FuncFParamDefAst();
-	funcParaDef->type = *((yyvsp[-1].str_val));
+  case 11: /* FuncFParam: FuncType Identifier  */
+#line 145 "/home/godcc/frontend/sysy.y"
+                     {
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	funcParaDef->ident = shared_ptr<Ast>((yyvsp[0].ast_val));
+	funcParaDef->first_no_dim = false;
 	(yyval.ast_val) = funcParaDef;
-
 }
-#line 1366 "/home/godcc/frontend/parser.cpp"
+#line 1358 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 13: /* FuncType: INT  */
-#line 162 "/home/godcc/frontend/sysy.y"
+  case 12: /* FuncFParam: FuncType Identifier '[' ']'  */
+#line 152 "/home/godcc/frontend/sysy.y"
+                             {
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>((yyvsp[-3].ast_val));
+	funcParaDef->ident = shared_ptr<Ast>((yyvsp[-2].ast_val));
+	funcParaDef->first_no_dim = true;
+	(yyval.ast_val) = funcParaDef;
+}
+#line 1370 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 13: /* FuncFParam: FuncType Identifier '[' ']' ArrayExpList  */
+#line 159 "/home/godcc/frontend/sysy.y"
+                                         {
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>((yyvsp[-4].ast_val));
+	funcParaDef->ident = shared_ptr<Ast>((yyvsp[-3].ast_val));
+	funcParaDef->first_no_dim = true;
+	funcParaDef->array_expr_list = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = funcParaDef;
+}
+#line 1383 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 14: /* FuncFParam: FuncType Identifier ArrayExpList  */
+#line 167 "/home/godcc/frontend/sysy.y"
+                                  {
+	auto funcParaDef = new FuncFParamAst();
+	funcParaDef->funcType = shared_ptr<Ast>((yyvsp[-2].ast_val));
+	funcParaDef->ident = shared_ptr<Ast>((yyvsp[-1].ast_val));
+	funcParaDef->first_no_dim = false;
+	funcParaDef->array_expr_list = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = funcParaDef;
+}
+#line 1396 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 15: /* FuncType: INT  */
+#line 181 "/home/godcc/frontend/sysy.y"
       {
     auto funcType = new FuncTypeAst();
-    funcType->type = string("int");
+    funcType->type = "int";
     (yyval.ast_val) = funcType;
   }
-#line 1376 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 14: /* FuncType: VOID  */
-#line 167 "/home/godcc/frontend/sysy.y"
-      {
-	auto funcType = new FuncTypeAst();
-	funcType->type = string("void");
-	(yyval.ast_val) = funcType;
-}
-#line 1386 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 15: /* Block: '{' BlockItemUp '}'  */
-#line 175 "/home/godcc/frontend/sysy.y"
-                        {
-    auto block = new BlockAst();
-    auto blockItemUp = shared_ptr<Ast>((yyvsp[-1].ast_val));
-    block->blockItems = BlockAst::GetFromBlockItemUp(dynamic_cast<BlockUpAst*>(blockItemUp.get()));
-    (yyval.ast_val) = block;
-  }
-#line 1397 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 16: /* BlockItemUp: BlockItem  */
-#line 184 "/home/godcc/frontend/sysy.y"
-           {
-	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = blockItemUp;
- }
 #line 1406 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 17: /* BlockItemUp: BlockItemUp BlockItem  */
-#line 188 "/home/godcc/frontend/sysy.y"
-                       {
-	auto blockItemUp = new BlockUpAst(shared_ptr<Ast>((yyvsp[-1].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = blockItemUp;
+  case 16: /* FuncType: VOID  */
+#line 186 "/home/godcc/frontend/sysy.y"
+      {
+	auto funcType = new FuncTypeAst();
+	funcType->type = "void";
+	(yyval.ast_val) = funcType;
 }
-#line 1415 "/home/godcc/frontend/parser.cpp"
+#line 1416 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 18: /* BlockItem: Stmt  */
+  case 17: /* Block: '{' BlockItemList '}'  */
 #line 194 "/home/godcc/frontend/sysy.y"
-     {
-	auto blockItem = new BlockItemAst();
-	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
-	(yyval.ast_val) = blockItem;
-}
-#line 1425 "/home/godcc/frontend/parser.cpp"
+                          {
+	auto block = new BlockAst();
+	block-> block_item_list= shared_ptr<Ast>((yyvsp[-1].ast_val));
+	(yyval.ast_val) = block;
+  }
+#line 1426 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 19: /* BlockItem: Decl  */
-#line 199 "/home/godcc/frontend/sysy.y"
-     {
-	auto blockItem = new BlockItemAst();
-	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
-	(yyval.ast_val) = blockItem;
-}
+  case 18: /* BlockItemList: BlockItem  */
+#line 202 "/home/godcc/frontend/sysy.y"
+           {
+	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = blockItemUp;
+ }
 #line 1435 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 20: /* Decl: ConstDecl  */
-#line 208 "/home/godcc/frontend/sysy.y"
+  case 19: /* BlockItemList: BlockItemList BlockItem  */
+#line 206 "/home/godcc/frontend/sysy.y"
+                         {
+	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>((yyvsp[-1].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = blockItemUp;
+}
+#line 1444 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 20: /* BlockItem: Stmt  */
+#line 212 "/home/godcc/frontend/sysy.y"
+     {
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = blockItem;
+}
+#line 1454 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 21: /* BlockItem: Decl  */
+#line 217 "/home/godcc/frontend/sysy.y"
+     {
+	auto blockItem = new BlockItemAst();
+	blockItem->item = shared_ptr<Ast>((yyvsp[0].ast_val));
+	(yyval.ast_val) = blockItem;
+}
+#line 1464 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 22: /* Decl: ConstDecl  */
+#line 226 "/home/godcc/frontend/sysy.y"
           {
 	auto decl = new DeclAst();
 	decl->decl = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = decl;
 }
-#line 1445 "/home/godcc/frontend/parser.cpp"
+#line 1474 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 21: /* Decl: VarDecl  */
-#line 213 "/home/godcc/frontend/sysy.y"
+  case 23: /* Decl: VarDecl  */
+#line 231 "/home/godcc/frontend/sysy.y"
         {
 	auto decl = new DeclAst();
 	decl->decl = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = decl;
 }
-#line 1455 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 22: /* ConstDecl: CONST INT ConstDefUp ';'  */
-#line 220 "/home/godcc/frontend/sysy.y"
-                         {
-	auto constDecl = new ConstDeclAst();
-	constDecl->constDefs=  ConstDeclAst::GetFromConstDefUpAst(dynamic_cast<ConstDefUpAst*>(shared_ptr<Ast>((yyvsp[-1].ast_val)).get()));
-	constDecl->dataType = *((yyvsp[-2].str_val));
-	(yyval.ast_val) = constDecl;
-}
-#line 1466 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 23: /* ConstDefUp: ConstDef  */
-#line 228 "/home/godcc/frontend/sysy.y"
-         {
-	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = constDeclUp;
-}
-#line 1475 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 24: /* ConstDefUp: ConstDefUp ',' ConstDef  */
-#line 232 "/home/godcc/frontend/sysy.y"
-                        {
-	auto constDeclUp = new ConstDefUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
-	(yyval.ast_val) = constDeclUp;
-}
 #line 1484 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 25: /* ConstDef: Identifier ArrayExpList '=' InitValList  */
+  case 24: /* ConstDecl: CONST FuncType ConstDefList ';'  */
 #line 238 "/home/godcc/frontend/sysy.y"
+                                {
+	auto constDecl = new ConstDeclAst();
+	constDecl->const_def_list= shared_ptr<Ast>((yyvsp[-1].ast_val));
+	constDecl->data_type = shared_ptr<Ast>((yyvsp[-2].ast_val));
+	(yyval.ast_val) = constDecl;
+}
+#line 1495 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 25: /* ConstDefList: ConstDef  */
+#line 246 "/home/godcc/frontend/sysy.y"
+         {
+	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = constDeclUp;
+}
+#line 1504 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 26: /* ConstDefList: ConstDefList ',' ConstDef  */
+#line 250 "/home/godcc/frontend/sysy.y"
+                          {
+	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+	(yyval.ast_val) = constDeclUp;
+}
+#line 1513 "/home/godcc/frontend/parser.cpp"
+    break;
+
+  case 27: /* ConstDef: Identifier ArrayExpList '=' InitValList  */
+#line 256 "/home/godcc/frontend/sysy.y"
                                         {
 	auto constDef = new ConstDefAst();
 	constDef->ident = shared_ptr<Ast>((yyvsp[-3].ast_val));
@@ -1492,234 +1521,235 @@ yyreduce:
 	constDef->const_val = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = constDef;
 }
-#line 1496 "/home/godcc/frontend/parser.cpp"
+#line 1525 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 26: /* ConstDef: Identifier '=' InitValList  */
-#line 245 "/home/godcc/frontend/sysy.y"
+  case 28: /* ConstDef: Identifier '=' InitValList  */
+#line 263 "/home/godcc/frontend/sysy.y"
                            {
 	auto constDef = new ConstDefAst();
 	constDef->ident = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	constDef->const_val = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = constDef;
 }
-#line 1507 "/home/godcc/frontend/parser.cpp"
+#line 1536 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 27: /* ArrayExpList: '[' Expr ']'  */
-#line 253 "/home/godcc/frontend/sysy.y"
+  case 29: /* ArrayExpList: '[' Expr ']'  */
+#line 271 "/home/godcc/frontend/sysy.y"
               {
  	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>((yyvsp[-1].ast_val)));
  	(yyval.ast_val) = array_expr;
 }
-#line 1516 "/home/godcc/frontend/parser.cpp"
+#line 1545 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 28: /* ArrayExpList: ArrayExpList '[' Expr ']'  */
-#line 257 "/home/godcc/frontend/sysy.y"
+  case 30: /* ArrayExpList: ArrayExpList '[' Expr ']'  */
+#line 275 "/home/godcc/frontend/sysy.y"
                            {
 	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>((yyvsp[-3].ast_val)),shared_ptr<Ast>((yyvsp[-1].ast_val)));
  	(yyval.ast_val) = array_expr;
 }
-#line 1525 "/home/godcc/frontend/parser.cpp"
+#line 1554 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 29: /* InitValList: Expr  */
-#line 263 "/home/godcc/frontend/sysy.y"
+  case 31: /* InitValList: Expr  */
+#line 281 "/home/godcc/frontend/sysy.y"
      {
 	auto init_val_list = new InitValListAst();
 	init_val_list->expr_init_val = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = init_val_list;
 }
-#line 1535 "/home/godcc/frontend/parser.cpp"
+#line 1564 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 30: /* InitValList: '{' '}'  */
-#line 268 "/home/godcc/frontend/sysy.y"
-         {}
-#line 1541 "/home/godcc/frontend/parser.cpp"
+  case 32: /* InitValList: '{' '}'  */
+#line 286 "/home/godcc/frontend/sysy.y"
+         {
+	auto init_val_list = new InitValListAst();
+	(yyval.ast_val) = init_val_list;
+}
+#line 1573 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 31: /* InitValList: '{' InitVal '}'  */
-#line 269 "/home/godcc/frontend/sysy.y"
+  case 33: /* InitValList: '{' InitVal '}'  */
+#line 290 "/home/godcc/frontend/sysy.y"
                 {
 	auto init_val_list = new InitValListAst();
 	init_val_list->expr_init_val = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	(yyval.ast_val) = init_val_list;
 }
-#line 1551 "/home/godcc/frontend/parser.cpp"
+#line 1583 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 32: /* InitVal: InitValList  */
-#line 276 "/home/godcc/frontend/sysy.y"
+  case 34: /* InitVal: InitValList  */
+#line 297 "/home/godcc/frontend/sysy.y"
             {
 	auto init_val = new InitValAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
 	(yyval.ast_val) = init_val;
 }
-#line 1560 "/home/godcc/frontend/parser.cpp"
+#line 1592 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 33: /* InitVal: InitVal ',' InitValList  */
-#line 280 "/home/godcc/frontend/sysy.y"
+  case 35: /* InitVal: InitVal ',' InitValList  */
+#line 301 "/home/godcc/frontend/sysy.y"
                         {
 	auto init_val = new InitValAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
 	(yyval.ast_val) = init_val;
 }
-#line 1569 "/home/godcc/frontend/parser.cpp"
+#line 1601 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 34: /* VarDecl: FuncType VarDefUp ';'  */
-#line 288 "/home/godcc/frontend/sysy.y"
-                      {
+  case 36: /* VarDecl: FuncType VarDefList ';'  */
+#line 309 "/home/godcc/frontend/sysy.y"
+                        {
 	auto varDecl = new VarDeclAst();
-	varDecl->varDefs=  VarDeclAst::GetFromVarDefUpAst(dynamic_cast<VarDefUpAst*>(shared_ptr<Ast>((yyvsp[-1].ast_val)).get()));
+	varDecl->var_def_list = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	varDecl->dataType =  shared_ptr<Ast>((yyvsp[-2].ast_val));
 	(yyval.ast_val) = varDecl;
 }
-#line 1580 "/home/godcc/frontend/parser.cpp"
+#line 1612 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 35: /* VarDefUp: VarDef  */
-#line 296 "/home/godcc/frontend/sysy.y"
+  case 37: /* VarDefList: VarDef  */
+#line 317 "/home/godcc/frontend/sysy.y"
        {
-	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
         (yyval.ast_val) = varDeclUp;
 }
-#line 1589 "/home/godcc/frontend/parser.cpp"
+#line 1621 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 36: /* VarDefUp: VarDefUp "," VarDef  */
-#line 300 "/home/godcc/frontend/sysy.y"
-                     {
-	auto varDeclUp = new VarDefUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+  case 38: /* VarDefList: VarDefList "," VarDef  */
+#line 321 "/home/godcc/frontend/sysy.y"
+                       {
+	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
         (yyval.ast_val) = varDeclUp;
 }
-#line 1598 "/home/godcc/frontend/parser.cpp"
+#line 1630 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 37: /* VarDef: Identifier  */
-#line 307 "/home/godcc/frontend/sysy.y"
+  case 39: /* VarDef: Identifier  */
+#line 328 "/home/godcc/frontend/sysy.y"
            {
 	auto varDef = new VarDefAst();
 	varDef->ident = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = varDef;
 }
-#line 1608 "/home/godcc/frontend/parser.cpp"
+#line 1640 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 38: /* VarDef: Identifier ArrayExpList  */
-#line 312 "/home/godcc/frontend/sysy.y"
+  case 40: /* VarDef: Identifier ArrayExpList  */
+#line 333 "/home/godcc/frontend/sysy.y"
                         {
 	auto varDef = new VarDefAst();
 	varDef->ident = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	varDef->array_expr_list = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = varDef;
 }
-#line 1619 "/home/godcc/frontend/parser.cpp"
+#line 1651 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 39: /* VarDef: Identifier '=' InitValList  */
-#line 318 "/home/godcc/frontend/sysy.y"
+  case 41: /* VarDef: Identifier '=' InitValList  */
+#line 339 "/home/godcc/frontend/sysy.y"
                            {
 	auto varDef = new VarDefAst();
 	varDef->ident =  shared_ptr<Ast>((yyvsp[-2].ast_val));
 	varDef->var_expr =  shared_ptr<Ast>((yyvsp[0].ast_val));
-	varDef->is_expr = true;
 	(yyval.ast_val) = varDef;
 }
-#line 1631 "/home/godcc/frontend/parser.cpp"
+#line 1662 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 40: /* VarDef: Identifier ArrayExpList '=' InitValList  */
-#line 325 "/home/godcc/frontend/sysy.y"
+  case 42: /* VarDef: Identifier ArrayExpList '=' InitValList  */
+#line 345 "/home/godcc/frontend/sysy.y"
                                         {
 	auto varDef = new VarDefAst();
 	varDef->ident =  shared_ptr<Ast>((yyvsp[-3].ast_val));
 	varDef->array_expr_list = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	varDef->var_expr =  shared_ptr<Ast>((yyvsp[0].ast_val));
-	varDef->is_expr = true;
 	(yyval.ast_val) = varDef;
 }
-#line 1644 "/home/godcc/frontend/parser.cpp"
+#line 1674 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 41: /* Identifier: IDENT  */
-#line 336 "/home/godcc/frontend/sysy.y"
+  case 43: /* Identifier: IDENT  */
+#line 355 "/home/godcc/frontend/sysy.y"
       {
 	auto identifier=  new IdentifierAst();
-	identifier->name = *((yyvsp[0].str_val));
+	identifier->name = ((yyvsp[0].str_val))->c_str();
 	(yyval.ast_val) = identifier;
 }
-#line 1654 "/home/godcc/frontend/parser.cpp"
+#line 1684 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 42: /* Stmt: RETURN Expr ';'  */
-#line 343 "/home/godcc/frontend/sysy.y"
+  case 44: /* Stmt: RETURN Expr ';'  */
+#line 362 "/home/godcc/frontend/sysy.y"
                   {
 	auto stmt = new StmtAst();
 	stmt->expr = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	stmt->type = StmtType::kReturn;
 	(yyval.ast_val) = stmt;
 }
-#line 1665 "/home/godcc/frontend/parser.cpp"
+#line 1695 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 43: /* Stmt: RETURN ';'  */
-#line 349 "/home/godcc/frontend/sysy.y"
+  case 45: /* Stmt: RETURN ';'  */
+#line 368 "/home/godcc/frontend/sysy.y"
             {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kReturn;
 	(yyval.ast_val) = stmt;
 }
-#line 1675 "/home/godcc/frontend/parser.cpp"
+#line 1705 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 44: /* Stmt: Expr ';'  */
-#line 354 "/home/godcc/frontend/sysy.y"
+  case 46: /* Stmt: Expr ';'  */
+#line 373 "/home/godcc/frontend/sysy.y"
          {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kExpr;
 	stmt->expr = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	(yyval.ast_val) = stmt;
 }
-#line 1686 "/home/godcc/frontend/parser.cpp"
+#line 1716 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 45: /* Stmt: ';'  */
-#line 360 "/home/godcc/frontend/sysy.y"
+  case 47: /* Stmt: ';'  */
+#line 379 "/home/godcc/frontend/sysy.y"
     {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kExpr;
 	(yyval.ast_val) = stmt;
 }
-#line 1696 "/home/godcc/frontend/parser.cpp"
+#line 1726 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 46: /* Stmt: Block  */
-#line 365 "/home/godcc/frontend/sysy.y"
+  case 48: /* Stmt: Block  */
+#line 384 "/home/godcc/frontend/sysy.y"
       {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kBlock;
 	stmt->expr = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = stmt;
 }
-#line 1707 "/home/godcc/frontend/parser.cpp"
+#line 1737 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 47: /* Stmt: LVal '=' Expr ';'  */
-#line 371 "/home/godcc/frontend/sysy.y"
+  case 49: /* Stmt: LVal '=' Expr ';'  */
+#line 390 "/home/godcc/frontend/sysy.y"
                    {
 	auto stmt = new StmtAst();
     	stmt->expr = shared_ptr<Ast>((yyvsp[-1].ast_val));
     	stmt->l_val =  shared_ptr<Ast>((yyvsp[-3].ast_val));
-    	stmt->type = StmtType::kDecl;
+    	stmt->type = StmtType::kAssign;
     	(yyval.ast_val) = stmt;
  }
-#line 1719 "/home/godcc/frontend/parser.cpp"
+#line 1749 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 48: /* Stmt: IF '(' Expr ')' Stmt  */
-#line 378 "/home/godcc/frontend/sysy.y"
+  case 50: /* Stmt: IF '(' Expr ')' Stmt  */
+#line 397 "/home/godcc/frontend/sysy.y"
                                            {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kIf;
@@ -1729,11 +1759,11 @@ yyreduce:
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
 	(yyval.ast_val) = stmt;
 }
-#line 1733 "/home/godcc/frontend/parser.cpp"
+#line 1763 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 49: /* Stmt: IF '(' Expr ')' Stmt ELSE Stmt  */
-#line 387 "/home/godcc/frontend/sysy.y"
+  case 51: /* Stmt: IF '(' Expr ')' Stmt ELSE Stmt  */
+#line 406 "/home/godcc/frontend/sysy.y"
                                {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kIf;
@@ -1744,11 +1774,11 @@ yyreduce:
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
 	(yyval.ast_val) = stmt;
 }
-#line 1748 "/home/godcc/frontend/parser.cpp"
+#line 1778 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 50: /* Stmt: WHILE '(' Expr ')' Stmt  */
-#line 397 "/home/godcc/frontend/sysy.y"
+  case 52: /* Stmt: WHILE '(' Expr ')' Stmt  */
+#line 416 "/home/godcc/frontend/sysy.y"
                         {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kWhile;
@@ -1758,204 +1788,204 @@ yyreduce:
 	stmt->expr = shared_ptr<Ast>(whileStmt);
 	(yyval.ast_val) = stmt;
 }
-#line 1762 "/home/godcc/frontend/parser.cpp"
+#line 1792 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 51: /* Stmt: BREAK ';'  */
-#line 406 "/home/godcc/frontend/sysy.y"
+  case 53: /* Stmt: BREAK ';'  */
+#line 425 "/home/godcc/frontend/sysy.y"
           {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kBreak;
 	(yyval.ast_val) = stmt;
 }
-#line 1772 "/home/godcc/frontend/parser.cpp"
+#line 1802 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 52: /* Stmt: CONTINUE ';'  */
-#line 411 "/home/godcc/frontend/sysy.y"
+  case 54: /* Stmt: CONTINUE ';'  */
+#line 430 "/home/godcc/frontend/sysy.y"
              {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kContinue;
 	(yyval.ast_val) = stmt;
 }
-#line 1782 "/home/godcc/frontend/parser.cpp"
+#line 1812 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 53: /* Expr: OrExpr  */
-#line 419 "/home/godcc/frontend/sysy.y"
+  case 55: /* Expr: OrExpr  */
+#line 438 "/home/godcc/frontend/sysy.y"
            {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
     (yyval.ast_val) = Expr;
   }
-#line 1792 "/home/godcc/frontend/parser.cpp"
+#line 1822 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 54: /* AddExpr: MulExpr  */
-#line 427 "/home/godcc/frontend/sysy.y"
+  case 56: /* AddExpr: MulExpr  */
+#line 446 "/home/godcc/frontend/sysy.y"
          {
   (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd);
 }
-#line 1800 "/home/godcc/frontend/parser.cpp"
+#line 1830 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 55: /* AddExpr: AddExpr '+' MulExpr  */
-#line 430 "/home/godcc/frontend/sysy.y"
+  case 57: /* AddExpr: AddExpr '+' MulExpr  */
+#line 449 "/home/godcc/frontend/sysy.y"
                     {
   (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd,"+");
 }
-#line 1808 "/home/godcc/frontend/parser.cpp"
+#line 1838 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 56: /* AddExpr: AddExpr '-' MulExpr  */
-#line 433 "/home/godcc/frontend/sysy.y"
+  case 58: /* AddExpr: AddExpr '-' MulExpr  */
+#line 452 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd,"-");
 }
-#line 1816 "/home/godcc/frontend/parser.cpp"
+#line 1846 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 57: /* RelExpr: AddExpr  */
-#line 438 "/home/godcc/frontend/sysy.y"
+  case 59: /* RelExpr: AddExpr  */
+#line 457 "/home/godcc/frontend/sysy.y"
         {
  (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel);
 }
-#line 1824 "/home/godcc/frontend/parser.cpp"
+#line 1854 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 58: /* RelExpr: RelExpr LT AddExpr  */
-#line 441 "/home/godcc/frontend/sysy.y"
+  case 60: /* RelExpr: RelExpr LT AddExpr  */
+#line 460 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,"<");
 }
-#line 1832 "/home/godcc/frontend/parser.cpp"
+#line 1862 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 59: /* RelExpr: RelExpr GT AddExpr  */
-#line 444 "/home/godcc/frontend/sysy.y"
+  case 61: /* RelExpr: RelExpr GT AddExpr  */
+#line 463 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,">");
 }
-#line 1840 "/home/godcc/frontend/parser.cpp"
+#line 1870 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 60: /* RelExpr: RelExpr LE AddExpr  */
-#line 447 "/home/godcc/frontend/sysy.y"
+  case 62: /* RelExpr: RelExpr LE AddExpr  */
+#line 466 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,"<=");
 }
-#line 1848 "/home/godcc/frontend/parser.cpp"
+#line 1878 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 61: /* RelExpr: RelExpr GE AddExpr  */
-#line 450 "/home/godcc/frontend/sysy.y"
+  case 63: /* RelExpr: RelExpr GE AddExpr  */
+#line 469 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,">=");
 }
-#line 1856 "/home/godcc/frontend/parser.cpp"
+#line 1886 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 62: /* EqExpr: RelExpr  */
-#line 455 "/home/godcc/frontend/sysy.y"
+  case 64: /* EqExpr: RelExpr  */
+#line 474 "/home/godcc/frontend/sysy.y"
          {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq);
 }
-#line 1864 "/home/godcc/frontend/parser.cpp"
+#line 1894 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 63: /* EqExpr: EqExpr EQ RelExpr  */
-#line 458 "/home/godcc/frontend/sysy.y"
+  case 65: /* EqExpr: EqExpr EQ RelExpr  */
+#line 477 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq,"==");
 }
-#line 1872 "/home/godcc/frontend/parser.cpp"
+#line 1902 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 64: /* EqExpr: EqExpr NE RelExpr  */
-#line 461 "/home/godcc/frontend/sysy.y"
+  case 66: /* EqExpr: EqExpr NE RelExpr  */
+#line 480 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq,"!=");
 }
-#line 1880 "/home/godcc/frontend/parser.cpp"
+#line 1910 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 65: /* AndExpr: EqExpr  */
-#line 466 "/home/godcc/frontend/sysy.y"
+  case 67: /* AndExpr: EqExpr  */
+#line 485 "/home/godcc/frontend/sysy.y"
        {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAnd);
 }
-#line 1888 "/home/godcc/frontend/parser.cpp"
+#line 1918 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 66: /* AndExpr: AndExpr AND EqExpr  */
-#line 469 "/home/godcc/frontend/sysy.y"
+  case 68: /* AndExpr: AndExpr AND EqExpr  */
+#line 488 "/home/godcc/frontend/sysy.y"
                     {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAnd,"&&");
 }
-#line 1896 "/home/godcc/frontend/parser.cpp"
+#line 1926 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 67: /* OrExpr: AndExpr  */
-#line 475 "/home/godcc/frontend/sysy.y"
+  case 69: /* OrExpr: AndExpr  */
+#line 494 "/home/godcc/frontend/sysy.y"
         {
 (yyval.ast_val) = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kLor);
 }
-#line 1904 "/home/godcc/frontend/parser.cpp"
+#line 1934 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 68: /* OrExpr: OrExpr OR AndExpr  */
-#line 478 "/home/godcc/frontend/sysy.y"
+  case 70: /* OrExpr: OrExpr OR AndExpr  */
+#line 497 "/home/godcc/frontend/sysy.y"
                   {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kLor,"||");
 }
-#line 1912 "/home/godcc/frontend/parser.cpp"
+#line 1942 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 69: /* MulExpr: UnaryExp  */
-#line 483 "/home/godcc/frontend/sysy.y"
+  case 71: /* MulExpr: UnaryExp  */
+#line 502 "/home/godcc/frontend/sysy.y"
          {
   (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul);
 }
-#line 1920 "/home/godcc/frontend/parser.cpp"
+#line 1950 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 70: /* MulExpr: MulExpr '*' UnaryExp  */
-#line 486 "/home/godcc/frontend/sysy.y"
+  case 72: /* MulExpr: MulExpr '*' UnaryExp  */
+#line 505 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"*");
 }
-#line 1928 "/home/godcc/frontend/parser.cpp"
+#line 1958 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 71: /* MulExpr: MulExpr '/' UnaryExp  */
-#line 489 "/home/godcc/frontend/sysy.y"
+  case 73: /* MulExpr: MulExpr '/' UnaryExp  */
+#line 508 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"/");
 }
-#line 1936 "/home/godcc/frontend/parser.cpp"
+#line 1966 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 72: /* MulExpr: MulExpr '%' UnaryExp  */
-#line 492 "/home/godcc/frontend/sysy.y"
+  case 74: /* MulExpr: MulExpr '%' UnaryExp  */
+#line 511 "/home/godcc/frontend/sysy.y"
                      {
 (yyval.ast_val) = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"%");
 }
-#line 1944 "/home/godcc/frontend/parser.cpp"
+#line 1974 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 73: /* UnaryExp: PrimaryExpr  */
-#line 499 "/home/godcc/frontend/sysy.y"
+  case 75: /* UnaryExp: PrimaryExpr  */
+#line 518 "/home/godcc/frontend/sysy.y"
                 {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
   	unaryExp->unaryType = UnaryType::kPrimary;
   	(yyval.ast_val) = unaryExp;
   }
-#line 1955 "/home/godcc/frontend/parser.cpp"
+#line 1985 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 74: /* UnaryExp: UnaryOp UnaryExp  */
-#line 505 "/home/godcc/frontend/sysy.y"
+  case 76: /* UnaryExp: UnaryOp UnaryExp  */
+#line 524 "/home/godcc/frontend/sysy.y"
                    {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -1963,156 +1993,146 @@ yyreduce:
 	unaryExp->unaryType = UnaryType::kUnary;
 	(yyval.ast_val) = unaryExp;
   }
-#line 1967 "/home/godcc/frontend/parser.cpp"
+#line 1997 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 75: /* UnaryExp: Identifier '(' ')'  */
-#line 512 "/home/godcc/frontend/sysy.y"
+  case 77: /* UnaryExp: Identifier '(' ')'  */
+#line 531 "/home/godcc/frontend/sysy.y"
                     {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	unaryExp->unaryType = UnaryType::kCall;
 	(yyval.ast_val) = unaryExp;
 }
-#line 1978 "/home/godcc/frontend/parser.cpp"
+#line 2008 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 76: /* UnaryExp: Identifier '(' FuncRParams ')'  */
-#line 518 "/home/godcc/frontend/sysy.y"
-                               {
+  case 78: /* UnaryExp: Identifier '(' FuncRParamList ')'  */
+#line 537 "/home/godcc/frontend/sysy.y"
+                                  {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-3].ast_val));
-        unaryExp->unaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
+    	unaryExp->unaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	unaryExp->unaryType = UnaryType::kCall;
 	(yyval.ast_val) = unaryExp;
 }
-#line 1990 "/home/godcc/frontend/parser.cpp"
+#line 2020 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 77: /* FuncRParams: FuncRParamUp  */
-#line 528 "/home/godcc/frontend/sysy.y"
-             {
-	auto funcRP = new FuncRParamAst();
-	funcRP->params = FuncRParamAst::GetParamsFromFuncRParaUp(dynamic_cast<FuncRParamUpAst*>(shared_ptr<Ast>((yyvsp[0].ast_val)).get()));
-	(yyval.ast_val) = funcRP;
-}
-#line 2000 "/home/godcc/frontend/parser.cpp"
-    break;
-
-  case 78: /* FuncRParamUp: Expr  */
-#line 535 "/home/godcc/frontend/sysy.y"
+  case 79: /* FuncRParamList: Expr  */
+#line 548 "/home/godcc/frontend/sysy.y"
      {
-	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
+	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
 	(yyval.ast_val) = funcRPUp;
 }
-#line 2009 "/home/godcc/frontend/parser.cpp"
+#line 2029 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 79: /* FuncRParamUp: FuncRParamUp ',' Expr  */
-#line 539 "/home/godcc/frontend/sysy.y"
-                      {
-	auto funcRPUp = new FuncRParamUpAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
+  case 80: /* FuncRParamList: FuncRParamList ',' Expr  */
+#line 552 "/home/godcc/frontend/sysy.y"
+                        {
+	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
 	(yyval.ast_val) = funcRPUp;
 }
-#line 2018 "/home/godcc/frontend/parser.cpp"
+#line 2038 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 80: /* PrimaryExpr: '(' Expr ')'  */
-#line 546 "/home/godcc/frontend/sysy.y"
+  case 81: /* PrimaryExpr: '(' Expr ')'  */
+#line 559 "/home/godcc/frontend/sysy.y"
                  {
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
   primaryAst->primaryType = PrimaryType::EXP;
   (yyval.ast_val) = primaryAst;
   }
-#line 2029 "/home/godcc/frontend/parser.cpp"
+#line 2049 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 81: /* PrimaryExpr: Number  */
-#line 552 "/home/godcc/frontend/sysy.y"
+  case 82: /* PrimaryExpr: Number  */
+#line 565 "/home/godcc/frontend/sysy.y"
           {
   auto primaryAst = new PrimaryExprAst();
     primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
     primaryAst->primaryType = PrimaryType::NUMBER;
     (yyval.ast_val) = primaryAst;
   }
-#line 2040 "/home/godcc/frontend/parser.cpp"
+#line 2060 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 82: /* PrimaryExpr: LVal  */
-#line 558 "/home/godcc/frontend/sysy.y"
+  case 83: /* PrimaryExpr: LVal  */
+#line 571 "/home/godcc/frontend/sysy.y"
        {
       auto primaryAst = new PrimaryExprAst();
       primaryAst->primaryType = PrimaryType::IDENTIFIER;
       primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
       (yyval.ast_val) = primaryAst;
   }
-#line 2051 "/home/godcc/frontend/parser.cpp"
+#line 2071 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 83: /* LVal: Identifier  */
-#line 567 "/home/godcc/frontend/sysy.y"
+  case 84: /* LVal: Identifier  */
+#line 580 "/home/godcc/frontend/sysy.y"
            {
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = lval;
 }
-#line 2061 "/home/godcc/frontend/parser.cpp"
+#line 2081 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 84: /* LVal: Identifier ArrayExpList  */
-#line 572 "/home/godcc/frontend/sysy.y"
+  case 85: /* LVal: Identifier ArrayExpList  */
+#line 585 "/home/godcc/frontend/sysy.y"
                          {
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	lval->array_expr_list = shared_ptr<Ast>((yyvsp[0].ast_val));
 	(yyval.ast_val) = lval;
 }
-#line 2072 "/home/godcc/frontend/parser.cpp"
+#line 2092 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 85: /* UnaryOp: '+'  */
-#line 582 "/home/godcc/frontend/sysy.y"
+  case 86: /* UnaryOp: '+'  */
+#line 595 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "+";
    (yyval.ast_val) = unaryOpAst;
  }
-#line 2082 "/home/godcc/frontend/parser.cpp"
+#line 2102 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 86: /* UnaryOp: '-'  */
-#line 587 "/home/godcc/frontend/sysy.y"
+  case 87: /* UnaryOp: '-'  */
+#line 600 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "-";
    (yyval.ast_val) = unaryOpAst;
  }
-#line 2092 "/home/godcc/frontend/parser.cpp"
+#line 2112 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 87: /* UnaryOp: '!'  */
-#line 592 "/home/godcc/frontend/sysy.y"
+  case 88: /* UnaryOp: '!'  */
+#line 605 "/home/godcc/frontend/sysy.y"
        {
   auto unaryOpAst = new UnaryOpAst();
   unaryOpAst->op = "!";
   (yyval.ast_val) = unaryOpAst;
  }
-#line 2102 "/home/godcc/frontend/parser.cpp"
+#line 2122 "/home/godcc/frontend/parser.cpp"
     break;
 
-  case 88: /* Number: INT_CONST  */
-#line 600 "/home/godcc/frontend/sysy.y"
+  case 89: /* Number: INT_CONST  */
+#line 613 "/home/godcc/frontend/sysy.y"
               {
   auto numberAst = new NumberAst();
   numberAst->value = ((yyvsp[0].int_val));
   (yyval.ast_val) = numberAst;
   }
-#line 2112 "/home/godcc/frontend/parser.cpp"
+#line 2132 "/home/godcc/frontend/parser.cpp"
     break;
 
 
-#line 2116 "/home/godcc/frontend/parser.cpp"
+#line 2136 "/home/godcc/frontend/parser.cpp"
 
       default: break;
     }
@@ -2305,7 +2325,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 607 "/home/godcc/frontend/sysy.y"
+#line 620 "/home/godcc/frontend/sysy.y"
 
 
 // 定义错误处理函数, 其中第二个参数是错误信息

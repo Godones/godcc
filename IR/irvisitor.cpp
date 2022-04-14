@@ -3,7 +3,7 @@
 //
 #include "irvisitor.h"
 
-#include "../log/log.h"
+#include "tools/log.h"
 
 void IrVisitorDefault::VisitProgram(Program *program) {
   for (auto &func : program->functions) {

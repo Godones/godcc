@@ -11,9 +11,17 @@ extern FILE *yyout;
 
 
 
-static  std::vector<const char *> file_names = {"../test/test1.c","../test/test2.c","../test/test3.c","../test/test4.c","../test/test5.c"};
+static  std::vector<const char *> file_names = {
+	"../test/test1.c",
+	"../test/test2.c",
+	"../test/test3.c",
+	"../test/test4.c",
+	"../test/test5.c",
+	"../test/test6.c"
+};
 
 void openFile(const char * file_name){
+  INFO("open file:%s",file_name);
   yyin = fopen(file_name, "r");
   if (yyin == nullptr) {
 	std::cout << "open file "
@@ -76,10 +84,17 @@ void test_ast_ir() {
   ir_code->accept(&asmCodeGen);
 }
 
-void test_ast_tree(){
+void test_cst_tree(){
+
   auto ast = parser(file_names.back());
-  auto visitor = AstViewVisitor();
+  GDot json("cst_Tree.dot");
+  auto visitor = CstViewVisitor(json);
   ast->accept(&visitor);
-  auto asmCodeGen = CodeGenVisitor();
+}
+void test_ast_tree(){
+
+  auto ast = parser(file_names.back());
+  GDot json("ast_Tree.dot");
+  auto visitor = AstViewVisitor(json);
   ast->accept(&visitor);
 }

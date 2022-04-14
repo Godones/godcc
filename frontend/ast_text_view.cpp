@@ -23,9 +23,9 @@ void AstVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   funcDefAst->funcType->accept(this);
   funcDefAst->ident->setSpaces(funcDefAst->spaces + 1);
   funcDefAst->ident->accept(this);
-  if (funcDefAst->funcParam){
-	funcDefAst->funcParam->setSpaces(funcDefAst->spaces + 1);
-	funcDefAst->funcParam->accept(this);
+  if (funcDefAst->funcParamList){
+	funcDefAst->funcParamList->setSpaces(funcDefAst->spaces + 1);
+	funcDefAst->funcParamList->accept(this);
   }
   funcDefAst->block->setSpaces(funcDefAst->spaces + 1);
   funcDefAst->block->accept(this);
@@ -39,10 +39,18 @@ void AstVisitor::VisitBlockAst(BlockAst *blockAst) {
   blockAst->printSpace();
   std::cout << "BlockAst <>\n";
   //  DEBUG("blockAst->stmts.size() = %d ",  blockAst->blockItems.size());
-  for(auto &item: blockAst->blockItems) {
-	item->setSpaces(blockAst->spaces + 1);
-	item->accept(this);
+  blockAst->block_item_list->setSpaces(blockAst->spaces + 1);
+  blockAst->block_item_list->accept(this);
+}
+void AstVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
+  block_item_list_ast->printSpace();
+  std::cout << "BlockItemListAst <>\n";
+  if (block_item_list_ast->block_item_list){
+	block_item_list_ast->block_item_list->setSpaces(block_item_list_ast->spaces + 1);
+	block_item_list_ast->block_item_list->accept(this);
   }
+  block_item_list_ast->block_item->setSpaces(block_item_list_ast->spaces + 1);
+  block_item_list_ast->block_item->accept(this);
 }
 void AstVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
   block_item_ast->printSpace();
@@ -54,7 +62,7 @@ void AstVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
 void AstVisitor::VisitStmtAst(StmtAst *stmtAst) {
   stmtAst->printSpace();
   std::cout <<StmtTypeToString(stmtAst->type)<<"StmtAst <>\n";
-  if (stmtAst->type==StmtType::kDecl) {
+  if (stmtAst->type==StmtType::kAssign) {
 	stmtAst->l_val->setSpaces(stmtAst->spaces + 1);
 	stmtAst->l_val->accept(this);
   }
@@ -134,12 +142,23 @@ void AstVisitor::VisitDecl(DeclAst *decl_ast) {
 void AstVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
   const_decl_ast->printSpace();
   std::cout << "ConstDeclAst <> const ";
-  std::cout << const_decl_ast->dataType << "\n";
-  for (auto &constDef:const_decl_ast->constDefs) {
-	constDef->setSpaces(const_decl_ast->spaces + 1);
-	constDef->accept(this);
-  }
+  const_decl_ast->data_type->accept(this);
+  const_decl_ast->const_def_list->setSpaces(const_decl_ast->spaces + 1);
+  const_decl_ast->const_def_list->accept(this);
+
 }
+
+void AstVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
+  const_def_list_ast->printSpace();
+  std::cout << "ConstDefListAst <>\n";
+  if (const_def_list_ast->const_def_list) {
+	const_def_list_ast->const_def_list->setSpaces(const_def_list_ast->spaces + 1);
+	const_def_list_ast->const_def_list->accept(this);
+  }
+  const_def_list_ast->const_def->setSpaces(const_def_list_ast->spaces + 1);
+  const_def_list_ast->const_def->accept(this);
+}
+
 void AstVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
   const_def_ast->printSpace();
   std::cout << "ConstDefAst <> \n";
@@ -167,13 +186,23 @@ void AstVisitor::VisitLVal(LValAst *l_val_ast) {
 void AstVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
   var_decl_ast->printSpace();
   std::cout << "VarDeclAst <>  ";
+  var_decl_ast->dataType->setSpaces(var_decl_ast->spaces + 1);
   var_decl_ast->dataType->accept(this);
-  for (auto &varDef:var_decl_ast->varDefs) {
-	varDef->setSpaces(var_decl_ast->spaces + 1);
-	varDef->accept(this);
-  }
-
+  var_decl_ast->var_def_list->setSpaces(var_decl_ast->spaces + 1);
+  var_decl_ast->var_def_list->accept(this);
 }
+
+void AstVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
+  var_def_list_ast->printSpace();
+  std::cout << "VarDefListAst <> \n";
+  if (var_def_list_ast->varDefList) {
+    var_def_list_ast->varDefList->setSpaces(var_def_list_ast->spaces + 1);
+    var_def_list_ast->varDefList->accept(this);
+  }
+  var_def_list_ast->varDef->setSpaces(var_def_list_ast->spaces + 1);
+  var_def_list_ast->varDef->accept(this);
+}
+
 void AstVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   var_def_ast->printSpace();
   std::cout << "VarDefAst <> \n";
@@ -183,7 +212,7 @@ void AstVisitor::VisitVarDef(VarDefAst *var_def_ast) {
 	var_def_ast->array_expr_list->setSpaces(var_def_ast->spaces+1);
 	var_def_ast->array_expr_list->accept(this);
   }
-  if (var_def_ast->is_expr) {
+  if (var_def_ast->var_expr) {
 	var_def_ast->var_expr->setSpaces(var_def_ast->spaces + 1);
 	var_def_ast->var_expr->accept(this);
   }
@@ -211,26 +240,16 @@ void AstVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
 void AstVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
   func_f_param_ast->printSpace();
   std::cout << "FuncFParamAst <> \n";
-  for (auto &funcFParam :func_f_param_ast->params) {
-	funcFParam->setSpaces(func_f_param_ast->spaces+1);
-	funcFParam->accept(this);
-  }
+  func_f_param_ast->funcType->setSpaces(func_f_param_ast->spaces+1);
+  func_f_param_ast->funcType->accept(this);
+  func_f_param_ast->ident->setSpaces(func_f_param_ast->spaces+1);
+  func_f_param_ast->ident->accept(this);
 }
-void AstVisitor::VisitFuncFParamDefAst(FuncFParamDefAst *func_f_param_def_ast) {
-  func_f_param_def_ast->printSpace();
-  std::cout << "FuncFParamDefAst <> ";
-  std::cout << func_f_param_def_ast->type<<"\n";
-  func_f_param_def_ast->ident->setSpaces(func_f_param_def_ast->spaces+1);
-  func_f_param_def_ast->ident->accept(this);
-}
-void AstVisitor::VisitFuncRParamAst(FuncRParamAst *func_r_param_ast) {
+
+void AstVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_ast) {
   func_r_param_ast->printSpace();
-  std::cout << "FuncRParamAst <> \n";
-  for (auto &funcRParam :func_r_param_ast->params) {
-	funcRParam->setSpaces(func_r_param_ast->spaces+1);
-	funcRParam->accept(this);
-	std::cout<<"\n";
-  }
+  std::cout << "FuncRParamListAst <> \n";
+  func_r_param_ast->expr->accept(this);
 }
 void AstVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
   array_expr_list_ast->printSpace();
@@ -257,7 +276,6 @@ void AstVisitor::VisitInitVal(InitValAst *init_val_ast) {
 void AstVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
   init_val_list_ast->printSpace();
   std::cout << "InitValListAst <>  ";
-
   auto expr = dynamic_cast<InitValAst*>(init_val_list_ast->expr_init_val.get());
   if (expr||init_val_list_ast->expr_init_val== nullptr){
 	std::cout << "{ }"<< "\n";
@@ -270,4 +288,10 @@ void AstVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
 	init_val_list_ast->expr_init_val->setSpaces(init_val_list_ast->spaces+1);
 	init_val_list_ast->expr_init_val->accept(this);
   }
+}
+void AstVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
+  if (func_f_param_list_ast->funcFParamList){
+	func_f_param_list_ast->funcFParamList->accept(this);
+  }
+  func_f_param_list_ast->funcFParam->accept(this);
 }

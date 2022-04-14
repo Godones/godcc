@@ -452,3 +452,102 @@ LVal ::= IDENT [ArrayExpList]
 
 
 
+完整的文法子集如下：
+
+```
+翻译单元   		TranslationUnitAst 	::= compUnit
+编译单元   		CompUnit      		::=  Decl | FuncDef ;
+                             		| CompUnit (Decl | FuncDef);
+声明       	Decl				 ::= ConstDecl | VarDecl;
+常量声明       ConstDecl     		::= "const" INT ConstDefList ";";
+声明列表       ConstDefList  		::= ConstDef
+                        			| ConstDefList "," ConstDef
+函数类型       FuncType       		::= "int" | "void";
+常量定义       ConstDef      		::= IDENT "=" InitValList;
+                            		| IDENT ArrayExpList "=" InitValList
+数组声明       ArrayExpList   		::= '[' Exp ']'
+                        			|  ArrayExpList '[' Exp ']'
+初始化值列表    InitValList  		   ::= Exp
+                       				| "{"  "}"
+                       				| "{" InitVal "}"
+初始化值       InitVal				::= InitValList
+                      				| InitVal InitValList
+
+变量声明       VarDecl       	::= FuncType VarDefList ";";
+变量定义列表    VarDefList       ::= VarDef
+                        			| VarDefList VarDef
+变量定义       VarDef       	::= IDENT 
+                                | IDENT ArrayExpList "=" InitValL
+                                | IDENT ArrayExpList 
+                                | IDENT "=" InitValList;
+
+函数定义     FuncDef      		::= FuncType IDENT "("  ")" Block
+                      	     	 | FuncType IDENT "(" FuncFParamList ")" Block;
+形参列表     FuncFParamList   	::= FuncFParam 
+                                | FuncFParamList FuncFParam;
+
+形参定义    FuncFParam   ::= FuncType IDENT  
+                        | FuncType IDENT "[" "]" 
+                        | FuncType IDENT "[" "]" ArrayExpList
+                        | FuncType IDENT  ArrayExpList
+ 
+语句块      Block         	::= "{" BlockItemList "}";
+语句块列表   BlockItemList 	::= BlockItem
+                        		| BlockItemList BlockItem
+语句块项     BlockItem     ::= Decl | Stmt;
+语句        Stmt         ::= LVal "=" Exp ";"
+                        | [Exp] ";"
+                        | Block
+                        | "if" "(" Exp ")" Stmt ["else" Stmt]
+                        | "while" "(" Exp ")" Stmt
+                        | "break" ";"
+                        | "continue" ";"
+                        | "return" [Exp] ";";
+表达式      Exp          ::= LOrExp;
+左值        LVal          ::= IDENT [ArrayExpList] ; 
+基本表达式   PrimaryExp    ::= "(" Exp ")" | LVal | Number;
+数值        Number        ::= INT_CONST;
+一元表达式   UnaryExp      ::= PrimaryExp | IDENT "(" [FuncRParamList] ")" | UnaryOp UnaryExp;
+一元运算符   UnaryOp       ::= "+" | "-" | "!";
+函数实参列表 FuncRParamList :: Exp
+                           | FuncRParamList "," Exp
+乘法表达式   MulExp        ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+加法表达式   AddExp        ::= MulExp | AddExp ("+" | "-") MulExp;
+关系表达式   RelExp        ::= AddExp | RelExp ("<" | ">" | "<=" | ">=") AddExp;
+相等表达式   EqExp         ::= RelExp | EqExp ("==" | "!=") RelExp;
+逻辑与表达式  LAndExp       ::= EqExp | LAndExp "&&" EqExp;
+逻辑或表达式  LOrExp        ::= LAndExp | LOrExp "||" LAndExp;
+```
+
+
+
+==考虑如何展开表达式语句中的重复语句==
+
+```
+  std::string pre_name = BinaryTypeToString(binary_expr_ast->type);
+  auto left = dynamic_cast<PrimaryExprAst*>(binary_expr_ast->left.get());
+  auto right = dynamic_cast<PrimaryExprAst*>(binary_expr_ast->right.get());
+  if (left || right){
+	j_son_.BeganWrite(pre_name+"BinaryExp");
+	if(left){
+	  left->accept(this);
+	  j_son_.BeganWrite(binary_expr_ast->op);
+	  j_son_.EndWrite();
+	}
+	assert(right);
+	right->accept(this);
+	j_son_.EndWrite();
+  } else{
+	if (binary_expr_ast->left)
+		binary_expr_ast->left->accept(this);
+	binary_expr_ast->right->accept(this);
+  }
+```
+
+如果是二元节点的话则就需要将两边的表达式同时递归到最底层
+
+如果是一元节点就需要将右节点递归到最底层
+
+
+
+对于递归文法，使用堆栈将其取出。

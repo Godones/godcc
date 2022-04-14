@@ -6,16 +6,16 @@
 #define GODCC_JSON_JSON_H_
 #include <iostream>
 #include <fstream>
-
+#include <cstdarg>
 class GodJSon{
  private:
-  std::ofstream file;
+  FILE *file;
   int state = 0;
  public:
   GodJSon();
   explicit GodJSon(const char *file_name);
-  void BeganWrite(const std::string_view &dot_name);
-  void close();
-  void EndWrite();
+  virtual void BeganWrite(const char * dot_name,...);
+  virtual void close();
+  virtual void EndWrite();
 };
 #endif//GODCC_JSON_JSON_H_
