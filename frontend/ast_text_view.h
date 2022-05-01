@@ -5,12 +5,16 @@
 #ifndef GODCC_FRONTEND_AST_TEXT_VIEW_H_
 #define GODCC_FRONTEND_AST_TEXT_VIEW_H_
 #include "visitor.h"
+#include <stack>
+#include "../tools/njson.hpp"
 
 
 class AstVisitor : public Visitor {
+ private:
+  std::stack<nlohmann::json*> json;
  public:
+  AstVisitor();
   void VisitTranslationUnit(TranslationUnitAst *ast) override;
-
   void VisitCompUnitAst(CompUnitAst *) override;
   void VisitFuncDefAst(FuncDefAst *) override;
   void VisitFuncTypeAst(FuncTypeAst *) override;

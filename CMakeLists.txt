@@ -49,8 +49,7 @@ add_library(test STATIC
 	IR/IR.cpp
 	IR/irvisitor.cpp
 	backend/asm.cpp
-	tools/json.cpp
-	tools/dot.cpp
+        tools/dot.cpp
 	${FRONTENDCPP}
 	${parser_path}
 	${lexer_path}

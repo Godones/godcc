@@ -1,297 +1,409 @@
 //
-// Created by linfeng on 2022/4/8.
+// Created by linfeng on 2022/4/13.
 //
 
 #include "ast_text_view.h"
+
+
 void AstVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
+  auto j = json.top();
+  (*j)["_type"] = "Program";
+  (*j)["address"] = {{"line",ast->line},{"col",ast->column}};
+  json.pop();
+  json.push(&(*j)["declarator"]);
   ast->comp_unit->accept(this);
+  std::ofstream outfile("./ast.json");
+  outfile << j->dump(4);
+//  std::cout<<j->dump(4)<<std::endl;
 }
-
-// todo!(这里尝试使用递归)
-void AstVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
-  compUnitAst->printSpace();
-  std::cout << "CompUnitAST <> \n";
-  if (compUnitAst->comp_unit){
-	compUnitAst->comp_unit->accept(this);
+void AstVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
+  assert(!json.empty());
+  auto j = json.top();
+  json.pop();
+  (*j)["_type"] = "CompUnitList";
+  (*j)["address"] = {{"line",comp_unit_ast->line},{"col",comp_unit_ast->column}};
+  std::stack<std::shared_ptr<Ast>> comp_unit_list;
+  while (comp_unit_ast){
+	comp_unit_list.push(comp_unit_ast->comp_unit_Item);
+	comp_unit_ast = dynamic_cast<CompUnitAst *>((comp_unit_ast->comp_unit).get());
   }
-  compUnitAst->comp_unit_Item->accept(this);
-}
-
-void AstVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
-  funcDefAst->printSpace();
-  std::cout << "FuncDefAST <> ";
-  funcDefAst->funcType->accept(this);
-  funcDefAst->ident->setSpaces(funcDefAst->spaces + 1);
-  funcDefAst->ident->accept(this);
-  if (funcDefAst->funcParamList){
-	funcDefAst->funcParamList->setSpaces(funcDefAst->spaces + 1);
-	funcDefAst->funcParamList->accept(this);
+  int count1 = 0;
+  while (!comp_unit_list.empty()){
+	json.push(&(*j)["declarator"][count1++]); //使用列表将函数与全局变量装起来
+	comp_unit_list.top()->accept(this);
+	comp_unit_list.pop();
+	json.pop();
   }
-  funcDefAst->block->setSpaces(funcDefAst->spaces + 1);
-  funcDefAst->block->accept(this);
+}
+void AstVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
+  auto type = dynamic_cast<FuncTypeAst*>(func_def_ast->funcType.get());
+  assert(type);
+  auto ident = dynamic_cast<IdentifierAst*>(func_def_ast->ident.get());
+  assert(ident);
+  auto j = json.top();
+  (*j)["address"] = {{"line",func_def_ast->line},{"col",func_def_ast->column}};
+  (*j)["_returnType"] = type->type;
+  (*j)["_funcName"] = ident->name;
+  (*j)["_type"] = "funcDef";
+  if (func_def_ast->funcParamList){
+	func_def_ast->funcParamList->accept(this);
+  }
+  func_def_ast->block->accept(this);
+}
+void AstVisitor::VisitFuncTypeAst(FuncTypeAst *) {}
+void AstVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
+  auto j = json.top();
+  int count2= 0;
+  std::stack<std::shared_ptr<Ast>> list;
+  while (func_f_param_list_ast){
+	list.push(func_f_param_list_ast->funcFParam);
+	func_f_param_list_ast = dynamic_cast<FuncFParamListAst *>((func_f_param_list_ast->funcFParamList).get());
+  }
+  while (!list.empty()){
+	json.push(&(*j)["_fparamList"][count2++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
+}
+void AstVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
+  auto type = dynamic_cast<FuncTypeAst*>(func_f_param_ast->funcType.get());
+  auto ident = dynamic_cast<IdentifierAst*>(func_f_param_ast->ident.get());
+  bool first = false;
+  auto j = json.top();
+  (*j)["_type"] = "funcParam";
+  (*j)["address"] = {{"line",func_f_param_ast->line},{"col",func_f_param_ast->column}};
+  (*j)["_paramName"] = ident->name;
+  if(func_f_param_ast->first_no_dim){
+	first = true;
+  }
+  // 只显示是否是数组类型
+  if(first){
+	(*j)["_paramType"] = std::string(type->type)+"array";//int array
+  }
+  else{
+	(*j)["_paramType"] = type->type;
+  }
 }
 
-void AstVisitor::VisitFuncTypeAst(FuncTypeAst *funcTypeAst) {
-  std::cout << funcTypeAst->type << "\n";
-}
+void AstVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast) {
+  std::stack<std::shared_ptr<Ast>> list;
+  auto j = json.top();
 
-void AstVisitor::VisitBlockAst(BlockAst *blockAst) {
-  blockAst->printSpace();
-  std::cout << "BlockAst <>\n";
-  //  DEBUG("blockAst->stmts.size() = %d ",  blockAst->blockItems.size());
-  blockAst->block_item_list->setSpaces(blockAst->spaces + 1);
-  blockAst->block_item_list->accept(this);
+  int count3 = 0;
+  while (func_r_param_list_ast){
+	list.push(func_r_param_list_ast->expr);
+	func_r_param_list_ast = dynamic_cast<FuncRParamListAst *>((func_r_param_list_ast->funcRParamListAst).get());
+  }
+  while (!list.empty()){
+	json.push(&(*j)["paramList"][count3++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
+}
+void AstVisitor::VisitBlockAst(BlockAst *block_ast) {
+  block_ast->block_item_list->accept(this);
 }
 void AstVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
-  block_item_list_ast->printSpace();
-  std::cout << "BlockItemListAst <>\n";
-  if (block_item_list_ast->block_item_list){
-	block_item_list_ast->block_item_list->setSpaces(block_item_list_ast->spaces + 1);
-	block_item_list_ast->block_item_list->accept(this);
+  auto j = json.top();
+  int count4 = 0;
+
+  std::stack<std::shared_ptr<Ast>> list;
+  while (block_item_list_ast){
+	list.push(block_item_list_ast->block_item);
+	block_item_list_ast = dynamic_cast<BlockItemListAst *>((block_item_list_ast->block_item_list).get());
   }
-  block_item_list_ast->block_item->setSpaces(block_item_list_ast->spaces + 1);
-  block_item_list_ast->block_item->accept(this);
+  while (!list.empty()){
+	json.push(&(*j)["blockItemList"][count4++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
 }
 void AstVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
-  block_item_ast->printSpace();
-  std::cout << "BlockItemAst <>\n";
-  block_item_ast->item->setSpaces(block_item_ast->spaces + 1);
   block_item_ast->item->accept(this);
 }
-
-void AstVisitor::VisitStmtAst(StmtAst *stmtAst) {
-  stmtAst->printSpace();
-  std::cout <<StmtTypeToString(stmtAst->type)<<"StmtAst <>\n";
-  if (stmtAst->type==StmtType::kAssign) {
-	stmtAst->l_val->setSpaces(stmtAst->spaces + 1);
-	stmtAst->l_val->accept(this);
-  }
-  if (stmtAst->expr!=nullptr) {
-	stmtAst->expr->setSpaces(stmtAst->spaces + 1);
-	stmtAst->expr->accept(this);
-  }
-  std::cout << "\n";
-}
-
-void AstVisitor::VisitIdentifierAst(IdentifierAst *identifierAst) {
-  identifierAst->printSpace();
-  std::cout << "IdentifierAst <> ";
-  std::cout << identifierAst->name << "\n";
-}
-
-void AstVisitor::VisitExp(ExpAst *expAst) {
-  expAst->printSpace();
-  std::cout << "ExpAst <>\n";
-  expAst->realExpr->setSpaces(expAst->spaces + 1);
-  expAst->realExpr->accept(this);
-}
-
-
-void AstVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
-  binary_expr_ast->printSpace();
-  std::cout << BinaryTypeToString(binary_expr_ast->type)<<"BinaryExprAst <> ";
-  // 如果存在左子树
-  if (binary_expr_ast->left) {
-	std::cout << binary_expr_ast->op << "\n";
-	binary_expr_ast->left->setSpaces(binary_expr_ast->spaces + 1);
-	binary_expr_ast->left->accept(this);
-  }
-  // 右子树
-  std::cout << "\n";
-  binary_expr_ast->right->setSpaces(binary_expr_ast->spaces + 1);
-  binary_expr_ast->right->accept(this);
-}
-
-void AstVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
-  unaryExprAst->printSpace();
-  std::cout << UnaryTypeToString(unaryExprAst->unaryType)<<"UnaryExpAst <> \n";
-  if (unaryExprAst->unaryType == UnaryType::kUnary||unaryExprAst->unaryType == UnaryType::kCall) {
-	unaryExprAst->unaryOp->setSpaces(unaryExprAst->spaces + 1);
-	unaryExprAst->unaryOp->accept(this);//一元运算符号// call
-	std::cout << "\n";
-	if (unaryExprAst->unaryExpr){
-	  unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces + 1);
-	  unaryExprAst->unaryExpr->accept(this);
+void AstVisitor::VisitStmtAst(StmtAst *stmt_ast) {
+  auto j = json.top();
+  (*j)["address"] = {{"line",stmt_ast->line},{"col",stmt_ast->column}};
+  switch (stmt_ast->type) {
+	case StmtType::kReturn: {
+	  (*j)["_type"] = "return";
+	  json.push(&(*j)["returnExpr"]);
+	  if (stmt_ast->expr){
+		stmt_ast->expr->accept(this);
+	  }
+	  json.pop();
+	  break;
+	};
+	case StmtType::kAssign: {
+	  (*j)["_type"] = "assign";
+	  json.push(&(*j)["assignLvalue"]);
+	  stmt_ast->l_val->accept(this);
+	  json.pop();
+	  json.push(&(*j)["assignExpr"]);
+	  stmt_ast->expr->accept(this);
+	  json.pop();
+	  break;
+	};
+	case StmtType::kBlock: {
+	  stmt_ast->expr->accept(this);
+	  break;
+	};
+	case StmtType::kExpr: {
+	  (*j)["_type"] = "expr";
+	  json.push(&(*j)["expr"]);
+	  if (stmt_ast->expr)
+		stmt_ast->expr->accept(this);
+	  json.pop();
+	  break;
+	};
+	case StmtType::kIf: {
+	  stmt_ast->expr->accept(this);
+	  break;
 	}
-  } else {
-	unaryExprAst->unaryExpr->setSpaces(unaryExprAst->spaces + 1);
-	unaryExprAst->unaryExpr->accept(this);
+	case StmtType::kWhile: {
+	  stmt_ast->expr->accept(this);
+	  break;
+	};
+	case StmtType::kBreak: {
+	  (*j)["_type"] = "break";
+	  break;
+	};
+	case StmtType::kContinue: {
+	  (*j)["_type"] = "continue";
+	  break;
+	};
   }
 }
-void AstVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
-  std::cout << unaryOpAst->op;
+void AstVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
+  auto j = json.top();
+  (*j)["_type"] = "ifStmt";
+  json.push(&(*j)["condition"]);
+  if_stmt_ast->expr->accept(this);
+  json.pop();
+  json.push(&(*j)["thenStmt"]);
+  if_stmt_ast->stmt->accept(this);
+  json.pop();
+  if (if_stmt_ast->elseStmt) {
+	json.push(&(*j)["elseStmt"]);
+	if_stmt_ast->elseStmt->accept(this);
+	json.pop();
+  }
 }
-
-void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
-  primaryExprAst->printSpace();
-  std::cout << "PrimaryExpAst <> \n";
-  primaryExprAst->primaryExpr->setSpaces(primaryExprAst->spaces + 1);
-  primaryExprAst->primaryExpr->accept(this);
+void AstVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
+  auto j = json.top();
+  (*j)["_type"] = "whileStmt";
+  json.push(&(*j)["condition"]);
+  while_stmt_ast->expr->accept(this);
+  json.pop();
+  json.push(&(*j)["stmt"]);
+  while_stmt_ast->stmt->accept(this);
+  json.pop();
 }
-
-void AstVisitor::VisitNumberAst(NumberAst *numberAst) {
-  numberAst->printSpace();
-  std::cout << "NumberAst <> " << numberAst->value;
+void AstVisitor::VisitExp(ExpAst *exp_ast) {
+  exp_ast->realExpr->accept(this);
 }
 void AstVisitor::VisitDecl(DeclAst *decl_ast) {
-  decl_ast->printSpace();
-  std::cout << "DeclAst <> \n";
-  decl_ast->decl->setSpaces(decl_ast->spaces + 1);
   decl_ast->decl->accept(this);
 }
 void AstVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
-  const_decl_ast->printSpace();
-  std::cout << "ConstDeclAst <> const ";
-  const_decl_ast->data_type->accept(this);
-  const_decl_ast->const_def_list->setSpaces(const_decl_ast->spaces + 1);
+  auto type = dynamic_cast<FuncTypeAst*>(const_decl_ast->data_type.get());
+  assert(type);
+  auto j = json.top();
+  (*j)["_type"] = "constDecl";
+  (*j)["dataType"] = type->type;
   const_decl_ast->const_def_list->accept(this);
-
 }
-
 void AstVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
-  const_def_list_ast->printSpace();
-  std::cout << "ConstDefListAst <>\n";
-  if (const_def_list_ast->const_def_list) {
-	const_def_list_ast->const_def_list->setSpaces(const_def_list_ast->spaces + 1);
-	const_def_list_ast->const_def_list->accept(this);
+  auto j = json.top();
+  int count5 = 0;
+  std::stack<std::shared_ptr<Ast>> list;
+  while (const_def_list_ast){
+	list.push(const_def_list_ast->const_def);
+	const_def_list_ast = dynamic_cast<ConstDefListAst *>((const_def_list_ast->const_def_list).get());
   }
-  const_def_list_ast->const_def->setSpaces(const_def_list_ast->spaces + 1);
-  const_def_list_ast->const_def->accept(this);
+  while (!list.empty()){
+	json.push(&(*j)["constDefList"][count5++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
 }
-
 void AstVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
-  const_def_ast->printSpace();
-  std::cout << "ConstDefAst <> \n";
-  const_def_ast->ident->setSpaces(const_def_ast->spaces + 1);
-  const_def_ast->ident->accept(this);
+  auto j = json.top();
+  (*j)["_type"] = "constDef";
+  auto ident = dynamic_cast<IdentifierAst*>(const_def_ast->ident.get());
+  (*j)["name"] = ident->name; //会有 (*j)["name"] = "";
   if (const_def_ast->array_expr_list){
-	const_def_ast->array_expr_list->setSpaces(const_def_ast->spaces+1);
+	json.push(&(*j)["arrayExprList"]);
 	const_def_ast->array_expr_list->accept(this);
+	json.pop();
   }
-  const_def_ast->const_val->setSpaces(const_def_ast->spaces + 1);
+  json.push(&(*j)["constValue"]);
   const_def_ast->const_val->accept(this);
-  std::cout << "\n";
+  json.pop();
 }
 void AstVisitor::VisitLVal(LValAst *l_val_ast) {
-  l_val_ast->printSpace();
-  std::cout << "LValAst <> \n";
-  l_val_ast->l_val->setSpaces(l_val_ast->spaces + 1);
-  l_val_ast->l_val->accept(this);
+  auto ident = dynamic_cast<IdentifierAst*>(l_val_ast->l_val.get());
+  assert(ident);
+  auto j = json.top();
+  (*j)["_type"] = "lVal";
+  (*j)["name"] = ident->name;
   if (l_val_ast->array_expr_list){
-	l_val_ast->array_expr_list->setSpaces(l_val_ast->spaces+1);
+	json.push(&(*j)["arrayExprList"]);
 	l_val_ast->array_expr_list->accept(this);
+	json.pop();
   }
-
 }
 void AstVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
-  var_decl_ast->printSpace();
-  std::cout << "VarDeclAst <>  ";
-  var_decl_ast->dataType->setSpaces(var_decl_ast->spaces + 1);
-  var_decl_ast->dataType->accept(this);
-  var_decl_ast->var_def_list->setSpaces(var_decl_ast->spaces + 1);
+  auto type = dynamic_cast<FuncTypeAst*>(var_decl_ast->dataType.get());
+  assert(type);
+  auto j = json.top();
+  (*j)["_type"] = "VarDecl";
+  (*j)["dataType"] = type->type;
   var_decl_ast->var_def_list->accept(this);
 }
 
 void AstVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
-  var_def_list_ast->printSpace();
-  std::cout << "VarDefListAst <> \n";
-  if (var_def_list_ast->varDefList) {
-    var_def_list_ast->varDefList->setSpaces(var_def_list_ast->spaces + 1);
-    var_def_list_ast->varDefList->accept(this);
+  auto j = json.top();
+  int count6 = 0;
+  std::stack<std::shared_ptr<Ast>> list;
+  while (var_def_list_ast){
+	list.push(var_def_list_ast->varDef);
+	var_def_list_ast = dynamic_cast<VarDefListAst *>((var_def_list_ast->varDefList).get());
   }
-  var_def_list_ast->varDef->setSpaces(var_def_list_ast->spaces + 1);
-  var_def_list_ast->varDef->accept(this);
+  while (!list.empty()){
+	json.push(&(*j)["varDefList"][count6++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
 }
-
 void AstVisitor::VisitVarDef(VarDefAst *var_def_ast) {
-  var_def_ast->printSpace();
-  std::cout << "VarDefAst <> \n";
-  var_def_ast->ident->setSpaces(var_def_ast->spaces + 1);
-  var_def_ast->ident->accept(this);
+  auto j = json.top();
+  (*j)["_type"] = "varDef";
+  auto ident = dynamic_cast<IdentifierAst*>(var_def_ast->ident.get());
+  (*j)["_name"] = ident->name;
   if (var_def_ast->array_expr_list){
-	var_def_ast->array_expr_list->setSpaces(var_def_ast->spaces+1);
+	json.push(&(*j)["arrayExprList"]);
 	var_def_ast->array_expr_list->accept(this);
+	json.pop();
   }
-  if (var_def_ast->var_expr) {
-	var_def_ast->var_expr->setSpaces(var_def_ast->spaces + 1);
+  if (var_def_ast->var_expr){
+	json.push(&(*j)["initValue"]);
 	var_def_ast->var_expr->accept(this);
+	json.pop();
   }
-  std::cout << "\n";
-}
-void AstVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
-  if_stmt_ast->expr->setSpaces(if_stmt_ast->spaces + 1);
-  if_stmt_ast->expr->accept(this);
-  std::cout << "\n";
-  if_stmt_ast->stmt->setSpaces(if_stmt_ast->spaces + 1);
-  if_stmt_ast->stmt->accept(this);
-  if (if_stmt_ast->elseStmt) {
-	if_stmt_ast->elseStmt->setSpaces(if_stmt_ast->spaces+1);
-	if_stmt_ast->elseStmt->accept(this);
-  }
-  //  std::cout << "\n";
-}
-void AstVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
-  while_stmt_ast->expr->setSpaces(while_stmt_ast->spaces+1);
-  while_stmt_ast->expr->accept(this);
-  std::cout <<"\n";
-  while_stmt_ast->stmt->setSpaces(while_stmt_ast->spaces+1);
-  while_stmt_ast->stmt->accept(this);
-}
-void AstVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
-  func_f_param_ast->printSpace();
-  std::cout << "FuncFParamAst <> \n";
-  func_f_param_ast->funcType->setSpaces(func_f_param_ast->spaces+1);
-  func_f_param_ast->funcType->accept(this);
-  func_f_param_ast->ident->setSpaces(func_f_param_ast->spaces+1);
-  func_f_param_ast->ident->accept(this);
-}
-
-void AstVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_ast) {
-  func_r_param_ast->printSpace();
-  std::cout << "FuncRParamListAst <> \n";
-  func_r_param_ast->expr->accept(this);
 }
 void AstVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
-  array_expr_list_ast->printSpace();
-  std::cout << "ArrayExprListAst <> []\n";
-  if (array_expr_list_ast->array_expr_list){
-	array_expr_list_ast->array_expr_list->setSpaces(array_expr_list_ast->spaces+1);
-	array_expr_list_ast->array_expr_list->accept(this);
+  auto j = json.top();
+  int count7 = 0;
+  std::stack<std::shared_ptr<Ast>> list;
+  while (array_expr_list_ast){
+	list.push(array_expr_list_ast->array_expr);
+	array_expr_list_ast = dynamic_cast<ArrayExprListAst *>((array_expr_list_ast->array_expr_list).get());
   }
-  array_expr_list_ast->array_expr->setSpaces(array_expr_list_ast->spaces+1);
-  array_expr_list_ast->array_expr->accept(this);
-  std::cout << "\n";
-}
-void AstVisitor::VisitInitVal(InitValAst *init_val_ast) {
-  init_val_ast->printSpace();
-  std::cout << "InitValAst <> \n";
-  if (init_val_ast->init_val){
-	init_val_ast->init_val->setSpaces(init_val_ast->spaces+1);
-	init_val_ast->init_val->accept(this);
+  while (!list.empty()){
+	json.push(&(*j)["dim"][count7++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
   }
-  init_val_ast->init_val_list->setSpaces(init_val_ast->spaces+1);
-  init_val_ast->init_val_list->accept(this);
-  std::cout<<"\n";
 }
+
 void AstVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
-  init_val_list_ast->printSpace();
-  std::cout << "InitValListAst <>  ";
+  auto j = json.top();
   auto expr = dynamic_cast<InitValAst*>(init_val_list_ast->expr_init_val.get());
   if (expr||init_val_list_ast->expr_init_val== nullptr){
-	std::cout << "{ }"<< "\n";
-	if (expr){
-	  expr->setSpaces(init_val_list_ast->spaces+1);
+	(*j)["_type"] = "arrayInitVal";
+	if (expr)
 	  expr->accept(this);
-	}
   } else{
-	std::cout << "\n";
-	init_val_list_ast->expr_init_val->setSpaces(init_val_list_ast->spaces+1);
+	(*j)["_type"] = "singleVal";
 	init_val_list_ast->expr_init_val->accept(this);
   }
 }
-void AstVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
-  if (func_f_param_list_ast->funcFParamList){
-	func_f_param_list_ast->funcFParamList->accept(this);
+void AstVisitor::VisitInitVal(InitValAst *init_val_ast) {
+  auto j = json.top();
+  int count = 0;
+  std::stack<std::shared_ptr<Ast>> list;
+  while (init_val_ast){
+	list.push(init_val_ast->init_val_list);
+	init_val_ast = dynamic_cast<InitValAst*>((init_val_ast->init_val).get());
   }
-  func_f_param_list_ast->funcFParam->accept(this);
+  while (!list.empty()){
+	json.push(&(*j)["value"][count++]);
+	list.top()->accept(this);
+	list.pop();
+	json.pop();
+  }
+}
+
+void AstVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
+  if (binary_expr_ast->left){
+	auto j = json.top();
+	(*j)["_type"] = "BinaryExpr";
+	(*j)["op"] = binary_expr_ast->op;
+	json.push(&(*j)["left"]);
+	binary_expr_ast->left->accept(this);
+	json.pop();
+	json.push(&(*j)["right"]);
+	binary_expr_ast->right->accept(this);
+	json.pop();
+  }else{
+	binary_expr_ast->right->accept(this);
+  }
+
+}
+void AstVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
+  auto j = json.top();
+  switch (unary_expr_ast->unaryType) {
+	case UnaryType::kPrimary: {
+	  unary_expr_ast->unaryExpr->accept(this);
+	  break;
+	}
+	case UnaryType::kUnary: {
+	  (*j)["_type"] = "UnaryExpr";
+	  auto op = dynamic_cast<UnaryOpAst*>(unary_expr_ast->unaryOp.get());
+	  (*j)["op"] = op->op;
+	  json.push(&(*j)["unaryExpr"]);
+	  unary_expr_ast->unaryExpr->accept(this);
+	  json.pop();
+	  break;
+	}
+	case UnaryType::kCall: {
+	  (*j)["_type"] = "CallExpr";
+	  auto ident = dynamic_cast<IdentifierAst*>(unary_expr_ast->unaryOp.get());
+	  (*j)["funcName"] = ident->name;
+	  json.push(&(*j)["argList"]);
+	  if (unary_expr_ast->unaryExpr){
+		unary_expr_ast->unaryExpr->accept(this);
+	  }
+	  json.pop();
+	  break;
+	};
+  }
+}
+void AstVisitor::VisitUnaryOpAst(UnaryOpAst *unary_op_ast) {
+}
+void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
+  primary_expr_ast->primaryExpr->accept(this);
+}
+void AstVisitor::VisitNumberAst(NumberAst *number_ast) {
+  auto j = json.top();
+  (*j)["_type"] = "Number";
+  (*j)["value"] = number_ast->value;
+  (*j)["address"] ={{"line", number_ast->line}, {"col", number_ast->column}};
+}
+void AstVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
+  auto j = json.top();
+  (*j)["_type"] = "Identifier";
+  (*j)["name"] = identifier_ast->name;
+  (*j)["address"] ={{"line", identifier_ast->line}, {"col", identifier_ast->column}};
+}
+AstVisitor::AstVisitor() {
+  nlohmann::json * j = new nlohmann::json;
+  json.push(j);
 }

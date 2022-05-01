@@ -27,3 +27,9 @@ void INFO(const char *fmt, ...) {
   printf("\033[0m\n");
 #endif
 }
+
+void get_time(){
+    time_t now = time(nullptr);
+    char temp[32]{0};
+    strncpy(temp, ctime(&now),sizeof (temp));
+}

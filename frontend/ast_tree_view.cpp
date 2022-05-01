@@ -12,15 +12,15 @@ void AstViewVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
 }
 void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
   j_son_.BeganWrite("CompUnit");
-    std::stack<std::shared_ptr<Ast>> comp_unit_list;
-    while (comp_unit_ast){
-  	comp_unit_list.push(comp_unit_ast->comp_unit_Item);
-  	comp_unit_ast = dynamic_cast<CompUnitAst *>((comp_unit_ast->comp_unit).get());
-    }
-    while (!comp_unit_list.empty()){
-  	comp_unit_list.top()->accept(this);
-  	comp_unit_list.pop();
-    }
+  std::stack<std::shared_ptr<Ast>> comp_unit_list;
+  while (comp_unit_ast){
+	comp_unit_list.push(comp_unit_ast->comp_unit_Item);
+	comp_unit_ast = dynamic_cast<CompUnitAst *>((comp_unit_ast->comp_unit).get());
+  }
+  while (!comp_unit_list.empty()){
+	comp_unit_list.top()->accept(this);
+	comp_unit_list.pop();
+  }
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {

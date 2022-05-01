@@ -17,7 +17,9 @@ static  std::vector<const char *> file_names = {
 	"../test/test3.c",
 	"../test/test4.c",
 	"../test/test5.c",
-	"../test/test6.c"
+	"../test/test6.c",
+//	"../test/fab.c",
+//	"../test/dev.c",
 };
 
 void openFile(const char * file_name){
@@ -62,11 +64,10 @@ int test_ast_text() {
   auto ast = parser(file_names.back());
   auto visitor = AstVisitor();
   ast->accept(&visitor);
-  std::cout << "\n";
   return 0;
 }
 
-void testIRCodeGen() {
+void test_ir_gen() {
   auto ast = parser(file_names.back());
   auto visitor = IRGeneratorVisitor();
   ast->accept(&visitor);
@@ -75,7 +76,7 @@ void testIRCodeGen() {
   ir_code->accept(&visitor_default);
 }
 
-void test_ast_ir() {
+void test_asm_gen() {
   auto ast = parser(file_names.back());
   auto visitor = IRGeneratorVisitor();
   ast->accept(&visitor);

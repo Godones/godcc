@@ -44,6 +44,7 @@ void CodeGenVisitor::VisitBaseBlock(BaseBlock *baseBlock) {
 // 根据指令生成代码
 // todo!(代码生成)
 void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
+  DEBUG("VisitInstruction");
   switch (instruction->instructionType) {
 	case Integer:
 	  //todo!(需要修改立即数的加载和寄存器数的加载)
@@ -66,7 +67,8 @@ void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
 	case Unary:
 	  // + - !
 	  if (instruction->binaryOp==BinaryOp::Add || instruction->binaryOp==BinaryOp::Sub){
-		out_file <<"  "<<toString(instruction->binaryOp)<<"  ";
+		if (instruction->binaryOp==BinaryOp::Add) break ;
+		out_file <<"\t"<<toString(instruction->binaryOp)<<"  ";
 		out_file <<"t"<<instruction->target_register<<", ";
 		out_file <<"x0, ";
 		out_file <<"t"<<instruction->operand2.operand.reg;
@@ -75,9 +77,10 @@ void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
 		out_file << "	xor  ";
 		out_file << "t" << instruction->target_register << ",";
 		out_file << "x0, ";
-		out_file << "t" << instruction->operand2.operand.reg;
-		out_file<<"\n";
+		out_file << "t" << instruction->operand2.operand.reg<<"\n";
+		out_file <<"\tseqz  " << "t" << instruction->target_register << ", " << "t" << instruction->target_register << "\n";
 	  }
+	  break ;
 	case Binary:
 	  if(instruction->binaryOp==BinaryOp::Le||instruction->binaryOp==BinaryOp::Ge){
 		// 小于等于使用大于来判断，然后在判断其是否等于0
@@ -108,21 +111,16 @@ void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
 		out_file<< "t" << instruction->target_register << ", "<<"t"<<instruction->operand1.operand.reg;
 		out_file<<"\n";
 	  }else {
-		out_file << "	" << toString(instruction->binaryOp) << " ";
+		out_file << "\t" << toString(instruction->binaryOp) << " ";
 		out_file << "t" << instruction->target_register << ", ";
-		// 对于一元运算来说，第一个操作数都是0，使用x0寄存器
-		// 其它运算则需要使用其对应的寄存器
-		if (!instruction->operand1.isreg&&instruction->operand1.operand.number==0){
-		  out_file << "x0, ";
-		} else{
-		  // 所有的操作数都会被加载到寄存器中
-		  assert(instruction->operand1.isreg== true);
-		  out_file << "t" <<instruction->operand1.operand.reg<<", ";
-		}
+		// 所有的操作数都会被加载到寄存器中
+		assert(instruction->operand1.isreg== true);
+		out_file << "t" <<instruction->operand1.operand.reg<<", ";
 		assert(instruction->operand2.isreg== true);
 		out_file << "t" << instruction->operand2.operand.reg ;
 		out_file<<"\n";
 	  }
+	  break ;
 	default:
 	  break;
   }

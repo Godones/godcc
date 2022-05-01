@@ -6,9 +6,19 @@
 #define GODCC_FRONTEND_AST_TO_IR_H_
 // 中间代码生成
 #include "visitor.h"
-
+#include <stack>
+#include <variant>
+#include <unordered_map>
+typedef struct {
+  int value;//值
+  DataType type;//类型
+  std::pair<int,int>live;//生存期
+}CharacterTable;
 
 class IRGeneratorVisitor : public Visitor {
+ private:
+  //符号表
+  std::unordered_map<std::string_view,CharacterTable> var_map;
  public:
   std::shared_ptr<Program> programIr = nullptr;
   unsigned int register_num_ = 0;//记录分配的寄存器

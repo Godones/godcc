@@ -18,11 +18,11 @@
 
 int test_ast_text();
 
-void testIRCodeGen();
+void test_ir_gen();
 
 void test_ast_tree();
 void test_cst_tree();
-void test_ast_ir();
+void test_asm_gen();
 
 void test_parse_correct();
 #endif//GODCC_TPARSER_H

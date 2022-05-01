@@ -27,8 +27,6 @@ std::string_view toString(const BinaryOp&binary_op){
 	case Mul: return "mul ";
 	case Div: return "div ";
 	case Mod: return "rem ";
-	case Shl: return "shl ";
-	case Shr: return "shr ";
 	case And: return "and ";
 	case Or: return "or ";
 	case Lt: return "lt ";
@@ -58,4 +56,7 @@ void BaseBlock::accept(IrVisitor *visitor) {
 
 void Instruction::accept(IrVisitor *visitor) {
   visitor->VisitInstruction(this);
+}
+Instruction::Instruction(){
+
 }

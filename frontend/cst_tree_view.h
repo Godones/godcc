@@ -6,7 +6,6 @@
 #define GODCC_FRONTEND_CST_TREE_VIEW_H_
 
 #include "visitor.h"
-#include "../tools/json.h"
 #include "../tools/dot.h"
 class CstViewVisitor :public Visitor{
  private:

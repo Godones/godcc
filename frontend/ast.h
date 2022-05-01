@@ -52,6 +52,8 @@ class ArrayExprListAst;
 class Ast {
  public:
   int spaces = 0;
+  int line = 0;
+  int column = 0;
   virtual ~Ast() = default;
 
   virtual void setSpaces(int spaces) {
@@ -59,7 +61,7 @@ class Ast {
   }
   virtual void printSpace() {
 	for (int i = 0; i < spaces; i++) {
-	  std::cout << " ";
+	  std::cout << "\t";
 	}
   }
   virtual void accept(Visitor *) = 0;
@@ -91,7 +93,7 @@ class CompUnitAst : public Ast {
 class FuncDefAst : public Ast {
  public:
   std::shared_ptr<Ast> funcType;//类型
-  std::shared_ptr<Ast> ident;            //标识符
+  std::shared_ptr<Ast> ident;   //标识符
   std::shared_ptr<Ast> funcParamList;//参数列表 -->需要判空
   std::shared_ptr<Ast> block;   //函数体
  public:
@@ -254,7 +256,7 @@ class BinaryExprAst : public Ast {
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   BinaryType type;
-  const char *op;
+  const char *op{};
  public:
   ~BinaryExprAst() override = default;
   virtual void accept(Visitor *) override;

@@ -3,13 +3,15 @@
   #include <string>
   #include "ast.h"
 }
-
+%locations
 %{
 
 #include <iostream>
 #include <memory>
 #include <string>
 #include "ast.h"
+
+#define YYLOCATION_PRINT location_print //打印位置信息
 
 // 声明 lexer 函数和错误处理函数
 int yylex();
@@ -68,8 +70,11 @@ ConstDef BlockItemList BlockItem LVal Identifier
 
 TranslationUnitAst
 :CompUnit{
+
   auto trans  = new TranslationUnitAst();
   trans->comp_unit = shared_ptr<Ast>($1);
+  trans->line = @$.first_line;
+  trans->column = @$.first_column;
   ast = shared_ptr<Ast>(trans);
  }
  ;
@@ -83,10 +88,14 @@ TranslationUnitAst
 CompUnit
 :CompUnitItem{
     auto compUnit = new CompUnitAst(shared_ptr<Ast>($1));
+      compUnit->line = @$.first_line;
+      compUnit->column = @$.first_column;
     $$ = compUnit;
 }
 |CompUnit CompUnitItem{
 	auto compUnit = new CompUnitAst(shared_ptr<Ast>($1), shared_ptr<Ast>($2));
+	compUnit->line = @$.first_line;
+        compUnit->column = @$.first_column;
 	$$ = compUnit;
 }
 ;
@@ -118,6 +127,8 @@ FuncDef
 	funcDef->ident = shared_ptr<Ast>($2);
 	funcDef->funcParamList = shared_ptr<Ast>($4);
 	funcDef->block = shared_ptr<Ast>($6);
+ 	funcDef->line = @$.first_line;
+      	funcDef->column = @$.first_column;
 	$$ = funcDef;
   }
   | FuncType Identifier '('  ')' Block {
@@ -125,6 +136,8 @@ FuncDef
    	funcDef->funcType = shared_ptr<Ast>($1);
    	funcDef->ident = shared_ptr<Ast>($2);
    	funcDef->block = shared_ptr<Ast>($5);
+   	funcDef->line = @$.first_line;
+	funcDef->column = @$.first_column;
    	$$ = funcDef;
      }
   ;
@@ -133,10 +146,14 @@ FuncDef
 FuncFParamList
 :FuncFParam {
 	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>($1));
+	func_fpl->line = @$.first_line;
+	func_fpl->column = @$.first_column;
 	$$ = func_fpl;
 }
 |FuncFParamList ',' FuncFParam{
 	auto func_fpl = new FuncFParamListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	func_fpl->line = @$.first_line;
+	func_fpl->column = @$.first_column;
 	$$ = func_fpl;
 };
 
@@ -147,6 +164,8 @@ FuncFParam
 	funcParaDef->funcType = shared_ptr<Ast>($1);
 	funcParaDef->ident = shared_ptr<Ast>($2);
 	funcParaDef->first_no_dim = false;
+	funcParaDef->line = @$.first_line;
+	funcParaDef->column = @$.first_column;
 	$$ = funcParaDef;
 }
 | FuncType Identifier '[' ']'{
@@ -154,6 +173,8 @@ FuncFParam
 	funcParaDef->funcType = shared_ptr<Ast>($1);
 	funcParaDef->ident = shared_ptr<Ast>($2);
 	funcParaDef->first_no_dim = true;
+	funcParaDef->line = @$.first_line;
+	funcParaDef->column = @$.first_column;
 	$$ = funcParaDef;
 }
 |FuncType Identifier '[' ']' ArrayExpList{
@@ -162,6 +183,8 @@ FuncFParam
 	funcParaDef->ident = shared_ptr<Ast>($2);
 	funcParaDef->first_no_dim = true;
 	funcParaDef->array_expr_list = shared_ptr<Ast>($5);
+	funcParaDef->line = @$.first_line;
+	funcParaDef->column = @$.first_column;
 	$$ = funcParaDef;
 }
 |FuncType Identifier  ArrayExpList{
@@ -170,6 +193,8 @@ FuncFParam
 	funcParaDef->ident = shared_ptr<Ast>($2);
 	funcParaDef->first_no_dim = false;
 	funcParaDef->array_expr_list = shared_ptr<Ast>($3);
+	funcParaDef->line = @$.first_line;
+	funcParaDef->column = @$.first_column;
 	$$ = funcParaDef;
 }
 ;
@@ -181,11 +206,15 @@ FuncType
 : INT {
     auto funcType = new FuncTypeAst();
     funcType->type = "int";
+	funcType->line = @$.first_line;
+	funcType->column = @$.first_column;
     $$ = funcType;
   }
 |VOID {
 	auto funcType = new FuncTypeAst();
 	funcType->type = "void";
+	funcType->line = @$.first_line;
+	funcType->column = @$.first_column;
 	$$ = funcType;
 }
   ;
@@ -194,6 +223,8 @@ Block
   : '{' BlockItemList '}' {
 	auto block = new BlockAst();
 	block-> block_item_list= shared_ptr<Ast>($2);
+	block->line = @$.first_line;
+	block->column = @$.first_column;
 	$$ = block;
   }
   ;
@@ -201,10 +232,14 @@ Block
  BlockItemList
  :BlockItem{
 	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>($1));
+	blockItemUp->line = @$.first_line;
+	blockItemUp->column = @$.first_column;
 	$$ = blockItemUp;
  }
 |BlockItemList BlockItem {
 	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($2));
+		blockItemUp->line = @$.first_line;
+        	blockItemUp->column = @$.first_column;
 	$$ = blockItemUp;
 };
 
@@ -212,11 +247,15 @@ BlockItem
 :Stmt{
 	auto blockItem = new BlockItemAst();
 	blockItem->item = shared_ptr<Ast>($1);
+		blockItem->line = @$.first_line;
+        	blockItem->column = @$.first_column;
 	$$ = blockItem;
 }
 |Decl{
 	auto blockItem = new BlockItemAst();
 	blockItem->item = shared_ptr<Ast>($1);
+		blockItem->line = @$.first_line;
+		blockItem->column = @$.first_column;
 	$$ = blockItem;
 };
 
@@ -226,11 +265,15 @@ Decl
 :ConstDecl{
 	auto decl = new DeclAst();
 	decl->decl = shared_ptr<Ast>($1);
+	decl->line = @$.first_line;
+	decl->column = @$.first_column;
 	$$ = decl;
 }
 |VarDecl{
 	auto decl = new DeclAst();
 	decl->decl = shared_ptr<Ast>($1);
+		decl->line = @$.first_line;
+        	decl->column = @$.first_column;
 	$$ = decl;
 };
 
@@ -239,16 +282,22 @@ ConstDecl
 	auto constDecl = new ConstDeclAst();
 	constDecl->const_def_list= shared_ptr<Ast>($3);
 	constDecl->data_type = shared_ptr<Ast>($2);
+	constDecl->line = @$.first_line;
+	constDecl->column = @$.first_column;
 	$$ = constDecl;
 };
 
 ConstDefList
 :ConstDef{
 	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>($1));
+	constDeclUp->line = @$.first_line;
+	constDeclUp->column = @$.first_column;
 	$$ = constDeclUp;
 }
 |ConstDefList ',' ConstDef{
 	auto constDeclUp = new ConstDefListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+		constDeclUp->line = @$.first_line;
+        	constDeclUp->column = @$.first_column;
 	$$ = constDeclUp;
 };
 
@@ -258,22 +307,30 @@ ConstDef
 	constDef->ident = shared_ptr<Ast>($1);
 	constDef->array_expr_list = shared_ptr<Ast>($2);
 	constDef->const_val = shared_ptr<Ast>($4);
+	constDef->line = @$.first_line;
+	constDef->column = @$.first_column;
 	$$ = constDef;
 }
 |Identifier '=' InitValList{
 	auto constDef = new ConstDefAst();
 	constDef->ident = shared_ptr<Ast>($1);
 	constDef->const_val = shared_ptr<Ast>($3);
+	constDef->line = @$.first_line;
+	constDef->column = @$.first_column;
 	$$ = constDef;
 }
 ;
 ArrayExpList
 : '[' Expr ']'{
  	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>($2));
+ 	array_expr->line = @$.first_line;
+	array_expr->column = @$.first_column;
  	$$ = array_expr;
 }
 | ArrayExpList '[' Expr ']'{
 	auto array_expr = new ArrayExprListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	 	array_expr->line = @$.first_line;
+        	array_expr->column = @$.first_column;
  	$$ = array_expr;
 };
 
@@ -281,25 +338,35 @@ InitValList
 :Expr{
 	auto init_val_list = new InitValListAst();
 	init_val_list->expr_init_val = shared_ptr<Ast>($1);
+	init_val_list->line = @$.first_line;
+	init_val_list->column = @$.first_column;
 	$$ = init_val_list;
 }
 |'{' '}' {
 	auto init_val_list = new InitValListAst();
+	init_val_list->line = @$.first_line;
+	init_val_list->column = @$.first_column;
 	$$ = init_val_list;
 }
 |'{' InitVal '}'{
 	auto init_val_list = new InitValListAst();
 	init_val_list->expr_init_val = shared_ptr<Ast>($2);
+	init_val_list->line = @$.first_line;
+	init_val_list->column = @$.first_column;
 	$$ = init_val_list;
 };
 
 InitVal
 :InitValList{
 	auto init_val = new InitValAst(shared_ptr<Ast>($1));
+	init_val->line = @$.first_line;
+	init_val->column = @$.first_column;
 	$$ = init_val;
 }
 |InitVal ',' InitValList{
 	auto init_val = new InitValAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	init_val->line = @$.first_line;
+	init_val->column = @$.first_column;
 	$$ = init_val;
 };
 
@@ -310,16 +377,22 @@ VarDecl
 	auto varDecl = new VarDeclAst();
 	varDecl->var_def_list = shared_ptr<Ast>($2);
 	varDecl->dataType =  shared_ptr<Ast>($1);
+		varDecl->line = @$.first_line;
+        	varDecl->column = @$.first_column;
 	$$ = varDecl;
 };
 
 VarDefList
 :VarDef{
 	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>($1));
+	varDeclUp->line = @$.first_line;
+	varDeclUp->column = @$.first_column;
         $$ = varDeclUp;
 }
-|VarDefList "," VarDef {
+|VarDefList ',' VarDef {
 	auto varDeclUp = new VarDefListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	varDeclUp->line = @$.first_line;
+	varDeclUp->column = @$.first_column;
         $$ = varDeclUp;
 }
 ;
@@ -328,18 +401,24 @@ VarDef
 :Identifier{
 	auto varDef = new VarDefAst();
 	varDef->ident = shared_ptr<Ast>($1);
+		varDef->line = @$.first_line;
+        	varDef->column = @$.first_column;
 	$$ = varDef;
 }
 |Identifier ArrayExpList{
 	auto varDef = new VarDefAst();
 	varDef->ident = shared_ptr<Ast>($1);
 	varDef->array_expr_list = shared_ptr<Ast>($2);
+	varDef->line = @$.first_line;
+	varDef->column = @$.first_column;
 	$$ = varDef;
 }
 |Identifier '=' InitValList{
 	auto varDef = new VarDefAst();
 	varDef->ident =  shared_ptr<Ast>($1);
 	varDef->var_expr =  shared_ptr<Ast>($3);
+	varDef->line = @$.first_line;
+	varDef->column = @$.first_column;
 	$$ = varDef;
 }
 |Identifier ArrayExpList '=' InitValList{
@@ -347,6 +426,8 @@ VarDef
 	varDef->ident =  shared_ptr<Ast>($1);
 	varDef->array_expr_list = shared_ptr<Ast>($2);
 	varDef->var_expr =  shared_ptr<Ast>($4);
+	varDef->line = @$.first_line;
+	varDef->column = @$.first_column;
 	$$ = varDef;
 };
 
@@ -355,6 +436,8 @@ Identifier
 :IDENT{
 	auto identifier=  new IdentifierAst();
 	identifier->name = ($1)->c_str();
+	identifier->line = @$.first_line;
+	identifier->column = @$.first_column;
 	$$ = identifier;
 };
 
@@ -363,28 +446,38 @@ Stmt
 	auto stmt = new StmtAst();
 	stmt->expr = shared_ptr<Ast>($2);
 	stmt->type = StmtType::kReturn;
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 | RETURN ';'{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kReturn;
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |Expr ';'{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kExpr;
 	stmt->expr = shared_ptr<Ast>($1);
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |';'{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kExpr;
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |Block{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kBlock;
 	stmt->expr = shared_ptr<Ast>($1);
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 | LVal '=' Expr ';'{
@@ -392,6 +485,8 @@ Stmt
     	stmt->expr = shared_ptr<Ast>($3);
     	stmt->l_val =  shared_ptr<Ast>($1);
     	stmt->type = StmtType::kAssign;
+    		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
     	$$ = stmt;
  }
 |IF '(' Expr ')' Stmt %prec LOWER_THAN_ELSE{
@@ -401,6 +496,8 @@ Stmt
 	ifStmt->expr = shared_ptr<Ast>($3);
 	ifStmt->stmt =  shared_ptr<Ast>($5);
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |IF '(' Expr ')' Stmt ELSE Stmt{
@@ -411,6 +508,8 @@ Stmt
 	ifStmt->stmt =  shared_ptr<Ast>($5);
 	ifStmt->elseStmt = shared_ptr<Ast>($7);
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |WHILE '(' Expr ')' Stmt{
@@ -420,16 +519,22 @@ Stmt
 	whileStmt->expr = shared_ptr<Ast>($3);
 	whileStmt->stmt =  shared_ptr<Ast>($5);
 	stmt->expr = shared_ptr<Ast>(whileStmt);
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |BREAK ';'{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kBreak;
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |CONTINUE ';'{
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kContinue;
+		stmt->line = @$.first_line;
+        	stmt->column = @$.first_column;
 	$$ = stmt;
 }
  ;
@@ -438,78 +543,138 @@ Expr
   : OrExpr {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>($1);
+	Expr->line = @$.first_line;
+	Expr->column = @$.first_column;
     $$ = Expr;
   }
 ;
 
 AddExpr
 :MulExpr {
-  $$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAdd);
+  auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAdd);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |AddExpr '+' MulExpr{
-  $$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"+");
+ auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"+");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |AddExpr '-' MulExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"-");
+
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"-");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 };
 
 RelExpr
 :AddExpr{
- $$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kRel);
+ auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kRel);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 | RelExpr LT AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 | RelExpr GT AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 | RelExpr LE AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<=");
+auto binary =  new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,"<=");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 | RelExpr GE AddExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">=");
+auto binary= new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kRel,">=");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 };
 
 EqExpr
 :RelExpr {
-$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kEq);
+auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kEq);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |EqExpr EQ RelExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"==");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"==");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |EqExpr NE RelExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"!=");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kEq,"!=");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 };
 
 AndExpr
 :EqExpr{
-$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAnd);
+auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kAnd);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |AndExpr  AND EqExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAnd,"&&");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAnd,"&&");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 };
 
 
 OrExpr
 :AndExpr{
-$$ = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kLor);
+auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kLor);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |OrExpr OR AndExpr{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kLor,"||");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kLor,"||");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 };
 
 MulExpr
 :UnaryExp{
-  $$ = new BinaryExprAst(shared_ptr<Ast>($1),BinaryType::kMul);
+  auto binary = new BinaryExprAst(shared_ptr<Ast>($1),BinaryType::kMul);
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |MulExpr '*' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"*");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"*");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |MulExpr '/' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"/");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"/");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 |MulExpr '%' UnaryExp{
-$$ = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"%");
+auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kMul,"%");
+  binary->line = @$.first_line;
+binary->column = @$.first_column;
+  $$ = binary;
 }
 ;
 
@@ -519,6 +684,8 @@ UnaryExp
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>($1);
   	unaryExp->unaryType = UnaryType::kPrimary;
+  	  unaryExp->line = @$.first_line;
+        unaryExp->column = @$.first_column;
   	$$ = unaryExp;
   }
   |UnaryOp UnaryExp{
@@ -526,12 +693,16 @@ UnaryExp
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
         unaryExp->unaryExpr = shared_ptr<Ast>($2);
 	unaryExp->unaryType = UnaryType::kUnary;
+	  	  unaryExp->line = @$.first_line;
+                unaryExp->column = @$.first_column;
 	$$ = unaryExp;
   }
 | Identifier '(' ')'{
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
 	unaryExp->unaryType = UnaryType::kCall;
+	  	  unaryExp->line = @$.first_line;
+                unaryExp->column = @$.first_column;
 	$$ = unaryExp;
 }
 |Identifier '(' FuncRParamList ')'{
@@ -539,6 +710,8 @@ UnaryExp
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
     	unaryExp->unaryExpr = shared_ptr<Ast>($3);
 	unaryExp->unaryType = UnaryType::kCall;
+	  	  unaryExp->line = @$.first_line;
+                unaryExp->column = @$.first_column;
 	$$ = unaryExp;
 }
 ;
@@ -547,10 +720,14 @@ UnaryExp
 FuncRParamList
 :Expr{
 	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>($1));
+	  	  funcRPUp->line = @$.first_line;
+                funcRPUp->column = @$.first_column;
 	$$ = funcRPUp;
 }
 |FuncRParamList ',' Expr{
 	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3));
+	  funcRPUp->line = @$.first_line;
+	funcRPUp->column = @$.first_column;
 	$$ = funcRPUp;
 }
 ;
@@ -560,18 +737,24 @@ PrimaryExpr
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>($2);
   primaryAst->primaryType = PrimaryType::EXP;
+    	  primaryAst->line = @$.first_line;
+	  primaryAst->column = @$.first_column;
   $$ = primaryAst;
   }
   |Number {
   auto primaryAst = new PrimaryExprAst();
     primaryAst->primaryExpr = shared_ptr<Ast>($1);
     primaryAst->primaryType = PrimaryType::NUMBER;
+      primaryAst->line = @$.first_line;
+    	  primaryAst->column = @$.first_column;
     $$ = primaryAst;
   }
   |LVal{
       auto primaryAst = new PrimaryExprAst();
       primaryAst->primaryType = PrimaryType::IDENTIFIER;
       primaryAst->primaryExpr = shared_ptr<Ast>($1);
+        primaryAst->line = @$.first_line;
+      	  primaryAst->column = @$.first_column;
       $$ = primaryAst;
   }
 ;
@@ -580,12 +763,16 @@ LVal
 :Identifier{
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>($1);
+	  lval->line = @$.first_line;
+	  lval->column = @$.first_column;
 	$$ = lval;
 }
 | Identifier ArrayExpList{
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>($1);
 	lval->array_expr_list = shared_ptr<Ast>($2);
+	  lval->line = @$.first_line;
+	  lval->column = @$.first_column;
 	$$ = lval;
 }
 ;
@@ -595,16 +782,22 @@ UnaryOp
  : '+' {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "+";
+   unaryOpAst->line = @$.first_line;
+   unaryOpAst->column = @$.first_column;
    $$ = unaryOpAst;
  }
  | '-' {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "-";
+   unaryOpAst->line = @$.first_line;
+   unaryOpAst->column = @$.first_column;
    $$ = unaryOpAst;
  }
  | '!' {
   auto unaryOpAst = new UnaryOpAst();
   unaryOpAst->op = "!";
+  unaryOpAst->line = @$.first_line;
+  unaryOpAst->column = @$.first_column;
   $$ = unaryOpAst;
  }
  ;
@@ -613,6 +806,8 @@ Number
   : INT_CONST {
   auto numberAst = new NumberAst();
   numberAst->value = ($1);
+  numberAst->line = @$.first_line;
+  numberAst->column = @$.first_column;
   $$ = numberAst;
   }
   ;
@@ -622,6 +817,5 @@ Number
 // 定义错误处理函数, 其中第二个参数是错误信息
 // parser 如果发生错误 (例如输入的程序出现了语法错误), 就会调用这个函数
 void yyerror(shared_ptr<Ast> &ast, const char *s) {
-//  printf("%d:%d '%s'\n",yylloc.first_lien,yylloc.first_colunmn,s);
-	printf("%s\n",s);
+  	printf("[ERROR] address:%d:%d '%s'\n",yylloc.first_line,yylloc.first_column,s);
 }

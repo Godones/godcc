@@ -39,8 +39,6 @@ enum BinaryOp {
   Mul,//*
   Div,///
   Mod,//%
-  Shl,//<<
-  Shr,//>>
   And,//&&
   Or,//||
   Ne,//!=
@@ -56,8 +54,7 @@ enum DataType {
   Void,
   Int,//当前仅支持
   Float,
-  Double,
-  Pointer,
+  kConstInt,
 };
 
 class IRBase {
@@ -77,7 +74,7 @@ class Program : public IRBase {
 // 程序由函数和全局指令组成
 class Function : public IRBase {
  public:
-  std::string name;
+  std::string_view name;
   DataType retType;
   std::vector<BaseBlock> blocks;
   Function() = default;
@@ -87,7 +84,7 @@ class Function : public IRBase {
 // 函数由基本块组成
 class BaseBlock : public IRBase {
  public:
-  std::string blockName;
+  std::string_view blockName;
   std::vector<Instruction> instructions;
   BaseBlock() = default;
   void accept(IrVisitor *visitor);
@@ -113,10 +110,10 @@ class Instruction : public IRBase {
 	bool isreg;
 	} Operand;
 
-  Operand operand1;
-  Operand operand2;
-  unsigned int target_register;
-  Instruction() = default;
+  Operand operand1{};
+  Operand operand2{};
+  unsigned int target_register = 0;
+  Instruction();
   void accept(IrVisitor *visitor);
 };
 

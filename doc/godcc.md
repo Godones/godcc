@@ -475,7 +475,7 @@ LVal ::= IDENT [ArrayExpList]
 
 变量声明       VarDecl       	::= FuncType VarDefList ";";
 变量定义列表    VarDefList       ::= VarDef
-                        			| VarDefList VarDef
+                        			| VarDefList ',' VarDef
 变量定义       VarDef       	::= IDENT 
                                 | IDENT ArrayExpList "=" InitValL
                                 | IDENT ArrayExpList 
@@ -493,7 +493,7 @@ LVal ::= IDENT [ArrayExpList]
  
 语句块      Block         	::= "{" BlockItemList "}";
 语句块列表   BlockItemList 	::= BlockItem
-                        		| BlockItemList BlockItem
+                        	| BlockItemList BlockItem
 语句块项     BlockItem     ::= Decl | Stmt;
 语句        Stmt         ::= LVal "=" Exp ";"
                         | [Exp] ";"

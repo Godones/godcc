@@ -2,7 +2,7 @@
 // Created by linfeng on 2022/4/9.
 //
 
-const int MAX = 9;
+const int MAX = 9,MIN = 0;
 int T = 0;
 
 int f(){
@@ -16,17 +16,17 @@ int f(){
 void sort(int array[][10]){
   return;
 }
-int main(){
+int main() {
   f();
   int array[MAX][MAX];
   sort(array);
-  int x = 1;
-  if(x >= 1){
+  int x = 1,y=1;
+  if (x >= 1) {
 	x = 2;
-  } else{
+  } else {
 	x = 3;
   }
-  while (x < 10){
+  while (x < 10) {
 	x = x + 1;
 	continue;
   }

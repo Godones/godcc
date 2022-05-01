@@ -54,6 +54,7 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	  std::cout << toString(instruction->binaryOp);
 	  std::cout << "%"<<instruction->operand1.operand.reg;
 	  std::cout << " %"<<instruction->operand2.operand.reg;
+	  break ;
 	default:
 	  break;
   }
