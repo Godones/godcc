@@ -3,25 +3,26 @@
   #include <string>
   #include "ast.h"
 }
+//%expect 1
 %locations
 %{
-
 #include <iostream>
 #include <memory>
 #include <string>
 #include "ast.h"
 
-#define YYLOCATION_PRINT location_print //打印位置信息
+//#include "ast_to_ir.h" //用于编译器求值
 
+
+#define YYLOCATION_PRINT location_print //打印位置信息
 // 声明 lexer 函数和错误处理函数
 int yylex();
 void yyerror(std::shared_ptr<Ast> &ast, const char *s);
 using namespace std;
-
 %}
 
 // 定义 parser 函数和错误处理函数的附加参数
-// 我们需要返回一个字符串作为 AST, 所以我们把附加参数定义成字符串的智能指针
+// 我们需要返回 CST, 所以我们把附加参数定义成AST智能指针
 // 解析完成后, 我们要手动修改这个参数, 把它设置成解析的得到字符串
 %parse-param { std::shared_ptr<Ast> &ast }
 
@@ -65,12 +66,10 @@ ConstDef BlockItemList BlockItem LVal Identifier
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
 
-
 %%
 
 TranslationUnitAst
 :CompUnit{
-
   auto trans  = new TranslationUnitAst();
   trans->comp_unit = shared_ptr<Ast>($1);
   trans->line = @$.first_line;
@@ -238,8 +237,8 @@ Block
  }
 |BlockItemList BlockItem {
 	auto blockItemUp = new BlockItemListAst(shared_ptr<Ast>($1),shared_ptr<Ast>($2));
-		blockItemUp->line = @$.first_line;
-        	blockItemUp->column = @$.first_column;
+	blockItemUp->line = @$.first_line;
+	blockItemUp->column = @$.first_column;
 	$$ = blockItemUp;
 };
 
@@ -493,6 +492,8 @@ Stmt
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kIf;
 	auto ifStmt = new IfStmtAst();
+	ifStmt->line = @$.first_line;
+	ifStmt->column = @$.first_column;
 	ifStmt->expr = shared_ptr<Ast>($3);
 	ifStmt->stmt =  shared_ptr<Ast>($5);
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
@@ -504,6 +505,8 @@ Stmt
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kIf;
 	auto ifStmt = new IfStmtAst();
+	ifStmt->line = @$.first_line;
+	ifStmt->column = @$.first_column;
 	ifStmt->expr = shared_ptr<Ast>($3);
 	ifStmt->stmt =  shared_ptr<Ast>($5);
 	ifStmt->elseStmt = shared_ptr<Ast>($7);
@@ -518,9 +521,11 @@ Stmt
 	auto whileStmt = new WhileStmtAst();
 	whileStmt->expr = shared_ptr<Ast>($3);
 	whileStmt->stmt =  shared_ptr<Ast>($5);
+	whileStmt->line = @$.first_line;
+	whileStmt->column = @$.first_column;
 	stmt->expr = shared_ptr<Ast>(whileStmt);
-		stmt->line = @$.first_line;
-        	stmt->column = @$.first_column;
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |BREAK ';'{
@@ -640,8 +645,8 @@ binary->column = @$.first_column;
 OrExpr
 :AndExpr{
 auto binary = new BinaryExprAst( shared_ptr<Ast>($1),BinaryType::kLor);
-  binary->line = @$.first_line;
-binary->column = @$.first_column;
+	binary->line = @$.first_line;
+	binary->column = @$.first_column;
   $$ = binary;
 }
 |OrExpr OR AndExpr{
@@ -737,8 +742,14 @@ PrimaryExpr
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>($2);
   primaryAst->primaryType = PrimaryType::EXP;
-    	  primaryAst->line = @$.first_line;
-	  primaryAst->column = @$.first_column;
+  primaryAst->line = @$.first_line;
+  primaryAst->column = @$.first_column;
+  auto expr = dynamic_cast<ExpAst*>($2);
+  //编译器求值
+  if(expr->have_value){
+  	primaryAst->have_value = true;
+  	primaryAst->value = expr->value;
+  }
   $$ = primaryAst;
   }
   |Number {
@@ -746,7 +757,7 @@ PrimaryExpr
     primaryAst->primaryExpr = shared_ptr<Ast>($1);
     primaryAst->primaryType = PrimaryType::NUMBER;
       primaryAst->line = @$.first_line;
-    	  primaryAst->column = @$.first_column;
+   primaryAst->column = @$.first_column;
     $$ = primaryAst;
   }
   |LVal{

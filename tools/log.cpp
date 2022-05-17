@@ -28,6 +28,31 @@ void INFO(const char *fmt, ...) {
 #endif
 }
 
+void ERROR(const char *fmt,...){
+#ifdef _ERROR
+  printf("[ERROR] ");
+  printf("\033[31m");
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("\033[0m\n");
+#endif
+}
+
+
+void WARNING(const char *fmt, ...){
+#ifdef _WARNING
+  printf("[WARNING] ");
+  printf("\033[33m");
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("\033[0m\n");
+#endif
+}
+
 void get_time(){
     time_t now = time(nullptr);
     char temp[32]{0};

@@ -5,6 +5,18 @@
 #include "ast.h"
 
 #include <utility>
+
+DataType getFuncType(const FuncTypeAst& func_type){
+  if (strcmp(func_type.type,"int") == 0)
+	return DataType::kInt;
+  else if (strcmp(func_type.type,"float") == 0)
+	return DataType::kFloat;
+  else if (strcmp(func_type.type,"void") == 0)
+    return DataType::kVoid;
+  else
+	INFO("the func type is not supported");
+}
+
 const char * StmtTypeToString(StmtType &type){
   switch (type) {
 	case StmtType::kReturn: return "Return";

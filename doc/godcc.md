@@ -477,7 +477,7 @@ LVal ::= IDENT [ArrayExpList]
 变量定义列表    VarDefList       ::= VarDef
                         			| VarDefList ',' VarDef
 变量定义       VarDef       	::= IDENT 
-                                | IDENT ArrayExpList "=" InitValL
+                                | IDENT ArrayExpList "=" InitValList
                                 | IDENT ArrayExpList 
                                 | IDENT "=" InitValList;
 
@@ -548,6 +548,13 @@ LVal ::= IDENT [ArrayExpList]
 
 如果是一元节点就需要将右节点递归到最底层
 
-
-
 对于递归文法，使用堆栈将其取出。
+
+
+
+### 语义检查
+
+- 编译器求值--->针对二元运算、一元运算
+- 符号表建立---> 赋值语句
+
+如何保证`continue`和`break`位于循环中

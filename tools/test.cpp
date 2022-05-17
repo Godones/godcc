@@ -5,7 +5,7 @@
 #include "log.h"
 #include "dot.h"
 #include "njson.hpp"
-
+#include "symbolTable.h"
 
 void dot_test(){
 
@@ -36,7 +36,6 @@ void njson_test(){
 //	x["line"] = 1;
 //	x["col"] = {3,1};
 //	std::cout << std::setw(4) << j << std::endl;
-
 	std::stack<nlohmann::json *>jj;
 	nlohmann::json * jjj = new nlohmann::json;
 	jj.push(jjj);
@@ -53,15 +52,25 @@ void njson_test(){
 	auto x = jj.top();
 	(*x)["sdasdasdasd"][0] = {{"121","22"}};
 	(*x)["sdasdasdasd"][1] = {{"121","22"}};
-
 	nlohmann::json y = {{"key",1}};
-
 	std::cout << std::setw(4) << *jjj << std::endl;
 }
-
+void symbolTable_test(){
+//  SymbolTable table;
+//  table.add_symbol("a",SymbolInfo{DataType::kInt,0,""});
+//  table.add_symbol("b",{DataType::kInt,2,""});
+//  table.add_symbol("c",{DataType::kInt,3,""});
+//  auto a = table.get_symbol("a");
+//  std::cout << "a: "<<a->value << std::endl;
+//  auto b = table.get_symbol("b");
+//  std::cout << "b: "<<b->value << std::endl;
+//  auto d = table.get_symbol("d");
+//  assert(d == nullptr);
+}
 
 int main(){
   njson_test();
   dot_test();
+  symbolTable_test();
   return 0;
 }

@@ -6,22 +6,17 @@
 AstViewVisitor::AstViewVisitor(GDot j_son):j_son_(j_son){}
 void AstViewVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
   j_son_.BeganWrite("TranslationUnit");
+  j_son_.BeganWrite("CompUnit");
   ast->comp_unit->accept(this);
+  j_son_.EndWrite();
   j_son_.EndWrite();
   j_son_.close();
 }
 void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
-  j_son_.BeganWrite("CompUnit");
-  std::stack<std::shared_ptr<Ast>> comp_unit_list;
-  while (comp_unit_ast){
-	comp_unit_list.push(comp_unit_ast->comp_unit_Item);
-	comp_unit_ast = dynamic_cast<CompUnitAst *>((comp_unit_ast->comp_unit).get());
+  if (comp_unit_ast->comp_unit){
+	comp_unit_ast->comp_unit->accept(this);
   }
-  while (!comp_unit_list.empty()){
-	comp_unit_list.top()->accept(this);
-	comp_unit_list.pop();
-  }
-  j_son_.EndWrite();
+  comp_unit_ast->comp_unit_Item->accept(this);
 }
 void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
   char str[50] ={0};
@@ -32,7 +27,9 @@ void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
   sprintf(str,"FuncDef:%s %s",type->type,ident->name);
   j_son_.BeganWrite(str);
   if (func_def_ast->funcParamList){
+	j_son_.BeganWrite("FuncFParamList");
 	func_def_ast->funcParamList->accept(this);
+	j_son_.EndWrite();
   }
   func_def_ast->block->accept(this);
   j_son_.EndWrite();
@@ -56,17 +53,10 @@ void AstViewVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
-  j_son_.BeganWrite("FuncFParamList");
-  std::stack<std::shared_ptr<Ast>> list;
-  while (func_f_param_list_ast){
-	list.push(func_f_param_list_ast->funcFParam);
-	func_f_param_list_ast = dynamic_cast<FuncFParamListAst *>((func_f_param_list_ast->funcFParamList).get());
+  if (func_f_param_list_ast->funcFParamList){
+	func_f_param_list_ast->funcFParamList->accept(this);
   }
-  while (!list.empty()){
-	list.top()->accept(this);
-	list.pop();
-  }
-  j_son_.EndWrite();
+  func_f_param_list_ast->funcFParam->accept(this);
 }
 void AstViewVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast) {
   std::stack<std::shared_ptr<Ast>> list;
@@ -82,25 +72,18 @@ void AstViewVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list
   }
 }
 void AstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
-  j_son_.BeganWrite("Block");
+  j_son_.BeganWrite("BlockItemList");
   block_ast->block_item_list->accept(this);
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
-  std::stack<std::shared_ptr<Ast>> list;
-  while (block_item_list_ast){
-	list.push(block_item_list_ast->block_item);
-	block_item_list_ast = dynamic_cast<BlockItemListAst *>((block_item_list_ast->block_item_list).get());
+  if (block_item_list_ast->block_item_list){
+	block_item_list_ast->block_item_list->accept(this);
   }
-  while (!list.empty()){
-	list.top()->accept(this);
-	list.pop();
-  }
+  block_item_list_ast->block_item->accept(this);
 }
 void AstViewVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
-  j_son_.BeganWrite("BlockItem");
   block_item_ast->item->accept(this);
-  j_son_.EndWrite();
 }
 void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
   switch (stmt_ast->type) {
@@ -109,6 +92,7 @@ void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 	  if (stmt_ast->expr){
 		stmt_ast->expr->accept(this);
 	  }
+	  j_son_.EndWrite();
 	  break;
 	};
 	case StmtType::kAssign: {
@@ -154,10 +138,8 @@ void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
   }
 }
 void AstViewVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
-  j_son_.BeganWrite("if");
   if_stmt_ast->expr->accept(this);
   if_stmt_ast->stmt->accept(this);
-  j_son_.EndWrite();
   if (if_stmt_ast->elseStmt) {
 	j_son_.BeganWrite("else");
 	if_stmt_ast->elseStmt->accept(this);
@@ -165,10 +147,8 @@ void AstViewVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
   }
 }
 void AstViewVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
-  j_son_.BeganWrite("while");
   while_stmt_ast->expr->accept(this);
   while_stmt_ast->stmt->accept(this);
-  j_son_.EndWrite();
 }
 void AstViewVisitor::VisitExp(ExpAst *exp_ast) {
   exp_ast->realExpr->accept(this);
@@ -186,15 +166,10 @@ void AstViewVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
-  std::stack<std::shared_ptr<Ast>> list;
-  while (const_def_list_ast){
-	list.push(const_def_list_ast->const_def);
-	const_def_list_ast = dynamic_cast<ConstDefListAst *>((const_def_list_ast->const_def_list).get());
+  if (const_def_list_ast->const_def_list){
+	const_def_list_ast->const_def_list->accept(this);
   }
-  while (!list.empty()){
-	list.top()->accept(this);
-	list.pop();
-  }
+  const_def_list_ast->const_def->accept(this);
 }
 void AstViewVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
   j_son_.BeganWrite("ConstDef:=");
@@ -225,15 +200,10 @@ void AstViewVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
 }
 
 void AstViewVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
-  std::stack<std::shared_ptr<Ast>> list;
-  while (var_def_list_ast){
-	list.push(var_def_list_ast->varDef);
-	var_def_list_ast = dynamic_cast<VarDefListAst *>((var_def_list_ast->varDefList).get());
+  if(var_def_list_ast->varDefList){
+	var_def_list_ast->varDefList->accept(this);
   }
-  while (!list.empty()){
-	list.top()->accept(this);
-	list.pop();
-  }
+  var_def_list_ast->varDef->accept(this);
 }
 void AstViewVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   if (var_def_ast->var_expr)
@@ -279,7 +249,6 @@ void AstViewVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
 }
 void AstViewVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
   if (binary_expr_ast->left){
-	//
 	j_son_.BeganWrite(binary_expr_ast->op);
 	binary_expr_ast->left->accept(this);
   }

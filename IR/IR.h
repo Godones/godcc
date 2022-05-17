@@ -10,7 +10,7 @@
 #include <string_view>
 #include <vector>
 #include "tools/log.h"
-
+#include "tools/symbolTable.h"
 class Program;
 class Function;
 class BaseBlock;
@@ -50,12 +50,7 @@ enum BinaryOp {
   Invalid
 };
 
-enum DataType {
-  Void,
-  Int,//当前仅支持
-  Float,
-  kConstInt,
-};
+
 
 class IRBase {
  public:

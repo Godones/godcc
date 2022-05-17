@@ -15,9 +15,15 @@ int fibonacci ( int n ) {
   }
   return result ;
 }
-int main ( ) {
+
+int main (int argc, int x) {
   int a = 0x12;
   int res = fibonacci ( a ) ;
   _OUTPUT ( res ) ;
+  if(2>3){
+	;
+  }else{
+	;
+  }
   return 0 ;
 }

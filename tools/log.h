@@ -12,10 +12,16 @@
 
 #define _DEBUG
 #define _INFO
+#define _ERROR
+#define _WARNING
 
 void DEBUG(const char *fmt, ...);
 
 void INFO(const char *fmt, ...);
+
+void ERROR(const char *fmt,...);
+
+void WARNING(const char *fmt, ...);
 
 void get_time();
 

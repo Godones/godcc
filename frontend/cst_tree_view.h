@@ -9,8 +9,7 @@
 #include "../tools/dot.h"
 class CstViewVisitor :public Visitor{
  private:
-//  GodJSon j_son_;
-  GDot j_son_;
+  GDot dot;
  public:
   CstViewVisitor()=default;
   explicit CstViewVisitor(GDot j_son);

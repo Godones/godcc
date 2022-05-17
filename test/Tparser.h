@@ -15,11 +15,13 @@
 #include "frontend/ast_text_view.h"
 #include "frontend/ast_to_ir.h"
 #include "frontend/ast_tree_view.h"
+#include "semantic.h"
 
 int test_ast_text();
 
 void test_ir_gen();
 
+void test_semantic();
 void test_ast_tree();
 void test_cst_tree();
 void test_asm_gen();

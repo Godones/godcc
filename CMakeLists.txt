@@ -25,11 +25,11 @@ endif ()
 add_custom_command(
 	OUTPUT ${parser_path} ${parser_hpp_path}
 	COMMAND bison -d -Wcounterexamples -o ${parser_path} ${FRONTEND}/sysy.y
-	COMMAND bison -d ${FRONTEND}/sysy.y --graph
-	COMMAND bison ${FRONTEND}/sysy.y -W
+#	COMMAND bison -d ${FRONTEND}/sysy.y --graph
+#	COMMAND bison ${FRONTEND}/sysy.y -W
 	DEPENDS ${FRONTEND}/sysy.y
 )
-#SET_SOURCE_FILES_PROPERTIES(${lexer_path} GENERATED)
+
 add_custom_command(
 	OUTPUT ${lexer_path}
 	COMMENT "Compiling lexer"
@@ -37,22 +37,21 @@ add_custom_command(
 	DEPENDS ${parser_hpp_path} ${FRONTEND}/sysy.l
 )
 
-#add_custom_target(LEXER ALL DEPENDS ${lexer_path})
-#add_custom_target(PARSER ALL DEPENDS ${parser_path})
-#add_dependencies(LEXER PARSER)
+
 
 aux_source_directory(frontend FRONTENDCPP)
 
 add_library(test STATIC
-	test/Tparser.cpp
-	tools/log.cpp
-	IR/IR.cpp
-	IR/irvisitor.cpp
-	backend/asm.cpp
-        tools/dot.cpp
-	${FRONTENDCPP}
-	${parser_path}
-	${lexer_path}
+		test/Tparser.cpp
+		tools/log.cpp
+		IR/IR.cpp
+		IR/irvisitor.cpp
+		backend/asm.cpp
+		tools/dot.cpp
+		tools/symbolTable.cpp
+		${FRONTENDCPP}
+		${parser_path}
+		${lexer_path}
 	)
 
 #添加子目录
@@ -69,9 +68,9 @@ add_custom_target(
 	tree
 #	COMMAND pytm-cli -i test.json -d TB -t 1
 	COMMAND dot -Tpdf ast_Tree.dot -o ast_Tree.pdf
-	COMMAND dot -Tpng ast_Tree.dot -o ast_Tree.png
+	COMMAND dot -Tsvg ast_Tree.dot -o ast_Tree.svg
 	COMMAND dot -Tpdf cst_Tree.dot -o cst_Tree.pdf
-	COMMAND dot -Tpng cst_Tree.dot -o cst_Tree.png
+	COMMAND dot -Tsvg cst_Tree.dot -o cst_Tree.svg
 	COMMAND wslview ast_Tree.pdf && wslview cst_tree.pdf
 )
 

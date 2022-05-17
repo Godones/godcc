@@ -51,19 +51,9 @@ class ArrayExprListAst;
 
 class Ast {
  public:
-  int spaces = 0;
   int line = 0;
   int column = 0;
   virtual ~Ast() = default;
-
-  virtual void setSpaces(int spaces) {
-	this->spaces = spaces;
-  }
-  virtual void printSpace() {
-	for (int i = 0; i < spaces; i++) {
-	  std::cout << "\t";
-	}
-  }
   virtual void accept(Visitor *) = 0;
 };
 
@@ -129,6 +119,8 @@ class FuncFParamAst : public Ast {
   void accept(Visitor *) override;
 };
 
+
+
 class FuncTypeAst : public Ast {
  public:
   const char * type;
@@ -137,6 +129,7 @@ class FuncTypeAst : public Ast {
   void accept(Visitor *) override;
 };
 
+DataType getFuncType(const FuncTypeAst& func_type);
 
 class FuncRParamListAst : public Ast {
  public:
@@ -227,6 +220,8 @@ class WhileStmtAst : public Ast {
 // 表达式节点
 class ExpAst : public Ast {
  public:
+  int value;// 用于编译期值
+  bool have_value = false;// 用于编译期值
   std::shared_ptr<Ast> realExpr;
  public:
   ~ExpAst() override = default;
@@ -253,6 +248,8 @@ enum class BinaryType{
 const char * BinaryTypeToString(BinaryType &type);
 class BinaryExprAst : public Ast {
  public:
+  int value;// 用于编译期值
+  bool have_value = false;// 用于编译期值
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   BinaryType type;
@@ -275,6 +272,8 @@ enum class UnaryType {
 const char * UnaryTypeToString(UnaryType &type);
 class UnaryExprAst : public Ast {
  public:
+  int value;// 用于编译期值
+  bool have_value = false;// 用于编译期值
   std::shared_ptr<Ast> unaryOp;  //符号 --只有类型为unary时才有
   std::shared_ptr<Ast> unaryExpr;//表达式
   UnaryType unaryType;           //类型
@@ -290,6 +289,8 @@ enum class PrimaryType {
 class PrimaryExprAst : public Ast {
  public:
  public:
+  int value;// 用于编译期值
+  bool have_value = false;// 用于编译期值
   PrimaryType primaryType;
   std::shared_ptr<Ast> primaryExpr;
   ~PrimaryExprAst() override = default;
@@ -377,6 +378,7 @@ class ArrayExprListAst:public Ast{
 
 class InitValAst:public Ast{
  public:
+  std::vector<int> values; //用于存放初始化列表的值
   std::shared_ptr<Ast> init_val;
   std::shared_ptr<Ast> init_val_list;
   ~InitValAst() override = default;
@@ -387,6 +389,7 @@ class InitValAst:public Ast{
 
 class InitValListAst:public Ast{
  public:
+  std::vector<int> values; //用于存放初始化列表的值
   std::shared_ptr<Ast> expr_init_val;
   ~InitValListAst() override = default;
   void accept(Visitor *) override;
@@ -425,6 +428,8 @@ class VarDefAst : public Ast{
 // 左值节点---其对应一个已经声明过的标识符
 class LValAst : public Ast{
  public:
+  int value;
+  bool have_value;
   std::shared_ptr<Ast> l_val;// --> IdentifierAst
   std::shared_ptr<Ast> array_expr_list; //a[][]
   ~LValAst() override = default;

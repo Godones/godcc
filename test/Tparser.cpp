@@ -18,8 +18,8 @@ static  std::vector<const char *> file_names = {
 	"../test/test4.c",
 	"../test/test5.c",
 	"../test/test6.c",
-//	"../test/fab.c",
-//	"../test/dev.c",
+	"../test/fab.c",
+	"../test/dev.c",
 };
 
 void openFile(const char * file_name){
@@ -98,4 +98,11 @@ void test_ast_tree(){
   GDot json("ast_Tree.dot");
   auto visitor = AstViewVisitor(json);
   ast->accept(&visitor);
+}
+
+void test_semantic(){
+  auto ast = parser(file_names.back());
+  auto visitor = SemanticVisitor();
+  ast->accept(&visitor);
+  visitor.globalSymbolTable->dump();
 }

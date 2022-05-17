@@ -26,21 +26,23 @@ void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
 void IRGeneratorVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   DEBUG("IRGeneratorVisitor::VisitFuncDefAst");
   Function function;
+
+  auto ident = dynamic_cast<IdentifierAst *>(funcDefAst->ident.get());
+  auto func_type = dynamic_cast<FuncTypeAst *>(funcDefAst->funcType.get());
+  function.name = ident->name;
+  function.retType = getFuncType(*func_type);
   programIr->functions.emplace_back(function);
-  funcDefAst->ident->accept(this);
-  funcDefAst->funcType->accept(this);
   funcDefAst->block->accept(this);
 }
 
 // 设置函数返回类型
 void IRGeneratorVisitor::VisitFuncTypeAst(FuncTypeAst *funcTypeAst) {
   auto &function = programIr->functions.back();
-  if (funcTypeAst->type == "int") {
-	function.retType = DataType::Int;
-  } else if (funcTypeAst->type == "void") {
-	function.retType = DataType::Void;
+  if (strcmp(funcTypeAst->type,"int")==0) {
+	function.retType = DataType::kInt;
+  } else if (strcmp(funcTypeAst->type,"void")==0) {
+	function.retType = DataType::kVoid;
   }
-  DEBUG("IRGeneratorVisitor::VisitFuncTypeAst");
 }
 
 // 生成函数体
@@ -200,9 +202,9 @@ void IRGeneratorVisitor::VisitNumberAst(NumberAst *numberAst) {
 }
 
 void IRGeneratorVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
-  //标识符
-  auto &function = programIr->functions.back();
-  function.name = identifier_ast->name;
+  // 标识符
+  // 只将标识符的名字加入了符号表，类型以及其它信息需要其它地方填入
+//  table.add_symbol(identifier_ast->name, {});
 }
 
 void IRGeneratorVisitor::VisitDecl(DeclAst *decl_ast) {
@@ -210,10 +212,55 @@ void IRGeneratorVisitor::VisitDecl(DeclAst *decl_ast) {
 }
 void IRGeneratorVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
   // 常量定义，需要在编译器求出其值
+  DEBUG("ConstDecl");
+  auto type = dynamic_cast<FuncTypeAst*>(const_decl_ast->data_type.get());
+  assert(type);
+  //将定义的常量符号填入符号表
+//  int current_index = table.key_list.size();
+  const_decl_ast->const_def_list->accept(this);
+  //再将常量值的类型填入符号表
+//  for (int i=current_index; i<table.key_list.size(); i++) {
+//	auto val_info = table.get_symbol(table.key_list[i]);
+//	val_info->type = DataType::kConstInt;
+//  }
+}
+void IRGeneratorVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
+  std::stack<std::shared_ptr<Ast>> list;
+  while (const_def_list_ast){
+	list.push(const_def_list_ast->const_def);
+	const_def_list_ast = dynamic_cast<ConstDefListAst *>((const_def_list_ast->const_def_list).get());
+  }
+  while (!list.empty()){
+	list.top()->accept(this);
+	list.pop();
+  }
+}
 
-}
 void IRGeneratorVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
+  // 标识符
+  const_def_ast->ident->accept(this);
+  if (const_def_ast->array_expr_list){
+	const_def_ast->array_expr_list->accept(this);
+  }
+  const_def_ast->const_val->accept(this);
 }
+
+void IRGeneratorVisitor::VisitInitVal(InitValAst *init_val_ast) {
+  if (init_val_ast->init_val){
+	init_val_ast->init_val->accept(this);
+  }
+  init_val_ast->init_val_list->accept(this);
+}
+void IRGeneratorVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
+  auto expr = dynamic_cast<InitValAst*>(init_val_list_ast->expr_init_val.get());
+  if (expr||init_val_list_ast->expr_init_val== nullptr){
+	if (expr)
+	  expr->accept(this);
+  } else{
+	init_val_list_ast->expr_init_val->accept(this);
+  }
+}
+
 void IRGeneratorVisitor::VisitLVal(LValAst *l_val_ast) {
 }
 void IRGeneratorVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
@@ -233,12 +280,7 @@ void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_
 
 void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
 }
-void IRGeneratorVisitor::VisitInitVal(InitValAst *init_val_ast) {
-}
-void IRGeneratorVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
-}
+
 void IRGeneratorVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
 }
 
-void IRGeneratorVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
-}

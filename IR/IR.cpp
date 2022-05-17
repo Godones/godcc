@@ -15,7 +15,7 @@ std::string_view toString(const InstructionType &type) {
 
 std::string_view toString(const DataType &dataType) {
   switch (dataType) {
-	case DataType::Int: return "i32";
+	case DataType::kInt: return "i32";
 	default: return "";
   }
 }
