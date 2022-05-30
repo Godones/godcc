@@ -120,17 +120,18 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	  auto l_val = dynamic_cast<LValAst *>(stmtAst->l_val.get());
 	  auto ident = dynamic_cast<IdentifierAst *>(l_val->l_val.get());
 
-//	  auto item = globalSymbolTable->get_symbol(ident->name);
+	  //	  auto item = globalSymbolTable->get_symbol(ident->name);
 
 	  auto item_with_level = m_symbolTable->get_symbol_with_level(ident->name);
 	  auto item = item_with_level.second;
+	  auto expr = dynamic_cast<ExpAst *>(stmtAst->expr.get());
 
-	  if (item->have_value){
+	  if (expr->have_value){
 		// 如果是数字，则直接生成一个指令
 		Instruction instruction ={
 		  .instructionType = InstructionType::Store,
 		  .dataType = item->type,
-		  .operand1 = {.operand = {.number = item->value},.type = OperandType::kInteger},
+		  .operand1 = {.operand = {.number = expr->value},.type = OperandType::kInteger},
 		  .operand2 = {.operand = {
 							 .symbol = makeSymbolWithLevel(ident->name,item_with_level.first)->c_str()},
 						 .type = OperandType::kString
@@ -449,7 +450,7 @@ void IRGeneratorVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   auto &block = function.blocks.back();
   block.instructions.emplace_back(instruction);
   // 如果有初值
-  if (item.second->have_value||var_def_ast->var_expr){
+  if (var_def_ast->var_expr){
 	Instruction instruction1 = {
 		.instructionType = InstructionType::Store,
 		.dataType = instruction.dataType,
@@ -458,13 +459,14 @@ void IRGeneratorVisitor::VisitVarDef(VarDefAst *var_def_ast) {
 			.type = OperandType::kString,
 		},//第二个操作数是变量的符号
 	};
-	if(item.second->have_value){
+	auto expr = dynamic_cast<InitValListAst*>(var_def_ast->var_expr.get());
+	if(!expr->values.empty()){
 	  //其值已知
-	  instruction1.operand1.operand.number = item.second->value;
+	  instruction1.operand1.operand.number = expr->values[0];
 	  instruction1.operand1.type = OperandType::kInteger;
 	}else{
 	  //其初始值未知
-	  var_def_ast->var_expr->accept(this); //先产生求初始值的指令
+	  expr->accept(this); //先产生求初始值的指令
 	  instruction1.operand1.type = OperandType::kNumber; //操作数1类型为虚拟寄存器编号
 	  auto last_instruction = block.instructions.back(); //获取初始值指令的最后一条
 	  instruction1.operand1.operand.number = last_instruction.m_number; //取出其虚拟寄存器编号

@@ -179,7 +179,7 @@ void SemanticVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 	  // 重新赋值
 	  auto l_val = dynamic_cast<LValAst *>(stmt_ast->l_val.get());
 	  auto ident = dynamic_cast<IdentifierAst *>(l_val->l_val.get());
-	  auto expr = dynamic_cast<ExpAst *>(stmt_ast->expr.get());
+//	  auto expr = dynamic_cast<ExpAst *>(stmt_ast->expr.get());
 	  //已经保证了l_val是可以赋值的
 	  auto item = globalSymbolTable->get_symbol(ident->name);
 	  if (item) {
