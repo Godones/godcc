@@ -10,6 +10,8 @@
 class SemanticVisitor : public Visitor {
   DataType type_current = DataType::kNone; // 记录当前的数据类型
   bool while_flag = false; // 记录是否在while循环中
+  bool func_flag = false; // 记录函数是否以return结束
+  std::string current_func_name; // 记录当前函数名
  public:
   SymbolTable *globalSymbolTable;
  public:

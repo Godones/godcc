@@ -19,7 +19,17 @@ static  std::vector<const char *> file_names = {
 	"../test/test5.c",
 	"../test/test6.c",
 	"../test/fab.c",
+	"../test/semantic/0_var_not_defined.c",
+//	"../test/semantic/correct.c"
+	"../test/semantic/1_var_defined_again.c",
+	"../test/semantic/2_break_not_in_loop.c",
+	"../test/semantic/3_func_arg_not_match.c",
+	"../test/semantic/4_opnd_not_match.c",
+	"../test/semantic/7_func_lack_of_return.c",
 	"../test/dev.c",
+	"../test/semantic/while_if_condition_null.c",
+	"../test/semantic/correct.c",
+	"../test/ir.c",
 };
 
 void openFile(const char * file_name){
@@ -27,9 +37,9 @@ void openFile(const char * file_name){
   yyin = fopen(file_name, "r");
   if (yyin == nullptr) {
 	std::cout << "open file "
-			  << "../test/hello.c"
+			  << file_name
 			  << " failed\n";
-	return ;
+	exit(-1);
   }
   //需要输出token
   yyout = fopen("token.txt", "w");
@@ -69,21 +79,25 @@ int test_ast_text() {
 
 void test_ir_gen() {
   auto ast = parser(file_names.back());
-  auto visitor = IRGeneratorVisitor();
+  auto semanticVisitor = SemanticVisitor();
+  ast->accept(&semanticVisitor);
+  auto visitor = IRGeneratorVisitor(semanticVisitor.globalSymbolTable);
   ast->accept(&visitor);
   auto ir_code = visitor.programIr;
   auto visitor_default = IrVisitorDefault();
   ir_code->accept(&visitor_default);
 }
 
-void test_asm_gen() {
-  auto ast = parser(file_names.back());
-  auto visitor = IRGeneratorVisitor();
-  ast->accept(&visitor);
-  auto ir_code = visitor.programIr;
-  auto asmCodeGen = CodeGenVisitor();
-  ir_code->accept(&asmCodeGen);
-}
+//void test_asm_gen() {
+//  auto ast = parser(file_names.back());
+//  auto semanticVisitor = SemanticVisitor();
+//  ast->accept(&semanticVisitor);
+//  auto visitor = IRGeneratorVisitor(semanticVisitor.globalSymbolTable);
+//  ast->accept(&visitor);
+//  auto ir_code = visitor.programIr;
+//  auto asmCodeGen = CodeGenVisitor();
+//  ir_code->accept(&asmCodeGen);
+//}
 
 void test_cst_tree(){
 

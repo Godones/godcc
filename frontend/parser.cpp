@@ -1970,8 +1970,8 @@ yyreduce:
 	ifStmt->expr = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	ifStmt->stmt =  shared_ptr<Ast>((yyvsp[0].ast_val));
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
-		stmt->line = (yyloc).first_line;
-        	stmt->column = (yyloc).first_column;
+	stmt->line = (yyloc).first_line;
+	stmt->column = (yyloc).first_column;
 	(yyval.ast_val) = stmt;
 }
 #line 1978 "/home/godcc/frontend/parser.cpp"
@@ -2293,8 +2293,8 @@ binary->column = (yyloc).first_column;
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-2].ast_val));
 	unaryExp->unaryType = UnaryType::kCall;
-	  	  unaryExp->line = (yyloc).first_line;
-                unaryExp->column = (yyloc).first_column;
+	  unaryExp->line = (yyloc).first_line;
+	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
 }
 #line 2301 "/home/godcc/frontend/parser.cpp"
@@ -2307,8 +2307,8 @@ binary->column = (yyloc).first_column;
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-3].ast_val));
     	unaryExp->unaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
 	unaryExp->unaryType = UnaryType::kCall;
-	  	  unaryExp->line = (yyloc).first_line;
-                unaryExp->column = (yyloc).first_column;
+	  unaryExp->line = (yyloc).first_line;
+	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
 }
 #line 2315 "/home/godcc/frontend/parser.cpp"

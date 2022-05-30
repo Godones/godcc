@@ -124,6 +124,18 @@ Hex 0[xX][0-9a-fA-F]+
                     //began_colum +=yyleng;
                     return '}';
                 }
+ "("            {
+                    file_out("(","(");
+                     yylval.str_val=new string("(");
+                    //began_colum +=yyleng;
+                    return '(';
+                }
+ ")"            {
+                    file_out(")",")");
+                     yylval.str_val=new string(")");
+                    //began_colum +=yyleng;
+                    return ')';
+                }
 "<="            {
                     file_out("<=","<=");
                      yylval.str_val=new string("<=");

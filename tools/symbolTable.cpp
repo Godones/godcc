@@ -6,9 +6,8 @@
 
 #include <iomanip>
 
-std::string_view DataTypeToString(DataType type){
+std::string DataTypeToString(DataType type){
   switch (type) {
-
 	case kNone: {
 	  return "null";
 	};
@@ -41,28 +40,22 @@ void SymbolTable::add_symbol(const std::string& key, const SymbolInfo& info) {
   key_list.emplace_back(key);
 }
 
-SymbolTable* SymbolTable::enter_scope() {
+SymbolTable* SymbolTable::new_scope() {
+  // 在语义分析中是产生新的作用域
   SymbolTable *new_table = new SymbolTable();
+  new_table->level = level + 1; // 当前作用域的层级
   child_list.emplace_back(new_table);
   new_table->parent = this;
   return new_table; //返回新的符号表
 }
+
+
 SymbolTable* SymbolTable::exit_scope() const{
   assert(parent != nullptr);
   // 退出当前作用域，返回父作用域
   return parent;
 }
-SymbolInfo* SymbolTable::get_symbol(const std::string& key) {
-  //查找符号时需要从当前的符号表开始查找，如果没有找到，就往上一级符号表查找
-  auto iter = table.find(key);
-  if (iter != table.end()) {
-	return &iter->second;
-  }
-  if (parent != nullptr) {
-	return parent->get_symbol(key);
-  }
-  return nullptr;
-}
+
 void SymbolTable::dump(int depth) {
   // 打印符号表
   std::string tab = std::string(depth, ' ');
@@ -85,13 +78,38 @@ bool SymbolTable::has_symbol(const std::string& key) {
   return table.find(key) != table.end();
 }
 
-void SymbolTable::delete_symbol(const std::string& key) {
-  // 删除符号 只在语义分析阶段使用
-  if(has_symbol(key)) {
-	table.erase(key);
+SymbolTable* SymbolTable::enter_scope() {
+  // 在中间代码生成以及目标代码生成中是进入已经建立起来的作用域中
+  if (child_list.size() > index){
+    return child_list[index++];
+  } else{
+	ERROR("enter_scope %d  %d error!",index-1,child_list.size());
+	exit(-1);
   }
 }
-
+std::pair<int, SymbolInfo*> SymbolTable::get_symbol_with_level(const std::string& key) {
+  // 查找符号，返回符号所在的作用域层级和符号信息
+  // 如果没有找到，返回-1和nullptr
+  auto iter = table.find(key);
+  if (iter != table.end()) {
+	return std::make_pair(level, &iter->second);
+  }
+  if (parent != nullptr) {
+	return parent->get_symbol_with_level(key);
+  }
+  return std::make_pair(-1, nullptr);
+}
+SymbolInfo* SymbolTable::get_symbol(const std::string& key) {
+  //查找符号时需要从当前的符号表开始查找，如果没有找到，就往上一级符号表查找
+  auto iter = table.find(key);
+  if (iter != table.end()) {
+	return &iter->second;
+  }
+  if (parent != nullptr) {
+	return parent->get_symbol(key);
+  }
+  return nullptr;
+}
 void ArrayInfo::dump() {
   // 打印数组信息
   std::cout << DataTypeToString(type) << " ";
@@ -112,15 +130,7 @@ void FuncInfo::dump() {
   }
   std::cout << ") ";
 }
-bool FuncInfo::has_param(DataType type, std::string_view name) {
-  //检查是否已经有此参数
-  for (auto& param : params) {
-	if (param.type == type && param.name == name) {
-	  return true;
-	}
-  }
-  return false;
-}
+
 void SymbolInfo::dump() {
   // 打印符号信息
   std::cout << DataTypeToString(type) << " ";

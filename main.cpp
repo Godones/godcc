@@ -24,18 +24,21 @@ int main(int argc, const char *argv[]) {
   INFO("test_ast_tree:");
   test_ast_tree();
   INFO("test_ast_tree ok!");
-//
-//  INFO("test_ir_gen:");
-//  test_ir_gen();
-//  INFO("test_ir_gen ok!");
-//
+
+//  INFO("test_semantic");
+//  test_semantic();
+//  INFO("test_semantic ok!");
+
+  INFO("test_ir_gen:");
+  test_ir_gen();
+  INFO("test_ir_gen ok!");
+
 //  INFO("test_asm_gen:");
 //  test_asm_gen();
 //  INFO("test_asm_gen ok!");
 //
-  INFO("test_semantic");
-  test_semantic();
-  INFO("test_semantic ok!");
+
+
 
   return 0;
 }

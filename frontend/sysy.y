@@ -497,8 +497,8 @@ Stmt
 	ifStmt->expr = shared_ptr<Ast>($3);
 	ifStmt->stmt =  shared_ptr<Ast>($5);
 	stmt-> expr = shared_ptr<Ast>(ifStmt);
-		stmt->line = @$.first_line;
-        	stmt->column = @$.first_column;
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
 	$$ = stmt;
 }
 |IF '(' Expr ')' Stmt ELSE Stmt{
@@ -706,8 +706,8 @@ UnaryExp
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
 	unaryExp->unaryType = UnaryType::kCall;
-	  	  unaryExp->line = @$.first_line;
-                unaryExp->column = @$.first_column;
+	  unaryExp->line = @$.first_line;
+	unaryExp->column = @$.first_column;
 	$$ = unaryExp;
 }
 |Identifier '(' FuncRParamList ')'{
@@ -715,8 +715,8 @@ UnaryExp
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
     	unaryExp->unaryExpr = shared_ptr<Ast>($3);
 	unaryExp->unaryType = UnaryType::kCall;
-	  	  unaryExp->line = @$.first_line;
-                unaryExp->column = @$.first_column;
+	  unaryExp->line = @$.first_line;
+	unaryExp->column = @$.first_column;
 	$$ = unaryExp;
 }
 ;

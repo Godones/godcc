@@ -132,7 +132,9 @@ class FuncTypeAst : public Ast {
 DataType getFuncType(const FuncTypeAst& func_type);
 
 class FuncRParamListAst : public Ast {
+  //参数列表
  public:
+  std::string func_name;//函数名,用于语义检查
   std::shared_ptr<Ast> funcRParamListAst;
   std::shared_ptr<Ast> expr;
   FuncRParamListAst(std::shared_ptr<Ast> left,std::shared_ptr<Ast> right);
@@ -222,6 +224,7 @@ class ExpAst : public Ast {
  public:
   int value;// 用于编译期值
   bool have_value = false;// 用于编译期值
+  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> realExpr;
  public:
   ~ExpAst() override = default;
@@ -229,7 +232,6 @@ class ExpAst : public Ast {
 };
 
 // 二元关系表达式
-
 // AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
 // MulExp      ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
 // RelExp      ::= AddExp | RelExp ("<" | "<=" | ">" | ">=") AddExp;
@@ -250,6 +252,7 @@ class BinaryExprAst : public Ast {
  public:
   int value;// 用于编译期值
   bool have_value = false;// 用于编译期值
+  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   BinaryType type;
@@ -274,6 +277,8 @@ class UnaryExprAst : public Ast {
  public:
   int value;// 用于编译期值
   bool have_value = false;// 用于编译期值
+  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+
   std::shared_ptr<Ast> unaryOp;  //符号 --只有类型为unary时才有
   std::shared_ptr<Ast> unaryExpr;//表达式
   UnaryType unaryType;           //类型
@@ -291,6 +296,8 @@ class PrimaryExprAst : public Ast {
  public:
   int value;// 用于编译期值
   bool have_value = false;// 用于编译期值
+  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+
   PrimaryType primaryType;
   std::shared_ptr<Ast> primaryExpr;
   ~PrimaryExprAst() override = default;
@@ -430,6 +437,8 @@ class LValAst : public Ast{
  public:
   int value;
   bool have_value;
+  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+
   std::shared_ptr<Ast> l_val;// --> IdentifierAst
   std::shared_ptr<Ast> array_expr_list; //a[][]
   ~LValAst() override = default;

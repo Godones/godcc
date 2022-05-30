@@ -16,25 +16,26 @@ std::string_view toString(const InstructionType &type) {
 std::string_view toString(const DataType &dataType) {
   switch (dataType) {
 	case DataType::kInt: return "i32";
+	case DataType::kConstInt : return "i32";
 	default: return "";
   }
 }
 
 std::string_view toString(const BinaryOp&binary_op){
   switch (binary_op) {
-	case Add: return "add ";
-	case Sub: return "sub ";
-	case Mul: return "mul ";
-	case Div: return "div ";
-	case Mod: return "rem ";
-	case And: return "and ";
-	case Or: return "or ";
-	case Lt: return "lt ";
-	case Gt: return "gt ";
-	case Le: return "le ";
-	case Ge: return "ge ";
-	case Eq: return "eq ";
-	case Ne: return "ne ";
+	case BinaryOp::Add: return "add ";
+	case BinaryOp::Sub: return "sub ";
+	case BinaryOp::Mul: return "mul ";
+	case BinaryOp::Div: return "div ";
+	case BinaryOp::Mod: return "rem ";
+	case BinaryOp::And: return "and ";
+	case BinaryOp::Or: return "or ";
+	case BinaryOp::Lt: return "lt ";
+	case BinaryOp::Gt: return "gt ";
+	case BinaryOp::Le: return "le ";
+	case BinaryOp::Ge: return "ge ";
+	case BinaryOp::Eq: return "eq ";
+	case BinaryOp::Ne: return "ne ";
 	default: break;
   }
   //todo!(符号错误)
@@ -53,10 +54,8 @@ void Function::accept(IrVisitor *visitor) {
 void BaseBlock::accept(IrVisitor *visitor) {
   visitor->VisitBaseBlock(this);
 }
+BaseBlock::BaseBlock(int id):blkId(id){}
 
 void Instruction::accept(IrVisitor *visitor) {
   visitor->VisitInstruction(this);
-}
-Instruction::Instruction(){
-
 }

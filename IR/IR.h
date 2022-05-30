@@ -11,29 +11,32 @@
 #include <vector>
 #include "tools/log.h"
 #include "tools/symbolTable.h"
-class Program;
-class Function;
-class BaseBlock;
-class Instruction;
-class IrVisitor;
-enum InstructionType {
-  Integer,
-  ZeroInit,
+
+
+struct Program;
+struct Function;
+struct BaseBlock;
+struct Instruction;
+struct IrVisitor;
+
+// 指令类型
+enum class InstructionType {
+  Integer, // 整数
+  ZeroInit, // 初始化为0
   FuncArgRef,
-  Alloc,
-  GlobalAlloc,
-  Load,
-  Store,
-  GetPtr,
-  GetElementPtr,
-  Binary,
-  Unary,
-  Branch,
-  Jump,
-  Return,
-  Call,
+  Alloc, //局部变量
+  GlobalAlloc, //全局变量
+  Load, // 加载数
+  Store, // 存储数
+  GetPtr, // 指针，用于数组
+  GetElementPtr, // 数组元素
+  Binary,  // 二元运算表达式
+  Branch, //分支
+  Jump, // 跳转 --> 分支
+  Return, // 返回语句   return lvalue|number|symbol|null
+  Call, //函数调用语句 call <symbol>
 };
-enum BinaryOp {
+enum class BinaryOp {
   Add,//+
   Sub,//-
   Mul,//*
@@ -52,63 +55,73 @@ enum BinaryOp {
 
 
 
-class IRBase {
+struct IRBase {
  public:
   IRBase() = default;
   virtual void accept(IrVisitor *) = 0;
 };
 
 // 程序定义
-class Program : public IRBase {
+struct Program  {
  public:
-  std::vector<Function> functions;
+  std::vector<Function> functions; //函数列表
+  std::vector<Instruction> global_instructions;//全局变量列表
   Program() = default;
   void accept(IrVisitor *visitor);
 };
 
 // 程序由函数和全局指令组成
-class Function : public IRBase {
+struct Function  {
  public:
-  std::string_view name;
-  DataType retType;
-  std::vector<BaseBlock> blocks;
+  std::string_view name; //函数名称
+  DataType retType; // 返回值类型
+  std::vector<BaseBlock> blocks; //基本块列表
+  std::vector<Instruction> params;//函数参数
   Function() = default;
   void accept(IrVisitor *visitor);
 };
 
 // 函数由基本块组成
-class BaseBlock : public IRBase {
+struct BaseBlock  {
  public:
-  std::string_view blockName;
-  std::vector<Instruction> instructions;
+  int blkId = 0;
+  std::vector<Instruction> instructions {}; //指令列表
   BaseBlock() = default;
+  BaseBlock(int id);
   void accept(IrVisitor *visitor);
 };
+
+
+// 四元式操作数定义
+// 操作数类型
+enum class OperandType{
+  kString,  // 符号字符串-->函数
+  kNumber,  // 指令虚拟寄存器号
+  kInteger, // 常数
+  kLabel,   //基本块编号
+};
+struct Operand{
+  union {
+	int number; // 整数
+	const char * symbol; // 字符串
+  }operand;// 操作数
+  OperandType type;
+} ;
 
 // 指令定义,包括全局指令、局部指令
 // 全局指令: 全局变量声明、全局函数声明
 // 局部指令: 局部变量声明、局部函数声明
-
-class Instruction : public IRBase {
+struct Instruction  {
  public:
-  // 指令类型
-  InstructionType instructionType;
-  // 指令类型对应的操作数
-  // 操作数可以是立即数
-  // 也可以是寄存器的名字
-  BinaryOp binaryOp;
-  typedef struct {
-	union {
-	  int number;
-	  unsigned int reg;
-	}operand;
-	bool isreg;
-	} Operand;
-
-  Operand operand1{};
-  Operand operand2{};
-  unsigned int target_register = 0;
-  Instruction();
+  InstructionType instructionType;// 指令类型
+  DataType dataType;  //数据类型
+  BinaryOp binaryOp;  //二元运算符
+  Operand operand1{}; //操作数1
+  Operand operand2{}; //操作数2
+  Operand operand3{}; //操作数3 //只有在branch会使用三个 操作数
+  int m_number; //指令的值所用虚拟寄存器编号
+  std::string_view name; // 保存变量名称或者函数名称
+  std::vector<Instruction> extra; // 额外信息，在函数参数中使用
   void accept(IrVisitor *visitor);
 };
 
