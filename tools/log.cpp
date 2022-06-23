@@ -28,7 +28,7 @@ void INFO(const char *fmt, ...) {
 #endif
 }
 
-void ERROR(const char *fmt,...){
+void ERROR(const char *fmt, ...) {
 #ifdef _ERROR
   printf("[ERROR] ");
   printf("\033[31m");
@@ -40,8 +40,7 @@ void ERROR(const char *fmt,...){
 #endif
 }
 
-
-void WARNING(const char *fmt, ...){
+void WARNING(const char *fmt, ...) {
 #ifdef _WARNING
   printf("[WARNING] ");
   printf("\033[33m");
@@ -53,8 +52,8 @@ void WARNING(const char *fmt, ...){
 #endif
 }
 
-void get_time(){
-    time_t now = time(nullptr);
-    char temp[32]{0};
-    strncpy(temp, ctime(&now),sizeof (temp));
+void get_time() {
+  time_t now = time(nullptr);
+  char temp[32]{0};
+  strncpy(temp, ctime(&now), sizeof(temp));
 }

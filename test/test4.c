@@ -3,16 +3,16 @@
 //
 
 int x = 0;
-int f(){
-  int x[2][3] ;
+int f() {
+  int x[2][3];
   x[1][2] = 0;
   return 0;
 }
-void T(int a,int b){
+void T(int a, int b) {
   return;
 }
-int main(){
+int main() {
   f();
-  T(1,2);
+  T(1, 2);
   return 0;
 }

@@ -5,32 +5,31 @@
 #ifndef GODCC_FRONTEND_AST_TO_IR_H_
 #define GODCC_FRONTEND_AST_TO_IR_H_
 // 中间代码生成
-#include "visitor.h"
 #include <stack>
+
 #include "tools/symbolTable.h"
-
-
+#include "visitor.h"
 
 class IRGeneratorVisitor : public Visitor {
  private:
   SymbolTable *m_symbolTable;
   SymbolTable *globalSymbolTable;
-  std::string* makeSymbolWithLevel(const char *name, int level);
+  std::string *makeSymbolWithLevel(const char *name, int level);
   Instruction make_jump(int label);
-  Instruction make_branch(int condition,int label1,int label2);
+  Instruction make_branch(int condition, int label1, int label2);
 
   //记录while循环的开头标签和结尾标签
-  std::stack<unsigned int> while_begin_label; //continue跳转的位置
-  std::vector<std::pair<int,int>> break_instruction; //记录break的指令，需要修改break跳转的位置
-  std::vector<Instruction> func_param;//保存函数参数
+  std::stack<unsigned int> while_begin_label;        //continue跳转的位置
+  std::vector<std::pair<int, int>> break_instruction;//记录break的指令，需要修改break跳转的位置
+  std::vector<Instruction> func_param;               //保存函数参数
  public:
   std::shared_ptr<Program> programIr = nullptr;
-  int number_record = 0; //记录指令的标号
+  int number_record = 0;//记录指令的标号
   int label_record = 0; //记录标签的标号
 
  public:
   explicit IRGeneratorVisitor(SymbolTable *symbolTable);
-  ~IRGeneratorVisitor() ;
+  ~IRGeneratorVisitor();
   void VisitTranslationUnit(TranslationUnitAst *ast) override;
   void VisitCompUnitAst(CompUnitAst *) override;
   void VisitFuncDefAst(FuncDefAst *) override;
@@ -55,7 +54,7 @@ class IRGeneratorVisitor : public Visitor {
   void VisitVarDef(VarDefAst *) override;
   void VisitVarDefList(VarDefListAst *) override;
 
-  void VisitArrayExprList(ArrayExprListAst*) override;
+  void VisitArrayExprList(ArrayExprListAst *) override;
   void VisitInitVal(InitValAst *) override;
   void VisitInitValList(InitValListAst *) override;
 

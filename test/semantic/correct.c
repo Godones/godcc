@@ -3,5 +3,5 @@
 //
 int main() {
   int a = 0;
-  return 4+4/4*6-2%1;
+  return 4 + 4 / 4 * 6 - 2 % 1;
 }

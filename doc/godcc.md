@@ -121,6 +121,7 @@ UnaryOp     ::= "+" | "-" | "!";
 ```
 
 ### 第三节:支持二元算数运算
+
 ```
 Exp         ::= AddExp;
 PrimaryExp  ::= ...;
@@ -132,6 +133,7 @@ AddExp      ::= MulExp | AddExp ("+" | "-") MulExp;
 ```
 
 ### 第四节:支持二元逻辑运算
+
 ```
 Exp         ::= LOrExp;
 PrimaryExp  ::= ...;
@@ -146,18 +148,12 @@ LAndExp     ::= EqExp | LAndExp "&&" EqExp;
 LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
 ```
 
-
-
 ### 额外:json数据生成和树图格式化
 
 ```
 pip install pytm-cli
 
 ```
-
-
-
-
 
 ```
      |----B     |----E----|----I
@@ -275,8 +271,6 @@ LVal          ::= IDENT; //这一部分需要建立符号表来查找相关内�
 PrimaryExp    ::= "(" Exp ")" | LVal | Number;
 ```
 
-
-
 ### 第六节:支持变量和赋值
 
 ```
@@ -341,8 +335,6 @@ LVal          ::= IDENT; //这一部分需要建立符号表来查找相关内�
 PrimaryExp    ::= "(" Exp ")" | LVal | Number;
 ```
 
-
-
 ### 第七节:支持语句块和作用域
 
 ```
@@ -366,8 +358,6 @@ Stmt ::= LVal "=" Exp ";"
        | "break" ";"
        | "continue" ";"
 ```
-
-
 
 ### 第九节：支持函数定义和调用
 
@@ -416,8 +406,6 @@ Compunit ::= CompunitItem
 CompunitItem  ::= Decl | FuncDef
 ```
 
-
-
 ### 第十节：支持多维数组定义
 
 ```c
@@ -447,10 +435,6 @@ VarDef     ::= IDENT [ArrayExpList]
 //理论上 InitVal 与 ConstInitVal 不一样
 LVal ::= IDENT [ArrayExpList]
 ```
-
-
-
-
 
 完整的文法子集如下：
 
@@ -519,8 +503,6 @@ LVal ::= IDENT [ArrayExpList]
 逻辑或表达式  LOrExp        ::= LAndExp | LOrExp "||" LAndExp;
 ```
 
-
-
 ==考虑如何展开表达式语句中的重复语句==
 
 ```
@@ -549,8 +531,6 @@ LVal ::= IDENT [ArrayExpList]
 如果是一元节点就需要将右节点递归到最底层
 
 对于递归文法，使用堆栈将其取出。
-
-
 
 ### 语义检查
 

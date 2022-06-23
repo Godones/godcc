@@ -51,9 +51,9 @@ void SemanticVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
   block_item_list->accept(this);
   // 退出函数的作用域
   current_func_name = "";
-  if (!func_flag){
+  if (!func_flag) {
 	ERROR("address:%d-%d, ES08 function:%s has no return statement", ident->line, ident->column, ident->name);
-  }else{
+  } else {
 	func_flag = false;
   }
   globalSymbolTable = globalSymbolTable->exit_scope();
@@ -103,7 +103,7 @@ void SemanticVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_lis
   //检查参数个数是否匹配
   if (func_info->params.size() != list.size()) {
 	ERROR("address:%d-%d, function:%s has %d parameters, but %d parameters are given",
-		  line,column,
+		  line, column,
 		  name.c_str(),
 		  func_info->params.size(), list.size());
 	return;
@@ -111,10 +111,10 @@ void SemanticVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_lis
   //检查参数类型是否匹配
   for (int i = 0; i < func_info->params.size(); i++) {
 	SymbolInfo param = func_info->params[i];
-	auto expr_top = list.top(); //各个参数的表达式
+	auto expr_top = list.top();//各个参数的表达式
 	list.pop();
 	auto expr = dynamic_cast<ExpAst *>(expr_top.get());
-	expr->accept(this); //参数编译期求值
+	expr->accept(this);//参数编译期求值
 	if (param.type != expr->data_type) {
 	  ERROR("address:%d-%d, function:%s parameter %d type is %s, but %s is given",
 			line, column,
@@ -161,12 +161,12 @@ void SemanticVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 		  ERROR("address:%d-%d, function:%s has no return value, but return value is given",
 				stmt_ast->line, stmt_ast->column, current_func_name.c_str());
 		}
-	  } else{
-		if (stmt_ast->expr==nullptr) {
+	  } else {
+		if (stmt_ast->expr == nullptr) {
 		  //函数返回值不为空，但是函数返回值为空
 		  ERROR("address:%d-%d, function:%s has return value, but return value is not  given",
 				stmt_ast->line, stmt_ast->column, current_func_name.c_str());
-		}else{
+		} else {
 		  // 进行求值，后续可以直接使用
 		  stmt_ast->expr->accept(this);
 		}
@@ -179,12 +179,12 @@ void SemanticVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 	  // 重新赋值
 	  auto l_val = dynamic_cast<LValAst *>(stmt_ast->l_val.get());
 	  auto ident = dynamic_cast<IdentifierAst *>(l_val->l_val.get());
-//	  auto expr = dynamic_cast<ExpAst *>(stmt_ast->expr.get());
+	  //	  auto expr = dynamic_cast<ExpAst *>(stmt_ast->expr.get());
 	  //已经保证了l_val是可以赋值的
 	  auto item = globalSymbolTable->get_symbol(ident->name);
 	  if (item) {
-		if (item->type==DataType::kConstInt){
-		  ERROR("address:%d-%d, const int:%s can not be assigned",stmt_ast->line,stmt_ast->column,ident->name);
+		if (item->type == DataType::kConstInt) {
+		  ERROR("address:%d-%d, const int:%s can not be assigned", stmt_ast->line, stmt_ast->column, ident->name);
 		}//常量不能赋值，变量只需要求出其值即可
 	  }
 	  break;
@@ -232,7 +232,7 @@ void SemanticVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
   //保证条件可以求出值
   auto expr = dynamic_cast<ExpAst *>(if_stmt_ast->expr.get());
   //判断表达式类型是否不是kNone
-  if (expr->data_type == DataType::kNone||expr->data_type==DataType::kVoid) {
+  if (expr->data_type == DataType::kNone || expr->data_type == DataType::kVoid) {
 	ERROR("address:%d-%d, if condition is not a valid expression", if_stmt_ast->line, if_stmt_ast->column);
   }
   if_stmt_ast->stmt->accept(this);
@@ -244,7 +244,7 @@ void SemanticVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_stmt_ast->expr->accept(this);
   auto expr = dynamic_cast<ExpAst *>(while_stmt_ast->expr.get());
   // 判断表达式类型是否不是kNone
-  if (expr->data_type==DataType::kNone||expr->data_type==DataType::kVoid){
+  if (expr->data_type == DataType::kNone || expr->data_type == DataType::kVoid) {
 	ERROR("address:%d-%d, while condition is not a valid expression", while_stmt_ast->line, while_stmt_ast->column);
   }
   // 在while语句中，需要一个标志标明当前处于while循环中
@@ -266,7 +266,6 @@ void SemanticVisitor::VisitExp(ExpAst *exp_ast) {
   }
   exp_ast->data_type = expr->data_type;//类型
 }
-
 
 void SemanticVisitor::VisitDecl(DeclAst *decl_ast) {
   decl_ast->decl->accept(this);
@@ -290,7 +289,9 @@ void SemanticVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
 	ERROR("address:%d-%d ES02 %s duplicate definition", const_def_ast->line, const_def_ast->column, ident->name);
 	return;
   }
-  globalSymbolTable->add_symbol(ident->name, {type_current,});//填类型
+  globalSymbolTable->add_symbol(ident->name, {
+												 type_current,
+											 });//填类型
   //记录当前的常量
   auto item = globalSymbolTable->get_symbol(ident->name);
   if (const_def_ast->array_expr_list) {
@@ -324,34 +325,24 @@ void SemanticVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
 }
 void SemanticVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   auto ident = dynamic_cast<IdentifierAst *>(var_def_ast->ident.get());
-  if (globalSymbolTable->has_symbol(ident->name)) {
-	// 重复定义
+  if (globalSymbolTable->has_symbol(ident->name)) {// 重复定义
 	ERROR("address:%d-%d ES02 %s duplicate definition", var_def_ast->line, var_def_ast->column, ident->name);
 	return;
   }
-  globalSymbolTable->add_symbol(ident->name, {
-												 type_current,
-											 });//填类型
+  globalSymbolTable->add_symbol(ident->name, {type_current,});//填类型
   //记录当前的变量
   auto item = globalSymbolTable->get_symbol(ident->name);
   if (var_def_ast->array_expr_list) {
+	//todo!(需要处理数组)
 	var_def_ast->array_expr_list->accept(this);
   }
-  // 这里假设还没有数组
+
   if (var_def_ast->var_expr) {          //如果有初始化
 	var_def_ast->var_expr->accept(this);//求值
 	auto val = dynamic_cast<InitValListAst *>(var_def_ast->var_expr.get());
-	// 填入常量表
-	//	DEBUG("value:%d", val->values.size());
 	if (val->values.size() > 1) {
 	  //如果不是数组但是使用了数组初始化
 	  WARNING("address:%d-%d excess elements in scalar initializer", var_def_ast->line, var_def_ast->column);
-	}
-	if (!val->values.empty()) {
-	  // 初始化不为空
-	  // 对于变量来说，不需要将其值记录再符号表中
-//	  (*item).have_value = true;
-//	  (*item).value = val->values[0];
 	}
   }
 }
@@ -523,23 +514,23 @@ void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 		auto func_info = (FuncInfo *)func_def->ptr;
 		if (!func_info->params.empty()) {
 		  //参数个数不为0，但是没有参数
-		  if (unary_expr_ast->unaryExpr==nullptr) {
+		  if (unary_expr_ast->unaryExpr == nullptr) {
 			ERROR("address:%d-%d function %s need arguments", unary_expr_ast->line, unary_expr_ast->column, func_name->name);
 		  } else {
-            //有参数
+			//有参数
 			auto func_r_param = dynamic_cast<FuncRParamListAst *>(unary_expr_ast->unaryExpr.get());
 			func_r_param->func_name = func_name->name;
 			func_r_param->accept(this);
 			unary_expr_ast->data_type = func_info->ret_type;//表达式类型为函数返回类型
 		  }
 		} else {
-          //参数个数为0，但是有参数
-          if (unary_expr_ast->unaryExpr!=nullptr) {
-            ERROR("address:%d-%d function %s need no arguments", unary_expr_ast->line, unary_expr_ast->column, func_name->name);
-          } else {
-            //没有参数
-            unary_expr_ast->data_type = func_info->ret_type;//表达式类型为函数返回类型
-          }
+		  //参数个数为0，但是有参数
+		  if (unary_expr_ast->unaryExpr != nullptr) {
+			ERROR("address:%d-%d function %s need no arguments", unary_expr_ast->line, unary_expr_ast->column, func_name->name);
+		  } else {
+			//没有参数
+			unary_expr_ast->data_type = func_info->ret_type;//表达式类型为函数返回类型
+		  }
 		}
 	  } else {
 		//不存在定义
@@ -560,7 +551,7 @@ void SemanticVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 		primary_expr_ast->have_value = true;
 		primary_expr_ast->value = exp->value;
 	  }
-	  primary_expr_ast->data_type = exp->data_type; //表达式类型
+	  primary_expr_ast->data_type = exp->data_type;//表达式类型
 	  break;
 	}
 	case PrimaryType::NUMBER: {
@@ -589,13 +580,13 @@ void SemanticVisitor::VisitLVal(LValAst *l_val_ast) {
   if (!symbol) {
 	//符号不存在
 	ERROR("address:%d-%d ES01 undefined variable: %s", l_val_ast->line,
-	l_val_ast->column, ident->name);
-	return; //直接返回
+		  l_val_ast->column, ident->name);
+	return;//直接返回
   } else {
 	//符号存在
 	if (symbol->have_value) {
-	  l_val_ast->have_value = true; //左值有值
-	  l_val_ast->value = symbol->value; //左值值
+	  l_val_ast->have_value = true;    //左值有值
+	  l_val_ast->value = symbol->value;//左值值
 	}
 	l_val_ast->data_type = symbol->type;//类型传递
   }

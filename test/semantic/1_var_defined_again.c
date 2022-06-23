@@ -1,21 +1,20 @@
 
 //int f();
-int f(){
-	return 1;
+int f() {
+  return 1;
 }
 
-int f(){
-	return 2;
+int f() {
+  return 2;
 }
 
-int main()
-{
-	int a;
-	int a;
-	
+int main() {
+  int a;
+  int a;
+
+  int b;
+  {
 	int b;
-	{
-		int b;
-	}
-	return 0;
+  }
+  return 0;
 }

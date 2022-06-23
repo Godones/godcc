@@ -5,9 +5,10 @@
 #ifndef GODCC_IRVISITOR_H
 #define GODCC_IRVISITOR_H
 
-#include "IR.h"
-#include <fstream>
 #include <cassert>
+#include <fstream>
+
+#include "IR.h"
 class Program;
 class Function;
 class BaseBlock;
@@ -29,7 +30,5 @@ class IrVisitorDefault : public IrVisitor {
   void VisitBaseBlock(BaseBlock *) override;
   void VisitInstruction(Instruction *) override;
 };
-
-
 
 #endif//GODCC_IRVISITOR_H

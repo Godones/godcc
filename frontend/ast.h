@@ -5,10 +5,11 @@
 #ifndef GODCC_AST_H
 #define GODCC_AST_H
 
+#include <deque>
 #include <iostream>
 #include <memory>
 #include <ostream>
-#include <deque>
+
 #include "visitor.h"
 
 class Visitor;
@@ -21,7 +22,6 @@ class FuncFParamAst;
 class FuncFParamListAst;
 
 class FuncRParamListAst;
-
 
 class BlockAst;
 class BlockItemAst;
@@ -57,12 +57,11 @@ class Ast {
   virtual void accept(Visitor *) = 0;
 };
 
-
 class TranslationUnitAst : public Ast {
  public:
   std::shared_ptr<Ast> comp_unit;
   ~TranslationUnitAst() override = default;
-  void accept(Visitor *visitor) override ;
+  void accept(Visitor *visitor) override;
 };
 
 //CompUnit ::= T
@@ -72,6 +71,7 @@ class CompUnitAst : public Ast {
  public:
   std::shared_ptr<Ast> comp_unit;
   std::shared_ptr<Ast> comp_unit_Item;
+
  public:
   ~CompUnitAst() override = default;
   CompUnitAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
@@ -79,22 +79,22 @@ class CompUnitAst : public Ast {
   void accept(Visitor *) override;
 };
 
-
 class FuncDefAst : public Ast {
  public:
-  std::shared_ptr<Ast> funcType;//类型
-  std::shared_ptr<Ast> ident;   //标识符
+  std::shared_ptr<Ast> funcType;     //类型
+  std::shared_ptr<Ast> ident;        //标识符
   std::shared_ptr<Ast> funcParamList;//参数列表 -->需要判空
-  std::shared_ptr<Ast> block;   //函数体
+  std::shared_ptr<Ast> block;        //函数体
  public:
   ~FuncDefAst() override = default;
   void accept(Visitor *) override;
 };
 
-class FuncFParamListAst : public Ast{
+class FuncFParamListAst : public Ast {
  public:
   std::shared_ptr<Ast> funcFParam;
   std::shared_ptr<Ast> funcFParamList;
+
  public:
   ~FuncFParamListAst() override = default;
   void accept(Visitor *) override;
@@ -111,7 +111,7 @@ class FuncFParamAst : public Ast {
   std::shared_ptr<Ast> funcType;
   std::shared_ptr<Ast> ident;
   std::shared_ptr<Ast> array_expr_list;
-  bool first_no_dim = true ;
+  bool first_no_dim = true;
   //当first_no_dim = true 说明第一维未标大小 属于第二三中情况
   //当first_no_dim = false 说明属于第一四种情况
  public:
@@ -119,17 +119,16 @@ class FuncFParamAst : public Ast {
   void accept(Visitor *) override;
 };
 
-
-
 class FuncTypeAst : public Ast {
  public:
-  const char * type;
+  const char *type;
+
  public:
   ~FuncTypeAst() override = default;
   void accept(Visitor *) override;
 };
 
-DataType getFuncType(const FuncTypeAst& func_type);
+DataType getFuncType(const FuncTypeAst &func_type);
 
 class FuncRParamListAst : public Ast {
   //参数列表
@@ -137,11 +136,10 @@ class FuncRParamListAst : public Ast {
   std::string func_name;//函数名,用于语义检查
   std::shared_ptr<Ast> funcRParamListAst;
   std::shared_ptr<Ast> expr;
-  FuncRParamListAst(std::shared_ptr<Ast> left,std::shared_ptr<Ast> right);
+  FuncRParamListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
   FuncRParamListAst(std::shared_ptr<Ast> left);
   void accept(Visitor *) override;
 };
-
 
 // Block         ::= "{" {BlockItem} "}";
 // BlockItem     ::= Decl | Stmt;
@@ -156,21 +154,21 @@ class BlockAst : public Ast {
   void accept(Visitor *) override;
 };
 
-class BlockItemListAst:public Ast{
-public:
-	std::shared_ptr<Ast> block_item_list;
-	std::shared_ptr<Ast> block_item;
-	BlockItemListAst(std::shared_ptr<Ast> left,std::shared_ptr<Ast> right);
-	BlockItemListAst(std::shared_ptr<Ast> left);
-	~BlockItemListAst() override = default;
-	void accept(Visitor *) override;
+class BlockItemListAst : public Ast {
+ public:
+  std::shared_ptr<Ast> block_item_list;
+  std::shared_ptr<Ast> block_item;
+  BlockItemListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
+  BlockItemListAst(std::shared_ptr<Ast> left);
+  ~BlockItemListAst() override = default;
+  void accept(Visitor *) override;
 };
 
-class BlockItemAst:public Ast{
-public:
-	std::shared_ptr<Ast> item;
-	~BlockItemAst() override = default;
-	void accept(Visitor *) override;
+class BlockItemAst : public Ast {
+ public:
+  std::shared_ptr<Ast> item;
+  ~BlockItemAst() override = default;
+  void accept(Visitor *) override;
 };
 
 enum class StmtType {
@@ -185,7 +183,7 @@ enum class StmtType {
 };
 
 // TODO!(需要处理不同的stmt)
-const char * StmtTypeToString(StmtType &type);
+const char *StmtTypeToString(StmtType &type);
 // Stmt ::= LVal "=" Exp ";"
 //	      | [Exp] ";"
 //	      | Block
@@ -218,14 +216,14 @@ class WhileStmtAst : public Ast {
   void accept(Visitor *) override;
 };
 
-
 // 表达式节点
 class ExpAst : public Ast {
  public:
-  int value;// 用于编译期值
+  int value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
-  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> realExpr;
+
  public:
   ~ExpAst() override = default;
   void accept(Visitor *) override;
@@ -239,7 +237,7 @@ class ExpAst : public Ast {
 // LAndExp     ::= RelExp | LAndExp "&&" RelExp;
 // LOrExp      ::= LAndExp | LOrExp "||" LAndExp;
 
-enum class BinaryType{
+enum class BinaryType {
   kLor,
   kAnd,
   kEq,
@@ -247,23 +245,23 @@ enum class BinaryType{
   kMul,
   kAdd,
 };
-const char * BinaryTypeToString(BinaryType &type);
+const char *BinaryTypeToString(BinaryType &type);
 class BinaryExprAst : public Ast {
  public:
-  int value;// 用于编译期值
+  int value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
-  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> left;
   std::shared_ptr<Ast> right;
   BinaryType type;
   const char *op{};
+
  public:
   ~BinaryExprAst() override = default;
   virtual void accept(Visitor *) override;
-  BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, BinaryType type,const char *op);
+  BinaryExprAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right, BinaryType type, const char *op);
   BinaryExprAst(std::shared_ptr<Ast> right, BinaryType type);
 };
-
 
 enum class UnaryType {
   kPrimary,
@@ -272,12 +270,12 @@ enum class UnaryType {
 };
 // 一元表达式
 // UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp | IDENT "(" [FuncRParams] ")";
-const char * UnaryTypeToString(UnaryType &type);
+const char *UnaryTypeToString(UnaryType &type);
 class UnaryExprAst : public Ast {
  public:
-  int value;// 用于编译期值
+  int value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
-  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
 
   std::shared_ptr<Ast> unaryOp;  //符号 --只有类型为unary时才有
   std::shared_ptr<Ast> unaryExpr;//表达式
@@ -294,9 +292,9 @@ enum class PrimaryType {
 class PrimaryExprAst : public Ast {
  public:
  public:
-  int value;// 用于编译期值
+  int value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
-  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
 
   PrimaryType primaryType;
   std::shared_ptr<Ast> primaryExpr;
@@ -323,6 +321,7 @@ class UnaryOpAst : public Ast {
 class IdentifierAst : public Ast {
  public:
   const char *name;
+
  public:
   ~IdentifierAst() override = default;
   void accept(Visitor *) override;
@@ -330,42 +329,41 @@ class IdentifierAst : public Ast {
 
 // 声明
 // Decl          ::= ConstDecl;
-class DeclAst : public Ast{
+class DeclAst : public Ast {
  public:
   std::shared_ptr<Ast> decl;
   ~DeclAst() override = default;
   void accept(Visitor *) override;
 };
 
-
 // 常量声明
 // ConstDecl     ::= "const" INT ConstDefList ";";
-class ConstDeclAst : public Ast{
+class ConstDeclAst : public Ast {
  public:
-	std::shared_ptr<Ast>const_def_list;
-	std::shared_ptr<Ast>data_type;
-	~ConstDeclAst() override = default;
-	void accept(Visitor *) override;
+  std::shared_ptr<Ast> const_def_list;
+  std::shared_ptr<Ast> data_type;
+  ~ConstDeclAst() override = default;
+  void accept(Visitor *) override;
 };
 
 //	常量定义列表
 // ConstDefList    ::= ConstDef  | ConstDefList "," ConstDef
-class ConstDefListAst: public Ast{
+class ConstDefListAst : public Ast {
  public:
-    std::shared_ptr<Ast> const_def;
-	std::shared_ptr<Ast> const_def_list;
-	~ConstDefListAst() override = default;
-	ConstDefListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
-	ConstDefListAst(std::shared_ptr<Ast> right);
-	void accept(Visitor *) override;
+  std::shared_ptr<Ast> const_def;
+  std::shared_ptr<Ast> const_def_list;
+  ~ConstDefListAst() override = default;
+  ConstDefListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
+  ConstDefListAst(std::shared_ptr<Ast> right);
+  void accept(Visitor *) override;
 };
 
 // 常量定义
-class ConstDefAst : public Ast{
+class ConstDefAst : public Ast {
  public:
-  std::shared_ptr<Ast> ident; //标识符
-  std::shared_ptr<Ast> array_expr_list; // a [][] = {1,2,3}
-  std::shared_ptr<Ast> const_val; //常量值 == 常量表达式
+  std::shared_ptr<Ast> ident;          //标识符
+  std::shared_ptr<Ast> array_expr_list;// a [][] = {1,2,3}
+  std::shared_ptr<Ast> const_val;      //常量值 == 常量表达式
   ~ConstDefAst() override = default;
   void accept(Visitor *) override;
 };
@@ -373,38 +371,37 @@ class ConstDefAst : public Ast{
 //ArrayExpList  ::=  ""
 //	::= "[" Exp "]"
 //	| ArrayExpList "[" Exp "]"
-class ArrayExprListAst:public Ast{
+class ArrayExprListAst : public Ast {
  public:
-  	std::shared_ptr<Ast> array_expr_list;
-	std::shared_ptr<Ast> array_expr;
-	~ArrayExprListAst() override = default;
-	ArrayExprListAst(std::shared_ptr<Ast>left, std::shared_ptr<Ast>right);
-	ArrayExprListAst(std::shared_ptr<Ast>right);
-	void accept(Visitor *) override;
-};
-
-class InitValAst:public Ast{
- public:
-  std::vector<int> values; //用于存放初始化列表的值
-  std::shared_ptr<Ast> init_val;
-  std::shared_ptr<Ast> init_val_list;
-  ~InitValAst() override = default;
-  InitValAst(std::shared_ptr<Ast>left, std::shared_ptr<Ast>right);
-  InitValAst(std::shared_ptr<Ast>right);
+  std::vector<int>array_num;//记录数组的值
+  std::shared_ptr<Ast> array_expr_list;
+  std::shared_ptr<Ast> array_expr;
+  ~ArrayExprListAst() override = default;
+  ArrayExprListAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
+  ArrayExprListAst(std::shared_ptr<Ast> right);
   void accept(Visitor *) override;
 };
 
-class InitValListAst:public Ast{
+class InitValAst : public Ast {
  public:
-  std::vector<int> values; //用于存放初始化列表的值
+  std::vector<int> values;//用于存放初始化列表的值
+  std::shared_ptr<Ast> init_val;
+  std::shared_ptr<Ast> init_val_list;
+  ~InitValAst() override = default;
+  InitValAst(std::shared_ptr<Ast> left, std::shared_ptr<Ast> right);
+  InitValAst(std::shared_ptr<Ast> right);
+  void accept(Visitor *) override;
+};
+
+class InitValListAst : public Ast {
+ public:
+  std::vector<int> values;//用于存放初始化列表的值
   std::shared_ptr<Ast> expr_init_val;
   ~InitValListAst() override = default;
   void accept(Visitor *) override;
 };
 
-
-
-class VarDeclAst : public Ast{
+class VarDeclAst : public Ast {
  public:
   std::shared_ptr<Ast> var_def_list;
   std::shared_ptr<Ast> dataType;
@@ -412,7 +409,7 @@ class VarDeclAst : public Ast{
   void accept(Visitor *) override;
 };
 
-class VarDefListAst : public Ast{
+class VarDefListAst : public Ast {
  public:
   std::shared_ptr<Ast> varDefList;
   std::shared_ptr<Ast> varDef;
@@ -422,28 +419,26 @@ class VarDefListAst : public Ast{
   void accept(Visitor *) override;
 };
 
-class VarDefAst : public Ast{
+class VarDefAst : public Ast {
  public:
-  std::shared_ptr<Ast> ident; //标识符
+  std::shared_ptr<Ast> ident;//标识符
   std::shared_ptr<Ast> array_expr_list;
-  std::shared_ptr<Ast> var_expr; //表达式
+  std::shared_ptr<Ast> var_expr;//表达式
   ~VarDefAst() override = default;
   void accept(Visitor *) override;
 };
 
-
 // 左值节点---其对应一个已经声明过的标识符
-class LValAst : public Ast{
+class LValAst : public Ast {
  public:
   int value;
   bool have_value;
-  DataType data_type; // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  DataType data_type;// 用于语义检查,在声明语句中需要判断两边类型是否匹配
 
-  std::shared_ptr<Ast> l_val;// --> IdentifierAst
-  std::shared_ptr<Ast> array_expr_list; //a[][]
+  std::shared_ptr<Ast> l_val;          // --> IdentifierAst
+  std::shared_ptr<Ast> array_expr_list;//a[][]
   ~LValAst() override = default;
   void accept(Visitor *) override;
 };
-
 
 #endif//GODCC_AST_H

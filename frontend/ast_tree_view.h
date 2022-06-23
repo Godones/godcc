@@ -4,9 +4,9 @@
 
 #ifndef GODCC_FRONTEND_AST_TREE_VIEW_H_
 #define GODCC_FRONTEND_AST_TREE_VIEW_H_
-#include "ast.h"
 #include "../tools/dot.h"
-class AstViewVisitor :public Visitor {
+#include "ast.h"
+class AstViewVisitor : public Visitor {
  private:
   //  GodJSon j_son_;
   GDot j_son_;

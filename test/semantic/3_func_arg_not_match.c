@@ -1,11 +1,11 @@
-int f(int a,int b){
-	return a+b;
+int f(int a, int b) {
+  return a + b;
 }
-void t(){
-  return ;
+void t() {
+  return;
 }
-int main(){
-	int res = f(1);
-	res = f(1,t());
-	return 0;
+int main() {
+  int res = f(1);
+  res = f(1, t());
+  return 0;
 }

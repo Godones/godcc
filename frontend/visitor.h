@@ -5,12 +5,12 @@
 #ifndef GODCC_VISITOR_H
 #define GODCC_VISITOR_H
 
+#include <algorithm>
 #include <memory>
 
 #include "../IR/IR.h"
-#include "tools/log.h"
 #include "ast.h"
-#include <algorithm>
+#include "tools/log.h"
 
 class CompUnitAst;
 class TranslationUnitAst;
@@ -77,10 +77,10 @@ class Visitor {
   virtual void VisitVarDecl(VarDeclAst *) = 0;
   virtual void VisitVarDefList(VarDefListAst *) = 0;
   virtual void VisitVarDef(VarDefAst *) = 0;
-  virtual void VisitArrayExprList(ArrayExprListAst*) =0;
-  virtual void VisitInitValList(InitValListAst *) =0;
-  virtual void VisitInitVal(InitValAst *) =0;
-  virtual void VisitBinaryExpAst(BinaryExprAst *) =0;
+  virtual void VisitArrayExprList(ArrayExprListAst *) = 0;
+  virtual void VisitInitValList(InitValListAst *) = 0;
+  virtual void VisitInitVal(InitValAst *) = 0;
+  virtual void VisitBinaryExpAst(BinaryExprAst *) = 0;
   virtual void VisitUnaryExpAst(UnaryExprAst *) = 0;
   virtual void VisitUnaryOpAst(UnaryOpAst *) = 0;
   virtual void VisitPrimaryExpAst(PrimaryExprAst *) = 0;
@@ -89,6 +89,5 @@ class Visitor {
 };
 
 BinaryOp to_BinaryOp(const std::string_view &op);
-
 
 #endif//GODCC_VISITOR_H

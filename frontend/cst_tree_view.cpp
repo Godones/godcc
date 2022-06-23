@@ -9,7 +9,7 @@ void CstViewVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
 }
 void CstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
   dot.BeganWrite("CompUnit");
-  if(comp_unit_ast->comp_unit){
+  if (comp_unit_ast->comp_unit) {
 	comp_unit_ast->comp_unit->accept(this);
   }
   comp_unit_ast->comp_unit_Item->accept(this);
@@ -20,7 +20,7 @@ void CstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
   dot.BeganWrite("FuncDef");
   func_def_ast->funcType->accept(this);
   func_def_ast->ident->accept(this);
-  if (func_def_ast->funcParamList){
+  if (func_def_ast->funcParamList) {
 	func_def_ast->funcParamList->accept(this);
   }
   func_def_ast->block->accept(this);
@@ -39,8 +39,8 @@ void CstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
 }
 void CstViewVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
   dot.BeganWrite("BlockItemList");
-  if (block_item_list_ast->block_item_list){
-  	block_item_list_ast->block_item_list->accept(this);
+  if (block_item_list_ast->block_item_list) {
+	block_item_list_ast->block_item_list->accept(this);
   }
   block_item_list_ast->block_item->accept(this);
   dot.EndWrite();
@@ -52,17 +52,17 @@ void CstViewVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
 }
 
 void CstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
-  const char * type = StmtTypeToString(stmt_ast->type);
+  const char *type = StmtTypeToString(stmt_ast->type);
   char str[50] = {0};
-  sprintf(str,"%sStmt",type);
+  sprintf(str, "%sStmt", type);
   dot.BeganWrite(str);
-  if (stmt_ast->type==StmtType::kAssign){
+  if (stmt_ast->type == StmtType::kAssign) {
 	stmt_ast->l_val->accept(this);
 	dot.BeganWrite("=");
 	stmt_ast->expr->accept(this);
 	dot.EndWrite();
-  }else{
-	if (stmt_ast->expr){
+  } else {
+	if (stmt_ast->expr) {
 	  stmt_ast->expr->accept(this);
 	}
   }
@@ -74,18 +74,18 @@ void CstViewVisitor::VisitExp(ExpAst *exp_ast) {
   dot.EndWrite();
 }
 void CstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
-  const char * pre_name = UnaryTypeToString(unary_expr_ast->unaryType);
+  const char *pre_name = UnaryTypeToString(unary_expr_ast->unaryType);
   char str[50] = {0};
-  sprintf(str,"%sUnaryExpr",pre_name);
+  sprintf(str, "%sUnaryExpr", pre_name);
   dot.BeganWrite(str);
   if (unary_expr_ast->unaryOp) {
 	unary_expr_ast->unaryOp->accept(this);//一元运算符号 // call
   }
-  if (unary_expr_ast->unaryType==UnaryType::kCall){
+  if (unary_expr_ast->unaryType == UnaryType::kCall) {
 	dot.BeganWrite("()");
 	dot.EndWrite();
   }
-  if (unary_expr_ast->unaryExpr){
+  if (unary_expr_ast->unaryExpr) {
 	unary_expr_ast->unaryExpr->accept(this);
   }
   dot.EndWrite();
@@ -97,9 +97,9 @@ void CstViewVisitor::VisitUnaryOpAst(UnaryOpAst *unary_op_ast) {
   dot.EndWrite();
 }
 void CstViewVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
-  const char * pre_name = BinaryTypeToString(binary_expr_ast->type);
+  const char *pre_name = BinaryTypeToString(binary_expr_ast->type);
   char str[50] = {0};
-  sprintf(str,"%sBinaryExp",pre_name);
+  sprintf(str, "%sBinaryExp", pre_name);
   dot.BeganWrite(str);
   if (binary_expr_ast->left) {
 	binary_expr_ast->left->accept(this);
@@ -147,7 +147,7 @@ void CstViewVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
 }
 void CstViewVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
   dot.BeganWrite("ConstDefList");
-  if (const_def_list_ast->const_def_list){
+  if (const_def_list_ast->const_def_list) {
 	const_def_list_ast->const_def_list->accept(this);
   }
   const_def_list_ast->const_def->accept(this);
@@ -157,7 +157,7 @@ void CstViewVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
 void CstViewVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
   dot.BeganWrite("ConstDef");
   const_def_ast->ident->accept(this);
-  if (const_def_ast->array_expr_list){
+  if (const_def_ast->array_expr_list) {
 	const_def_ast->array_expr_list->accept(this);
   }
   dot.BeganWrite("=");
@@ -169,7 +169,7 @@ void CstViewVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
 void CstViewVisitor::VisitLVal(LValAst *l_val_ast) {
   dot.BeganWrite("LVal");
   l_val_ast->l_val->accept(this);
-  if (l_val_ast->array_expr_list){
+  if (l_val_ast->array_expr_list) {
 	l_val_ast->array_expr_list->accept(this);
   }
   dot.EndWrite();
@@ -182,8 +182,8 @@ void CstViewVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
 }
 void CstViewVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
   dot.BeganWrite("VarDefList");
-  if (var_def_list_ast->varDefList){
-    var_def_list_ast->varDefList->accept(this);
+  if (var_def_list_ast->varDefList) {
+	var_def_list_ast->varDefList->accept(this);
   }
   var_def_list_ast->varDef->accept(this);
   dot.EndWrite();
@@ -192,10 +192,10 @@ void CstViewVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
 void CstViewVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   dot.BeganWrite("VarDef");
   var_def_ast->ident->accept(this);
-  if (var_def_ast->array_expr_list){
+  if (var_def_ast->array_expr_list) {
 	var_def_ast->array_expr_list->accept(this);
   }
-  if (var_def_ast->var_expr){
+  if (var_def_ast->var_expr) {
 	dot.BeganWrite("=");
 	dot.EndWrite();
 	var_def_ast->var_expr->accept(this);
@@ -223,11 +223,11 @@ void CstViewVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
   dot.BeganWrite("FuncFParam");
   func_f_param_ast->funcType->accept(this);
   func_f_param_ast->ident->accept(this);
-  if(func_f_param_ast->first_no_dim){
+  if (func_f_param_ast->first_no_dim) {
 	dot.BeganWrite("[]");
 	dot.EndWrite();
   }
-  if (func_f_param_ast->array_expr_list){
+  if (func_f_param_ast->array_expr_list) {
 	DEBUG("array_expr_list is not null");
 	func_f_param_ast->array_expr_list->accept(this);
   }
@@ -235,26 +235,25 @@ void CstViewVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
 }
 void CstViewVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
   dot.BeganWrite("FuncFParamList");
-  if (func_f_param_list_ast->funcFParamList){
+  if (func_f_param_list_ast->funcFParamList) {
 	func_f_param_list_ast->funcFParamList->accept(this);
   }
   func_f_param_list_ast->funcFParam->accept(this);
   dot.EndWrite();
 }
 
-
 void CstViewVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_ast) {
   dot.BeganWrite("FuncRParam");
-  if (func_r_param_ast->funcRParamListAst){
-    func_r_param_ast->funcRParamListAst->accept(this);
-  }       
-  func_r_param_ast->expr->accept(this);   
+  if (func_r_param_ast->funcRParamListAst) {
+	func_r_param_ast->funcRParamListAst->accept(this);
+  }
+  func_r_param_ast->expr->accept(this);
   dot.EndWrite();
 }
 
 void CstViewVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
   dot.BeganWrite("ArrayExprList");
-  if (array_expr_list_ast->array_expr_list){
+  if (array_expr_list_ast->array_expr_list) {
 	array_expr_list_ast->array_expr_list->accept(this);
   }
   dot.BeganWrite("[");
@@ -266,7 +265,7 @@ void CstViewVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
 }
 void CstViewVisitor::VisitInitVal(InitValAst *init_val_ast) {
   dot.BeganWrite("InitVal");
-  if (init_val_ast->init_val){
+  if (init_val_ast->init_val) {
 	init_val_ast->init_val->accept(this);
   }
   init_val_ast->init_val_list->accept(this);
@@ -274,17 +273,17 @@ void CstViewVisitor::VisitInitVal(InitValAst *init_val_ast) {
 }
 void CstViewVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
   dot.BeganWrite("InitValList");
-  auto expr = dynamic_cast<InitValAst*>(init_val_list_ast->expr_init_val.get());
-  if (expr||init_val_list_ast->expr_init_val== nullptr){
+  auto expr = dynamic_cast<InitValAst *>(init_val_list_ast->expr_init_val.get());
+  if (expr || init_val_list_ast->expr_init_val == nullptr) {
 	dot.BeganWrite("{");
 	dot.EndWrite();
 	if (expr)
-		expr->accept(this);
+	  expr->accept(this);
 	dot.BeganWrite("}");
 	dot.EndWrite();
-  } else{
+  } else {
 	init_val_list_ast->expr_init_val->accept(this);
   }
   dot.EndWrite();
 }
-CstViewVisitor::CstViewVisitor(GDot j_son):dot(j_son){}
+CstViewVisitor::CstViewVisitor(GDot j_son) : dot(j_son) {}

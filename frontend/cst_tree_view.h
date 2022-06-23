@@ -5,13 +5,14 @@
 #ifndef GODCC_FRONTEND_CST_TREE_VIEW_H_
 #define GODCC_FRONTEND_CST_TREE_VIEW_H_
 
-#include "visitor.h"
 #include "../tools/dot.h"
-class CstViewVisitor :public Visitor{
+#include "visitor.h"
+class CstViewVisitor : public Visitor {
  private:
   GDot dot;
+
  public:
-  CstViewVisitor()=default;
+  CstViewVisitor() = default;
   explicit CstViewVisitor(GDot j_son);
   void VisitTranslationUnit(TranslationUnitAst *ast) override;
 
@@ -21,7 +22,6 @@ class CstViewVisitor :public Visitor{
   void VisitFuncFParamAst(FuncFParamAst *) override;
   void VisitFuncFParamListAst(FuncFParamListAst *) override;
   void VisitFuncRParamListAst(FuncRParamListAst *) override;
-
 
   void VisitBlockAst(BlockAst *) override;
   void VisitBlockItemListAst(BlockItemListAst *) override;
@@ -33,7 +33,6 @@ class CstViewVisitor :public Visitor{
 
   void VisitExp(ExpAst *) override;
 
-
   void VisitDecl(DeclAst *) override;
   void VisitConstDecl(ConstDeclAst *) override;
   void VisitConstDefList(ConstDefListAst *) override;
@@ -44,7 +43,7 @@ class CstViewVisitor :public Visitor{
   void VisitVarDef(VarDefAst *) override;
   void VisitVarDefList(VarDefListAst *) override;
 
-  void VisitArrayExprList(ArrayExprListAst*) override;
+  void VisitArrayExprList(ArrayExprListAst *) override;
   void VisitInitVal(InitValAst *) override;
   void VisitInitValList(InitValListAst *) override;
 

@@ -8,6 +8,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <ctime>
+
 #include "cstring"
 
 #define _DEBUG
@@ -19,7 +20,7 @@ void DEBUG(const char *fmt, ...);
 
 void INFO(const char *fmt, ...);
 
-void ERROR(const char *fmt,...);
+void ERROR(const char *fmt, ...);
 
 void WARNING(const char *fmt, ...);
 

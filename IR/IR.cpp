@@ -16,12 +16,12 @@ std::string_view toString(const InstructionType &type) {
 std::string_view toString(const DataType &dataType) {
   switch (dataType) {
 	case DataType::kInt: return "i32";
-	case DataType::kConstInt : return "i32";
+	case DataType::kConstInt: return "i32";
 	default: return "";
   }
 }
 
-std::string_view toString(const BinaryOp&binary_op){
+std::string_view toString(const BinaryOp &binary_op) {
   switch (binary_op) {
 	case BinaryOp::Add: return "add ";
 	case BinaryOp::Sub: return "sub ";
@@ -54,7 +54,7 @@ void Function::accept(IrVisitor *visitor) {
 void BaseBlock::accept(IrVisitor *visitor) {
   visitor->VisitBaseBlock(this);
 }
-BaseBlock::BaseBlock(int id):blkId(id){}
+BaseBlock::BaseBlock(int id) : blkId(id) {}
 
 void Instruction::accept(IrVisitor *visitor) {
   visitor->VisitInstruction(this);

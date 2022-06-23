@@ -1,12 +1,11 @@
-int main()
-{
-	break;
+int main() {
+  break;
 
-	while (1){
-		break;
-	}
-	
+  while (1) {
 	break;
-	
-	return 0;
+  }
+
+  break;
+
+  return 0;
 }

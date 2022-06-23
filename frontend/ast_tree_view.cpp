@@ -3,7 +3,7 @@
 //
 
 #include "ast_tree_view.h"
-AstViewVisitor::AstViewVisitor(GDot j_son):j_son_(j_son){}
+AstViewVisitor::AstViewVisitor(GDot j_son) : j_son_(j_son) {}
 void AstViewVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
   j_son_.BeganWrite("TranslationUnit");
   j_son_.BeganWrite("CompUnit");
@@ -13,20 +13,20 @@ void AstViewVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
   j_son_.close();
 }
 void AstViewVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
-  if (comp_unit_ast->comp_unit){
+  if (comp_unit_ast->comp_unit) {
 	comp_unit_ast->comp_unit->accept(this);
   }
   comp_unit_ast->comp_unit_Item->accept(this);
 }
 void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
-  char str[50] ={0};
-  auto type = dynamic_cast<FuncTypeAst*>(func_def_ast->funcType.get());
+  char str[50] = {0};
+  auto type = dynamic_cast<FuncTypeAst *>(func_def_ast->funcType.get());
   assert(type);
-  auto ident = dynamic_cast<IdentifierAst*>(func_def_ast->ident.get());
+  auto ident = dynamic_cast<IdentifierAst *>(func_def_ast->ident.get());
   assert(ident);
-  sprintf(str,"FuncDef:%s %s",type->type,ident->name);
+  sprintf(str, "FuncDef:%s %s", type->type, ident->name);
   j_son_.BeganWrite(str);
-  if (func_def_ast->funcParamList){
+  if (func_def_ast->funcParamList) {
 	j_son_.BeganWrite("FuncFParamList");
 	func_def_ast->funcParamList->accept(this);
 	j_son_.EndWrite();
@@ -36,35 +36,35 @@ void AstViewVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
 }
 void AstViewVisitor::VisitFuncTypeAst(FuncTypeAst *) {}
 void AstViewVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
-  char str[50]={0};
-  auto type = dynamic_cast<FuncTypeAst*>(func_f_param_ast->funcType.get());
+  char str[50] = {0};
+  auto type = dynamic_cast<FuncTypeAst *>(func_f_param_ast->funcType.get());
   assert(type);
-  auto ident = dynamic_cast<IdentifierAst*>(func_f_param_ast->ident.get());
+  auto ident = dynamic_cast<IdentifierAst *>(func_f_param_ast->ident.get());
   assert(ident);
   bool first = false;
-  if(func_f_param_ast->first_no_dim){
+  if (func_f_param_ast->first_no_dim) {
 	first = true;
   }
-  sprintf(str,"%s %s%s",type->type,ident->name,first?"[]":"");
+  sprintf(str, "%s %s%s", type->type, ident->name, first ? "[]" : "");
   j_son_.BeganWrite(str);
-  if (func_f_param_ast->array_expr_list){
+  if (func_f_param_ast->array_expr_list) {
 	func_f_param_ast->array_expr_list->accept(this);
   }
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {
-  if (func_f_param_list_ast->funcFParamList){
+  if (func_f_param_list_ast->funcFParamList) {
 	func_f_param_list_ast->funcFParamList->accept(this);
   }
   func_f_param_list_ast->funcFParam->accept(this);
 }
 void AstViewVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast) {
   std::stack<std::shared_ptr<Ast>> list;
-  while (func_r_param_list_ast){
+  while (func_r_param_list_ast) {
 	list.push(func_r_param_list_ast->expr);
 	func_r_param_list_ast = dynamic_cast<FuncRParamListAst *>((func_r_param_list_ast->funcRParamListAst).get());
   }
-  while (!list.empty()){
+  while (!list.empty()) {
 	j_son_.BeganWrite("FuncRParam");
 	list.top()->accept(this);
 	j_son_.EndWrite();
@@ -77,7 +77,7 @@ void AstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
-  if (block_item_list_ast->block_item_list){
+  if (block_item_list_ast->block_item_list) {
 	block_item_list_ast->block_item_list->accept(this);
   }
   block_item_list_ast->block_item->accept(this);
@@ -89,7 +89,7 @@ void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
   switch (stmt_ast->type) {
 	case StmtType::kReturn: {
 	  j_son_.BeganWrite("ReturnStmt");
-	  if (stmt_ast->expr){
+	  if (stmt_ast->expr) {
 		stmt_ast->expr->accept(this);
 	  }
 	  j_son_.EndWrite();
@@ -109,7 +109,7 @@ void AstViewVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 	case StmtType::kExpr: {
 	  j_son_.BeganWrite("ExprStmt");
 	  if (stmt_ast->expr)
-		  stmt_ast->expr->accept(this);
+		stmt_ast->expr->accept(this);
 	  j_son_.EndWrite();
 	  break;
 	};
@@ -158,15 +158,15 @@ void AstViewVisitor::VisitDecl(DeclAst *decl_ast) {
 }
 void AstViewVisitor::VisitConstDecl(ConstDeclAst *const_decl_ast) {
   char str[50];
-  auto type = dynamic_cast<FuncTypeAst*>(const_decl_ast->data_type.get());
+  auto type = dynamic_cast<FuncTypeAst *>(const_decl_ast->data_type.get());
   assert(type);
-  sprintf(str,"ConstDecl:%s %s","const ",type->type);
+  sprintf(str, "ConstDecl:%s %s", "const ", type->type);
   j_son_.BeganWrite(str);
   const_decl_ast->const_def_list->accept(this);
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
-  if (const_def_list_ast->const_def_list){
+  if (const_def_list_ast->const_def_list) {
 	const_def_list_ast->const_def_list->accept(this);
   }
   const_def_list_ast->const_def->accept(this);
@@ -174,33 +174,33 @@ void AstViewVisitor::VisitConstDefList(ConstDefListAst *const_def_list_ast) {
 void AstViewVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
   j_son_.BeganWrite("ConstDef:=");
   const_def_ast->ident->accept(this);
-  if (const_def_ast->array_expr_list){
+  if (const_def_ast->array_expr_list) {
 	const_def_ast->array_expr_list->accept(this);
   }
   const_def_ast->const_val->accept(this);
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitLVal(LValAst *l_val_ast) {
-  auto ident = dynamic_cast<IdentifierAst*>(l_val_ast->l_val.get());
+  auto ident = dynamic_cast<IdentifierAst *>(l_val_ast->l_val.get());
   assert(ident);
   j_son_.BeganWrite(ident->name);
-  if (l_val_ast->array_expr_list){
+  if (l_val_ast->array_expr_list) {
 	l_val_ast->array_expr_list->accept(this);
   }
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitVarDecl(VarDeclAst *var_decl_ast) {
   char str[50];
-  auto type = dynamic_cast<FuncTypeAst*>(var_decl_ast->dataType.get());
+  auto type = dynamic_cast<FuncTypeAst *>(var_decl_ast->dataType.get());
   assert(type);
-  sprintf(str,"VarDecl:%s",type->type);
+  sprintf(str, "VarDecl:%s", type->type);
   j_son_.BeganWrite(str);
   var_decl_ast->var_def_list->accept(this);
   j_son_.EndWrite();
 }
 
 void AstViewVisitor::VisitVarDefList(VarDefListAst *var_def_list_ast) {
-  if(var_def_list_ast->varDefList){
+  if (var_def_list_ast->varDefList) {
 	var_def_list_ast->varDefList->accept(this);
   }
   var_def_list_ast->varDef->accept(this);
@@ -209,21 +209,21 @@ void AstViewVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   if (var_def_ast->var_expr)
 	j_son_.BeganWrite("Vardef:=");
   var_def_ast->ident->accept(this);
-  if (var_def_ast->array_expr_list){
+  if (var_def_ast->array_expr_list) {
 	var_def_ast->array_expr_list->accept(this);
   }
-  if (var_def_ast->var_expr){
+  if (var_def_ast->var_expr) {
 	var_def_ast->var_expr->accept(this);
 	j_son_.EndWrite();
   }
 }
 void AstViewVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
   std::stack<std::shared_ptr<Ast>> list;
-  while (array_expr_list_ast){
+  while (array_expr_list_ast) {
 	list.push(array_expr_list_ast->array_expr);
 	array_expr_list_ast = dynamic_cast<ArrayExprListAst *>((array_expr_list_ast->array_expr_list).get());
   }
-  while (!list.empty()){
+  while (!list.empty()) {
 	j_son_.BeganWrite("[ ]");
 	list.top()->accept(this);
 	j_son_.EndWrite();
@@ -231,29 +231,29 @@ void AstViewVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
   }
 }
 void AstViewVisitor::VisitInitVal(InitValAst *init_val_ast) {
-  if (init_val_ast->init_val){
+  if (init_val_ast->init_val) {
 	init_val_ast->init_val->accept(this);
   }
   init_val_ast->init_val_list->accept(this);
 }
 void AstViewVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
-  auto expr = dynamic_cast<InitValAst*>(init_val_list_ast->expr_init_val.get());
-  if (expr||init_val_list_ast->expr_init_val== nullptr){
+  auto expr = dynamic_cast<InitValAst *>(init_val_list_ast->expr_init_val.get());
+  if (expr || init_val_list_ast->expr_init_val == nullptr) {
 	j_son_.BeganWrite("InitValList:={}");
 	if (expr)
 	  expr->accept(this);
 	j_son_.EndWrite();
-  } else{
+  } else {
 	init_val_list_ast->expr_init_val->accept(this);
   }
 }
 void AstViewVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
-  if (binary_expr_ast->left){
+  if (binary_expr_ast->left) {
 	j_son_.BeganWrite(binary_expr_ast->op);
 	binary_expr_ast->left->accept(this);
   }
   binary_expr_ast->right->accept(this);
-  if(binary_expr_ast->left){
+  if (binary_expr_ast->left) {
 	j_son_.EndWrite();
   }
 }
@@ -273,7 +273,7 @@ void AstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	case UnaryType::kCall: {
 	  j_son_.BeganWrite("FuncCall:()");
 	  unary_expr_ast->unaryOp->accept(this);
-	  if (unary_expr_ast->unaryExpr){
+	  if (unary_expr_ast->unaryExpr) {
 		unary_expr_ast->unaryExpr->accept(this);
 	  }
 	  j_son_.EndWrite();
@@ -290,13 +290,13 @@ void AstViewVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 }
 void AstViewVisitor::VisitNumberAst(NumberAst *number_ast) {
   char str[20];
-  sprintf(str,"%s:%d","Number",number_ast->value);
+  sprintf(str, "%s:%d", "Number", number_ast->value);
   j_son_.BeganWrite(str);
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
   char str[20];
-  sprintf(str,"%s:%s","Identifier",identifier_ast->name);
+  sprintf(str, "%s:%s", "Identifier", identifier_ast->name);
   j_son_.BeganWrite(str);
   j_son_.EndWrite();
 }

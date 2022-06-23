@@ -5,17 +5,18 @@
 #ifndef GODCC_TPARSER_H
 #define GODCC_TPARSER_H
 
-#include "../frontend/ast.h"
-#include "tools/log.h"
 #include <cassert>
 #include <fstream>
 #include <iostream>
+
 #include "../backend/asm.h"
-#include "frontend/cst_tree_view.h"
+#include "../frontend/ast.h"
 #include "frontend/ast_text_view.h"
 #include "frontend/ast_to_ir.h"
 #include "frontend/ast_tree_view.h"
+#include "frontend/cst_tree_view.h"
 #include "semantic.h"
+#include "tools/log.h"
 
 int test_ast_text();
 
