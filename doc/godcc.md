@@ -488,10 +488,15 @@ LVal ::= IDENT [ArrayExpList]
                         | "continue" ";"
                         | "return" [Exp] ";";
 表达式      Exp          ::= LOrExp;
-左值        LVal          ::= IDENT [ArrayExpList] ; 
+左值        LVal          ::= IDENT ArrayExpList ; 
 基本表达式   PrimaryExp    ::= "(" Exp ")" | LVal | Number;
+PostfixExp = PrimaryExp 
+			|PostfixExp --;
+			|PostfixExp ++;
+			
+
 数值        Number        ::= INT_CONST;
-一元表达式   UnaryExp      ::= PrimaryExp | IDENT "(" [FuncRParamList] ")" | UnaryOp UnaryExp;
+一元表达式   UnaryExp      ::= PostfixExp | IDENT "(" [FuncRParamList] ")" | UnaryOp UnaryExp;
 一元运算符   UnaryOp       ::= "+" | "-" | "!";
 函数实参列表 FuncRParamList :: Exp
                            | FuncRParamList "," Exp

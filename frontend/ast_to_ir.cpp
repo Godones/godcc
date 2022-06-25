@@ -65,7 +65,9 @@ void IRGeneratorVisitor::VisitBlockAst(BlockAst *blockAst) {
   auto &function = programIr->functions.back();
   m_symbolTable = m_symbolTable->enter_scope();//进入新的作用域
   globalSymbolTable = globalSymbolTable->new_scope();
-  blockAst->block_item_list->accept(this);
+  if (blockAst->block_item_list) {
+	blockAst->block_item_list->accept(this);
+  }
   globalSymbolTable = globalSymbolTable->exit_scope();
   m_symbolTable = m_symbolTable->exit_scope();//退出作用域
 }
@@ -256,9 +258,8 @@ void IRGeneratorVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
   // 获得最后一个base_block
   auto &function = programIr->functions.back();
-
   switch (unaryExprAst->unaryType) {
-	case UnaryType::kPrimary: {
+	case UnaryType::kPostfix: {
 	  unaryExprAst->unaryExpr->accept(this);
 	  break;
 	};
@@ -274,11 +275,11 @@ void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
 	  Instruction instruction = {
 		  .instructionType = InstructionType::Binary,
 		  .operand1 = {.operand = {.number = 0}, .type = OperandType::kInteger},
-		  .operand2 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kInteger},
+		  .operand2 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kNumber},
 		  .m_number = number_record++,
 	  };
-	  unaryExprAst->unaryOp->accept(this);// 设置二元符号
 	  block.instructions.emplace_back(instruction);
+	  unaryExprAst->unaryOp->accept(this);// 设置二元符号
 	  break;
 	};
 	case UnaryType::kCall: {
@@ -315,6 +316,55 @@ void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
 	}
   }
 }
+
+void IRGeneratorVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
+  // 处理 a++/a--/primaryExpr 的情况
+  postfixExprAst->postfixExpr->accept(this);
+  if (postfixExprAst->postfixType == PostfixType::kPrimary) {
+	return;
+  }
+  auto &block = programIr->functions.back().blocks.back();
+  auto last_instruction = block.instructions.back();
+  Instruction instruction = {
+	  .instructionType = InstructionType::Binary,
+	  .operand1 = {.operand = {.number = 1}, .type = OperandType::kInteger},
+	  .operand2 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kNumber},
+	  .m_number = number_record++,
+  };
+  switch (postfixExprAst->postfixType) {
+	case PostfixType::kBDec: {
+	  instruction.binaryOp = BinaryOp::Sub;
+	  auto temp = instruction.operand1;
+	  instruction.operand1 = instruction.operand2;
+	  instruction.operand2 = temp;
+	  break;
+	}
+	case PostfixType::kBInc: {
+	  instruction.binaryOp = BinaryOp::Add;
+	  break;
+	}
+	default: break;
+  }
+  block.instructions.emplace_back(instruction);
+  Instruction instruction1 = {
+	  .instructionType= InstructionType::Store,
+	  .dataType = last_instruction.dataType,
+	  .operand1 = {.operand = {.number = instruction.m_number}, .type = OperandType::kNumber},
+	  .operand2 = {.operand = {.symbol = last_instruction.operand1.operand.symbol}, .type = OperandType::kString},
+
+  };
+  //额外的一条指令
+  Instruction instruction2 = {
+	  .instructionType = InstructionType::Move,
+	  .operand1 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kNumber},
+	  .operand2 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kNumber},
+	  .m_number = last_instruction.m_number,
+  };
+  block.instructions.emplace_back(instruction1);
+  block.instructions.emplace_back(instruction2);
+}
+
+
 
 void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast) {
   std::stack<std::shared_ptr<Ast>> list;
@@ -356,12 +406,43 @@ void IRGeneratorVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
 	instruction.binaryOp = BinaryOp::Sub;
   } else if (op == "!") {
 	instruction.binaryOp = BinaryOp::Eq;
-  } else {
+  }else if (op == "--") {
+	instruction.binaryOp = BinaryOp::Sub;
+	Operand temp = instruction.operand2;
+	instruction.operand2 = {.operand = {.number = 1}, .type = OperandType::kInteger};
+	instruction.operand1 = temp;
+  } else if (op == "++") {
+	instruction.binaryOp = BinaryOp::Add;
+	instruction.operand1.operand.number = 1;
+  }else {
 	// 引发错误
 	// todo!(一元运算符异常)
 	exit(-1);
   }
+  if (op=="--"||op=="++") {
+	auto last_instruction = block.instructions[block.instructions.size() - 2];
+	Instruction instruction1 = {
+		.instructionType= InstructionType::Store,
+		.dataType = last_instruction.dataType,
+		.operand1 = {.operand = {.number = instruction.m_number}, .type = OperandType::kNumber},
+		.operand2 = {.operand = {.symbol = last_instruction.operand1.operand.symbol}, .type = OperandType::kString},
+
+	};
+	//额外的一条指令
+	Instruction instruction2 = {
+		.instructionType = InstructionType::Move,
+		.operand1 = {.operand = {.number = instruction.m_number}, .type = OperandType::kNumber},
+		.operand2 = {.operand = {.number = instruction.m_number}, .type = OperandType::kNumber},
+		.m_number = instruction.m_number,
+	};
+	block.instructions.emplace_back(instruction1);
+	block.instructions.emplace_back(instruction2);
+  }
 }
+
+
+
+
 
 void IRGeneratorVisitor::VisitPrimaryExpAst(PrimaryExprAst *primaryExprAst) {
   // (Exp) | number |LValue
@@ -439,9 +520,7 @@ void IRGeneratorVisitor::VisitVarDef(VarDefAst *var_def_ast) {
 	  .instructionType = InstructionType::GlobalAlloc,
 	  .dataType = item->type,
 	  .operand1 = {
-		  .operand = {
-			  .symbol = makeSymbolWithLevel(ident->name, globalSymbolTable->level)->c_str(),
-		  },
+		  .operand = {.symbol = makeSymbolWithLevel(ident->name, globalSymbolTable->level)->c_str(),},
 		  .type = OperandType::kString,
 	  },
   };
@@ -452,25 +531,37 @@ void IRGeneratorVisitor::VisitVarDef(VarDefAst *var_def_ast) {
 	auto &function = programIr->functions.back();
 	block = &function.blocks.back();
   }
+  // 处理数组
+  bool is_array = false;
+  if (var_def_ast->array_expr_list) {
+	auto array_expr_list = dynamic_cast<ArrayExprListAst *>(var_def_ast->array_expr_list.get());
+	array_expr_list->accept(this); // 处理数组
+	instruction.array_dim = array_expr_list->array_num;// 记录数组维度
+	auto array_info = (ArrayInfo*)item->ptr;
+	instruction.dataType =  DataType::kInt;// 记录数组类型
+	is_array = true;
+  }
+  Instruction instruction1 = {
+	  .instructionType = InstructionType::Store,
+	  .dataType = instruction.dataType,
+	  .operand2 = {
+		  .operand = {.symbol = instruction.operand1.operand.symbol},
+		  .type = OperandType::kString,
+	  },//第二个操作数是变量的符号
+  };
   // 如果有初值
   if (var_def_ast->var_expr) {
-	Instruction instruction1 = {
-		.instructionType = InstructionType::Store,
-		.dataType = instruction.dataType,
-		.operand2 = {
-			.operand = {.symbol = instruction.operand1.operand.symbol},
-			.type = OperandType::kString,
-		},//第二个操作数是变量的符号
-	};
 	auto expr = dynamic_cast<InitValListAst *>(var_def_ast->var_expr.get());
 	if (!expr->values.empty()) {
 	  //其值已知
-	  if (m_symbolTable->level != 0) {
-		instruction1.operand1.operand.number = expr->values[0];
-		instruction1.operand1.type = OperandType::kInteger;
+	  instruction1.array_dim = expr->values; //复用array_dim字段
+	  if (is_array) {
+		// 数组
+		instruction1.instructionType = InstructionType::Aggregate;
 	  } else {
-		instruction.operand2.operand.number = expr->values[0];
-		instruction.operand2.type = OperandType::kInteger;
+		// 基本类型
+		instruction1.operand1.type = OperandType::kInteger;
+		instruction1.operand1.operand.number = expr->values.front();
 	  }
 	} else {
 	  //其初始值未知
@@ -479,16 +570,24 @@ void IRGeneratorVisitor::VisitVarDef(VarDefAst *var_def_ast) {
 	  auto last_instruction = block->instructions.back();              //获取初始值指令的最后一条
 	  instruction1.operand1.operand.number = last_instruction.m_number;//取出其虚拟寄存器编号
 	}
-	block->instructions.emplace_back(instruction);
-	if (m_symbolTable->level != 0) {
-	  // 非全局变量
-	  block->instructions.emplace_back(instruction1);
-	}
-  } else {
+	// 存入变量
 	if (m_symbolTable->level == 0) {
-	  // 非全局变量
-	  instruction.operand2.operand.number = 0;
-	  instruction.operand2.type = OperandType::kInteger;
+	  instruction.next = new Instruction(instruction1);
+	  block->instructions.emplace_back(instruction);
+	}else{
+	  if (is_array){
+		instruction.next = new Instruction(instruction1);
+		block->instructions.emplace_back(instruction);
+	  } else {
+		block->instructions.emplace_back(instruction);
+		block->instructions.emplace_back(instruction1);
+	  }
+	}// 如果是全局变量，则第二条指令存放于next
+  } else {
+	// 没有初值,全局变量默认初始化为0，局部变量不用管
+	if(m_symbolTable->level==0){
+	  instruction1.array_dim.emplace_back(0);
+	  instruction.next = new Instruction(instruction1);
 	}
 	block->instructions.emplace_back(instruction);
   }
@@ -620,6 +719,15 @@ void IRGeneratorVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_begin_label.pop();// -----
   function.blocks.emplace_back(label_record++);
 }
+void IRGeneratorVisitor::VisitForStmt(ForStmtAst *forStmtAst) {
+  // 生成for循环的中间代码
+  // for(init;cond;inc)stmt
+  // 先生成init代码.创建一个block
+
+}
+
+
+
 void IRGeneratorVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_list_ast) {}
 void IRGeneratorVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {}
 

@@ -67,9 +67,9 @@ add_custom_target(
         tree
         #	COMMAND pytm-cli -i test.json -d TB -t 1
         COMMAND dot -Tpdf ast_Tree.dot -o ast_Tree.pdf
-        #	COMMAND dot -Tsvg ast_Tree.dot -o ast_Tree.svg
+#        	COMMAND dot -Tsvg ast_Tree.dot -o ast_Tree.svg
         COMMAND dot -Tpdf cst_Tree.dot -o cst_Tree.pdf
-        #	COMMAND dot -Tsvg cst_Tree.dot -o cst_Tree.svg
+#        	COMMAND dot -Tsvg cst_Tree.dot -o cst_Tree.svg
         COMMAND wslview ast_Tree.pdf && wslview cst_tree.pdf
 )
 

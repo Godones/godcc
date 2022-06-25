@@ -36,10 +36,10 @@
    private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED
-#define YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED
+# define YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-#define YYDEBUG 0
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -47,78 +47,86 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 1 "/home/godcc/frontend/sysy.y"
 
-#include <memory>
-#include <string>
-
-#include "ast.h"
+  #include <memory>
+  #include <string>
+  #include "ast.h"
 
 #line 55 "/home/godcc/frontend/parser.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
-#define YYTOKENTYPE
-enum yytokentype {
-  YYEMPTY = -2,
-  YYEOF = 0,            /* "end of file"  */
-  YYerror = 256,        /* error  */
-  YYUNDEF = 257,        /* "invalid token"  */
-  RETURN = 258,         /* RETURN  */
-  IDENT = 259,          /* IDENT  */
-  LT = 260,             /* LT  */
-  GT = 261,             /* GT  */
-  EQ = 262,             /* EQ  */
-  AND = 263,            /* AND  */
-  OR = 264,             /* OR  */
-  NE = 265,             /* NE  */
-  LE = 266,             /* LE  */
-  GE = 267,             /* GE  */
-  CONST = 268,          /* CONST  */
-  INT = 269,            /* INT  */
-  IF = 270,             /* IF  */
-  ELSE = 271,           /* ELSE  */
-  WHILE = 272,          /* WHILE  */
-  BREAK = 273,          /* BREAK  */
-  CONTINUE = 274,       /* CONTINUE  */
-  VOID = 275,           /* VOID  */
-  INT_CONST = 276,      /* INT_CONST  */
-  LOWER_THAN_ELSE = 277 /* LOWER_THAN_ELSE  */
-};
-typedef enum yytokentype yytoken_kind_t;
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    RETURN = 258,                  /* RETURN  */
+    IDENT = 259,                   /* IDENT  */
+    LT = 260,                      /* LT  */
+    GT = 261,                      /* GT  */
+    EQ = 262,                      /* EQ  */
+    AND = 263,                     /* AND  */
+    OR = 264,                      /* OR  */
+    NE = 265,                      /* NE  */
+    LE = 266,                      /* LE  */
+    GE = 267,                      /* GE  */
+    CONST = 268,                   /* CONST  */
+    INT = 269,                     /* INT  */
+    IF = 270,                      /* IF  */
+    ELSE = 271,                    /* ELSE  */
+    WHILE = 272,                   /* WHILE  */
+    BREAK = 273,                   /* BREAK  */
+    CONTINUE = 274,                /* CONTINUE  */
+    VOID = 275,                    /* VOID  */
+    FOR = 276,                     /* FOR  */
+    DEC = 277,                     /* DEC  */
+    INC = 278,                     /* INC  */
+    INT_CONST = 279,               /* INT_CONST  */
+    LOWER_THAN_ELSE = 280          /* LOWER_THAN_ELSE  */
+  };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-union YYSTYPE {
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+union YYSTYPE
+{
 #line 34 "/home/godcc/frontend/sysy.y"
 
   std::string *str_val;
   int int_val;
   Ast *ast_val;
-  const char *cstr_val;
+  const char * cstr_val;
 
-#line 101 "/home/godcc/frontend/parser.hpp"
+#line 104 "/home/godcc/frontend/parser.hpp"
+
 };
 typedef union YYSTYPE YYSTYPE;
-#define YYSTYPE_IS_TRIVIAL 1
-#define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
 
 /* Location type.  */
-#if !defined YYLTYPE && !defined YYLTYPE_IS_DECLARED
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
 typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE {
+struct YYLTYPE
+{
   int first_line;
   int first_column;
   int last_line;
   int last_column;
 };
-#define YYLTYPE_IS_DECLARED 1
-#define YYLTYPE_IS_TRIVIAL 1
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
 #endif
+
 
 extern YYSTYPE yylval;
 extern YYLTYPE yylloc;
 
-int yyparse(std::shared_ptr<Ast> &ast);
+int yyparse (std::shared_ptr<Ast> &ast);
+
 
 #endif /* !YY_YY_HOME_GODCC_FRONTEND_PARSER_HPP_INCLUDED  */

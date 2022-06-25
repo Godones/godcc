@@ -101,7 +101,9 @@ void AstVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast
   }
 }
 void AstVisitor::VisitBlockAst(BlockAst *block_ast) {
-  block_ast->block_item_list->accept(this);
+  if (block_ast->block_item_list) {
+	block_ast->block_item_list->accept(this);
+  }
 }
 void AstVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
   auto j = json.top();
@@ -357,7 +359,7 @@ void AstVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 void AstVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
   auto j = json.top();
   switch (unary_expr_ast->unaryType) {
-	case UnaryType::kPrimary: {
+	case UnaryType::kPostfix: {
 	  unary_expr_ast->unaryExpr->accept(this);
 	  break;
 	}
@@ -403,4 +405,10 @@ void AstVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
 AstVisitor::AstVisitor() {
   nlohmann::json *j = new nlohmann::json;
   json.push(j);
+}
+void AstVisitor::VisitForStmt(ForStmtAst *) {
+  //
+}
+void AstVisitor::VisitPostfixExprAst(PostfixExprAst *) {
+  //
 }

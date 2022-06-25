@@ -129,7 +129,9 @@ void SemanticVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_lis
 void SemanticVisitor::VisitBlockAst(BlockAst *block_ast) {
   // 遇到{}时，进入新的作用域
   globalSymbolTable = globalSymbolTable->new_scope();
-  block_ast->block_item_list->accept(this);
+  if (block_ast->block_item_list) {
+	block_ast->block_item_list->accept(this);
+  }
   globalSymbolTable = globalSymbolTable->exit_scope();
 }
 
@@ -209,6 +211,10 @@ void SemanticVisitor::VisitStmtAst(StmtAst *stmt_ast) {
 	  stmt_ast->expr->accept(this);
 	  break;
 	};
+	case StmtType::kFor: {
+	  stmt_ast->expr->accept(this);
+	  break;
+	};
 	case StmtType::kBreak: {
 	  //需要保证在循环中 需要一个标志标明当前处于while循环中
 	  if (!while_flag) {
@@ -253,9 +259,28 @@ void SemanticVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_flag = true;//标志当前处于while循环中
   while_stmt_ast->stmt->accept(this);
   //标志当前不再处于while循环中
-  //   恢复之前的while_flag
+  // 恢复之前的while_flag
   while_flag = old_while_flag;
 }
+void SemanticVisitor:: VisitForStmt(ForStmtAst *forStmtAst) {
+  // 处理for循环的话，括号内需要进入一个新的作用域
+  globalSymbolTable = globalSymbolTable->new_scope();
+  forStmtAst->expr1->accept(this);
+  forStmtAst->expr2->accept(this);
+  if (forStmtAst->expr3) forStmtAst->expr3->accept(this);
+
+  // 在for循环语句中，需要一个标志标明当前处于for循环中
+  // 保存当前的while_flag
+  auto old_while_flag = while_flag;
+  while_flag = true;//标志当前处于while循环中
+  forStmtAst->stmt->accept(this);
+  //标志当前不再处于while循环中
+  // 恢复之前的while_flag
+  while_flag = old_while_flag;
+  globalSymbolTable = globalSymbolTable->exit_scope();
+}
+
+
 void SemanticVisitor::VisitExp(ExpAst *exp_ast) {
   exp_ast->realExpr->accept(this);
   auto expr = dynamic_cast<BinaryExprAst *>(exp_ast->realExpr.get());
@@ -334,27 +359,35 @@ void SemanticVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   auto item = globalSymbolTable->get_symbol(ident->name);
   if (var_def_ast->array_expr_list) {
 	//todo!(需要处理数组)
-	var_def_ast->array_expr_list->accept(this);
+	auto array_expr_list = dynamic_cast<ArrayExprListAst *>(var_def_ast->array_expr_list.get());
+	array_expr_list->accept(this);
+	item->type = DataType::kArray;//修改为数组类型
+	ArrayInfo *array_info = new ArrayInfo();
+	array_info->type = type_current;
+	array_info->dim =array_expr_list->array_num;
+	item->ptr = array_info;
   }
-
   if (var_def_ast->var_expr) {          //如果有初始化
 	var_def_ast->var_expr->accept(this);//求值
 	auto val = dynamic_cast<InitValListAst *>(var_def_ast->var_expr.get());
-	if (val->values.size() > 1) {
+	if (val->values.size() > 1&&item->type!=DataType::kArray) {
 	  //如果不是数组但是使用了数组初始化
 	  WARNING("address:%d-%d excess elements in scalar initializer", var_def_ast->line, var_def_ast->column);
 	}
   }
 }
 void SemanticVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
-  //数组信息，只需要在当前符号表找到最后的一条item，即时数组对应的符号
+  //统计数组信息，这里只需要记录各个维度的大小即可
   std::stack<std::shared_ptr<Ast>> list;
+  auto record = array_expr_list_ast;
   while (array_expr_list_ast) {
 	list.push(array_expr_list_ast->array_expr);
 	array_expr_list_ast = dynamic_cast<ArrayExprListAst *>((array_expr_list_ast->array_expr_list).get());
   }
   while (!list.empty()) {
-	list.top()->accept(this);
+	auto expr = dynamic_cast<ExpAst *>(list.top().get());
+	expr->accept(this);//求值
+	record->array_num.emplace_back(expr->value);
 	list.pop();
   }
 }
@@ -481,10 +514,10 @@ void SemanticVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 }
 void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
   switch (unary_expr_ast->unaryType) {
-	case UnaryType::kPrimary: {
+	case UnaryType::kPostfix: {
 	  unary_expr_ast->unaryExpr->accept(this);
-	  // 基本表达式
-	  auto primary = dynamic_cast<PrimaryExprAst *>(unary_expr_ast->unaryExpr.get());
+	  // Postfix 表达式
+	  auto primary = dynamic_cast<PostfixExprAst *>(unary_expr_ast->unaryExpr.get());
 	  if (primary->have_value) {
 		unary_expr_ast->value = primary->value;
 		unary_expr_ast->have_value = true;
@@ -509,8 +542,7 @@ void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	  auto func_name = dynamic_cast<IdentifierAst *>(unary_expr_ast->unaryOp.get());
 	  auto func_def = globalSymbolTable->get_symbol(func_name->name);
 	  if (func_def) {
-		//存在定义
-		//检查参数个数
+		//存在定义 检查参数个数
 		auto func_info = (FuncInfo *)func_def->ptr;
 		if (!func_info->params.empty()) {
 		  //参数个数不为0，但是没有参数
@@ -542,6 +574,23 @@ void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	};
   }
 }
+void SemanticVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
+  //前缀表达式
+  //PostfixExp = PrimaryExp
+  //			|PostfixExp --;
+  //			|PostfixExp ++;
+  postfixExprAst->postfixExpr->accept(this);
+  if (postfixExprAst->postfixType==PostfixType::kPrimary){
+	auto primary = dynamic_cast<PrimaryExprAst *>(postfixExprAst->postfixExpr.get());
+	if (primary->have_value) {
+	  postfixExprAst->value = primary->value;
+	  postfixExprAst->have_value = true;
+	}
+	postfixExprAst->data_type = primary->data_type;//设置类型
+  }
+}
+
+
 void SemanticVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
   switch (primary_expr_ast->primaryType) {
 	case PrimaryType::EXP: {
@@ -575,7 +624,6 @@ void SemanticVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 }
 void SemanticVisitor::VisitLVal(LValAst *l_val_ast) {
   auto ident = dynamic_cast<IdentifierAst *>(l_val_ast->l_val.get());
-  assert(ident);
   auto symbol = globalSymbolTable->get_symbol(ident->name);
   if (!symbol) {
 	//符号不存在
@@ -584,15 +632,14 @@ void SemanticVisitor::VisitLVal(LValAst *l_val_ast) {
 	return;//直接返回
   } else {
 	//符号存在
-	if (symbol->have_value) {
+	if (l_val_ast->array_expr_list) {//处理数组
+	  l_val_ast->array_expr_list->accept(this);
+	}
+	if (symbol->have_value&&symbol->type!=DataType::kArray) {//非数组的情况下向上传值
 	  l_val_ast->have_value = true;    //左值有值
 	  l_val_ast->value = symbol->value;//左值值
+	  l_val_ast->data_type = symbol->type;//类型传递
 	}
-	l_val_ast->data_type = symbol->type;//类型传递
-  }
-  if (l_val_ast->array_expr_list) {
-	//数组暂时不管
-	l_val_ast->array_expr_list->accept(this);
   }
 }
 void SemanticVisitor::VisitNumberAst(NumberAst *number_ast) {}

@@ -24,6 +24,7 @@ enum class InstructionType {
   Integer, // 整数
   ZeroInit,// 初始化为0
   FuncArgRef,
+  Aggregate,    //由于数组的初始化
   Alloc,        //局部变量
   GlobalAlloc,  //全局变量
   Load,         // 加载数
@@ -35,9 +36,10 @@ enum class InstructionType {
   Jump,         // 跳转 --> 分支
   Return,       // 返回语句   return lvalue|number|symbol|null
   Call,         //函数调用语句 call <symbol>
+  Move,         //移动语句
 };
 enum class BinaryOp {
-  Add,//+
+  Add ,//+
   Sub,//-
   Mul,//*
   Div,///
@@ -119,6 +121,8 @@ struct Instruction {
   int m_number;                   //指令的值所用虚拟寄存器编号
   std::string_view name;          // 保存变量名称或者函数名称
   std::vector<Instruction> extra; // 额外信息，在函数参数中使用
+  std::vector<int>array_dim;	  // 数组维度+数组元素
+  struct Instruction *next = nullptr;//指向下一条指令,
   void accept(IrVisitor *visitor);
 };
 

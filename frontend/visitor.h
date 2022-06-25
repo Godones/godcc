@@ -29,11 +29,14 @@ class BlockItemAst;
 
 class StmtAst;
 class WhileStmtAst;
+class ForStmtAst;
 class IfStmtAst;
 
 class ExpAst;
 class UnaryExprAst;
 class UnaryOpAst;
+class PostfixExprAst;
+
 class BinaryExprAst;
 class NumberAst;
 class PrimaryExprAst;
@@ -68,6 +71,7 @@ class Visitor {
   virtual void VisitStmtAst(StmtAst *) = 0;
   virtual void VisitIfStmt(IfStmtAst *) = 0;
   virtual void VisitWhileStmt(WhileStmtAst *) = 0;
+  virtual void VisitForStmt(ForStmtAst *) = 0;
   virtual void VisitExp(ExpAst *) = 0;
   virtual void VisitDecl(DeclAst *) = 0;
   virtual void VisitConstDecl(ConstDeclAst *) = 0;
@@ -86,6 +90,7 @@ class Visitor {
   virtual void VisitPrimaryExpAst(PrimaryExprAst *) = 0;
   virtual void VisitNumberAst(NumberAst *) = 0;
   virtual void VisitIdentifierAst(IdentifierAst *) = 0;
+  virtual void VisitPostfixExprAst(PostfixExprAst *) = 0;
 };
 
 BinaryOp to_BinaryOp(const std::string_view &op);

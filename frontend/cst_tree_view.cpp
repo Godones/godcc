@@ -34,7 +34,9 @@ void CstViewVisitor::VisitFuncTypeAst(FuncTypeAst *func_type_ast) {
 }
 void CstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
   dot.BeganWrite("Block");
-  block_ast->block_item_list->accept(this);
+  if (block_ast->block_item_list) {
+	block_ast->block_item_list->accept(this);
+  }
   dot.EndWrite();
 }
 void CstViewVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
@@ -78,7 +80,7 @@ void CstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
   char str[50] = {0};
   sprintf(str, "%sUnaryExpr", pre_name);
   dot.BeganWrite(str);
-  if (unary_expr_ast->unaryOp) {
+  if (unary_expr_ast->unaryOp&&unary_expr_ast->unaryType!=UnaryType::kBDec&&unary_expr_ast->unaryType!=UnaryType::kBInc) {
 	unary_expr_ast->unaryOp->accept(this);//一元运算符号 // call
   }
   if (unary_expr_ast->unaryType == UnaryType::kCall) {
@@ -88,8 +90,26 @@ void CstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
   if (unary_expr_ast->unaryExpr) {
 	unary_expr_ast->unaryExpr->accept(this);
   }
+  if (unary_expr_ast->unaryOp&&(unary_expr_ast->unaryType==UnaryType::kBDec||unary_expr_ast->unaryType==UnaryType::kBInc)) {
+	unary_expr_ast->unaryOp->accept(this);//一元运算符号 // x++/x--
+  }
   dot.EndWrite();
 }
+
+void CstViewVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
+  dot.BeganWrite("PostfixExpr");
+  postfixExprAst->postfixExpr->accept(this);
+  if (postfixExprAst->postfixType==PostfixType::kBDec) {
+	dot.BeganWrite("--");
+	dot.EndWrite();
+  } else if (postfixExprAst->postfixType==PostfixType::kBInc) {
+	dot.BeganWrite("++");
+	dot.EndWrite();
+  }
+  dot.EndWrite();
+}
+
+
 void CstViewVisitor::VisitUnaryOpAst(UnaryOpAst *unary_op_ast) {
   dot.BeganWrite("UnaryOp");
   dot.BeganWrite(unary_op_ast->op);
@@ -219,6 +239,16 @@ void CstViewVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_stmt_ast->stmt->accept(this);
   dot.EndWrite();
 }
+void CstViewVisitor::VisitForStmt(ForStmtAst *forStmtAst) {
+  dot.BeganWrite("for");
+  forStmtAst->expr1->accept(this);
+  forStmtAst->expr2->accept(this);
+  if (forStmtAst->expr3)
+ 	 forStmtAst->expr3->accept(this);
+  forStmtAst->stmt->accept(this);
+  dot.EndWrite();
+}
+
 void CstViewVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {
   dot.BeganWrite("FuncFParam");
   func_f_param_ast->funcType->accept(this);

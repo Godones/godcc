@@ -43,7 +43,7 @@ const char *BinaryTypeToString(BinaryType &type) {
 }
 const char *UnaryTypeToString(UnaryType &type) {
   switch (type) {
-	case UnaryType::kPrimary: return "Primary";
+	case UnaryType::kPostfix: return "Postfix";
 	case UnaryType::kUnary: return "Unary";
 	case UnaryType::kCall: return "Call";
   }
@@ -113,6 +113,9 @@ void NumberAst::accept(Visitor *visitor) {
 
 void UnaryOpAst::accept(Visitor *visitor) {
   visitor->VisitUnaryOpAst(this);
+}
+UnaryOpAst::UnaryOpAst(const char *op_) {
+  op=op_;
 }
 
 void IdentifierAst::accept(Visitor *visitor) {
@@ -221,4 +224,10 @@ void InitValAst::accept(Visitor *visitor) {
 }
 void InitValListAst::accept(Visitor *visitor) {
   visitor->VisitInitValList(this);
+}
+void ForStmtAst::accept(Visitor *visitor) {
+  visitor->VisitForStmt(this);
+}
+void PostfixExprAst::accept(Visitor *visitor) {
+  visitor->VisitPostfixExprAst(this);
 }

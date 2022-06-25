@@ -28,10 +28,12 @@ class BlockItemAst;
 class StmtAst;
 class IfStmtAst;
 class WhileStmtAst;
+class ForStmtAst;
 
 class ExpAst;
 class BinaryExprAst;
 class UnaryExprAst;
+class PostfixExprAst;
 class PrimaryExprAst;
 class UnaryOpAst;
 class IdentifierAst;
@@ -180,6 +182,7 @@ enum class StmtType {
   kWhile,
   kBreak,
   kContinue,
+  kFor,
 };
 
 // TODO!(需要处理不同的stmt)
@@ -215,6 +218,18 @@ class WhileStmtAst : public Ast {
   ~WhileStmtAst() override = default;
   void accept(Visitor *) override;
 };
+
+// for(expr;expr;expr)stmt
+class ForStmtAst : public Ast {
+ public:
+  std::shared_ptr<Ast> expr1;
+  std::shared_ptr<Ast> expr2;
+  std::shared_ptr<Ast> expr3;
+  std::shared_ptr<Ast> stmt;
+  ~ForStmtAst() override = default;
+  void accept(Visitor *) override;
+};
+
 
 // 表达式节点
 class ExpAst : public Ast {
@@ -264,9 +279,11 @@ class BinaryExprAst : public Ast {
 };
 
 enum class UnaryType {
-  kPrimary,
+  kPostfix,
   kUnary,
   kCall,
+  kBDec,
+  kBInc,
 };
 // 一元表达式
 // UnaryExp    ::= PrimaryExp | UnaryOp UnaryExp | IDENT "(" [FuncRParams] ")";
@@ -283,6 +300,24 @@ class UnaryExprAst : public Ast {
   ~UnaryExprAst() override = default;
   void accept(Visitor *) override;
 };
+
+
+enum class PostfixType {
+  kPrimary,
+  kBDec,
+  kBInc,
+};
+class PostfixExprAst : public Ast {
+ public :
+  int value;              // 用于编译期值
+  bool have_value = false;// 用于编译期值
+  DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
+  std::shared_ptr<Ast> postfixExpr;
+  PostfixType postfixType; //kBDec,kBInc
+  ~PostfixExprAst() override = default;
+  void accept(Visitor *) override;
+};
+
 
 enum class PrimaryType {
   EXP,//(exp) --- 带括号的表达式
@@ -316,6 +351,8 @@ class UnaryOpAst : public Ast {
   const char *op;
   ~UnaryOpAst() override = default;
   void accept(Visitor *) override;
+  UnaryOpAst(const char *op_);
+  UnaryOpAst() =default;
 };
 
 class IdentifierAst : public Ast {

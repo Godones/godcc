@@ -73,7 +73,9 @@ void AstViewVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list
 }
 void AstViewVisitor::VisitBlockAst(BlockAst *block_ast) {
   j_son_.BeganWrite("BlockItemList");
-  block_ast->block_item_list->accept(this);
+  if (block_ast->block_item_list) {
+	block_ast->block_item_list->accept(this);
+  }
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitBlockItemListAst(BlockItemListAst *block_item_list_ast) {
@@ -150,6 +152,16 @@ void AstViewVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_stmt_ast->expr->accept(this);
   while_stmt_ast->stmt->accept(this);
 }
+void AstViewVisitor::VisitForStmt(ForStmtAst *forStmtAst) {
+  forStmtAst->expr1->accept(this);
+  forStmtAst->expr2->accept(this);
+  if (forStmtAst->expr3) {
+	forStmtAst->expr3->accept(this);
+  }
+  forStmtAst->stmt->accept(this);
+}
+
+
 void AstViewVisitor::VisitExp(ExpAst *exp_ast) {
   exp_ast->realExpr->accept(this);
 }
@@ -259,7 +271,7 @@ void AstViewVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 }
 void AstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
   switch (unary_expr_ast->unaryType) {
-	case UnaryType::kPrimary: {
+	case UnaryType::kPostfix: {
 	  unary_expr_ast->unaryExpr->accept(this);
 	  break;
 	}
@@ -270,6 +282,20 @@ void AstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	  j_son_.EndWrite();
 	  break;
 	};
+	case UnaryType::kBDec:{
+	  j_son_.BeganWrite("UnaryExpr");
+	  unary_expr_ast->unaryExpr->accept(this);
+	  unary_expr_ast->unaryOp->accept(this);
+	  j_son_.EndWrite();
+	  break;
+	}
+	case UnaryType::kBInc:{
+	  j_son_.BeganWrite("UnaryExpr");
+	  unary_expr_ast->unaryExpr->accept(this);
+	  unary_expr_ast->unaryOp->accept(this);
+	  j_son_.EndWrite();
+	  break;
+	}
 	case UnaryType::kCall: {
 	  j_son_.BeganWrite("FuncCall:()");
 	  unary_expr_ast->unaryOp->accept(this);
@@ -281,6 +307,22 @@ void AstViewVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	};
   }
 }
+
+void AstViewVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
+  if (postfixExprAst->postfixExpr) {
+	postfixExprAst->postfixExpr->accept(this);
+  }
+  if (postfixExprAst->postfixType==PostfixType::kBDec){
+	j_son_.BeganWrite("--");
+	j_son_.EndWrite();
+  }
+  if (postfixExprAst->postfixType==PostfixType::kBInc){
+	j_son_.BeganWrite("++");
+	j_son_.EndWrite();
+  }
+}
+
+
 void AstViewVisitor::VisitUnaryOpAst(UnaryOpAst *unary_op_ast) {
   j_son_.BeganWrite(unary_op_ast->op);
   j_son_.EndWrite();
@@ -295,8 +337,9 @@ void AstViewVisitor::VisitNumberAst(NumberAst *number_ast) {
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
-  char str[20];
+  char str[50];
   sprintf(str, "%s:%s", "Identifier", identifier_ast->name);
   j_son_.BeganWrite(str);
   j_son_.EndWrite();
 }
+

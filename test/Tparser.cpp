@@ -18,7 +18,6 @@ static std::vector<const char *> file_names = {
 	"../test/test6.c",
 	"../test/fab.c",
 	"../test/semantic/0_var_not_defined.c",
-	//	"../test/semantic/correct.c"
 	"../test/semantic/1_var_defined_again.c",
 	"../test/semantic/2_break_not_in_loop.c",
 	"../test/semantic/3_func_arg_not_match.c",
@@ -29,6 +28,8 @@ static std::vector<const char *> file_names = {
 	"../test/semantic/correct.c",
 	"../test/ir.c",
 	"../test/array.c",
+//	"../test/nc_tests/1_Fibonacci.c",
+//	"../test/nc_tests/5_YangHuiTriangle.c",
 };
 
 void openFile(const char *file_name) {

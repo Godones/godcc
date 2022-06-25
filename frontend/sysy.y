@@ -41,7 +41,7 @@ using namespace std;
 // lexer 返回的所有 token 种类的声明
 // 注意 IDENT 和 INT_CONST 会返回 token 的值, 分别对应 str_val 和 int_val
 %token RETURN
-%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT IF ELSE WHILE BREAK CONTINUE VOID
+%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT IF ELSE WHILE BREAK CONTINUE VOID FOR DEC INC
 %token <int_val> INT_CONST
 //Lt,//<
 //Gt,//>
@@ -51,6 +51,8 @@ using namespace std;
 //Ne,// !=
 //Le,// <=
 //Ge,// >=
+//DEC --
+//INC ++
 
 // 非终结符的类型定义
 %type <ast_val> FuncDef FuncType Block Stmt Expr UnaryExp PrimaryExpr Number UnaryOp
@@ -58,7 +60,7 @@ using namespace std;
 ConstDef BlockItemList BlockItem LVal Identifier
 %type <ast_val>  VarDecl VarDef VarDefList CompUnitItem FuncFParamList  FuncFParam
 %type <ast_val>  FuncRParamList  CompUnit ArrayExpList
-%type <ast_val> InitValList  InitVal
+%type <ast_val> InitValList  InitVal PostfixExp
 //%type <int_val>
 //%type <str_val>
 
@@ -222,6 +224,12 @@ Block
   : '{' BlockItemList '}' {
 	auto block = new BlockAst();
 	block-> block_item_list= shared_ptr<Ast>($2);
+	block->line = @$.first_line;
+	block->column = @$.first_column;
+	$$ = block;
+  }
+  |'{' '}' {
+	auto block = new BlockAst();
 	block->line = @$.first_line;
 	block->column = @$.first_column;
 	$$ = block;
@@ -440,6 +448,8 @@ Identifier
 	$$ = identifier;
 };
 
+
+
 Stmt
 : RETURN Expr ';' {
 	auto stmt = new StmtAst();
@@ -542,6 +552,66 @@ Stmt
         	stmt->column = @$.first_column;
 	$$ = stmt;
 }
+|FOR '(' Stmt  Stmt  Expr ')' Stmt {
+	printf("FOR\n");
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kFor;
+	auto forStmt = new ForStmtAst();
+	forStmt->expr1 = shared_ptr<Ast>($3);
+	forStmt->expr2 = shared_ptr<Ast>($4);
+	forStmt->expr3 = shared_ptr<Ast>($5);
+	forStmt->stmt =  shared_ptr<Ast>($7);
+	forStmt->line = @$.first_line;
+	forStmt->column = @$.first_column;
+	stmt->expr = shared_ptr<Ast>(forStmt);
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
+	$$ = stmt;
+}
+|FOR '(' Stmt  Stmt  ')' Stmt {
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kFor;
+	auto forStmt = new ForStmtAst();
+	forStmt->expr1 = shared_ptr<Ast>($3);
+	forStmt->expr2 = shared_ptr<Ast>($4);
+	forStmt->stmt =  shared_ptr<Ast>($6);
+	forStmt->line = @$.first_line;
+	forStmt->column = @$.first_column;
+	stmt->expr = shared_ptr<Ast>(forStmt);
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
+	$$ = stmt;
+}
+|FOR '(' VarDecl  Stmt  Expr ')' Stmt {
+	printf("FOR\n");
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kFor;
+	auto forStmt = new ForStmtAst();
+	forStmt->expr1 = shared_ptr<Ast>($3);
+	forStmt->expr2 = shared_ptr<Ast>($4);
+	forStmt->expr3 = shared_ptr<Ast>($5);
+	forStmt->stmt =  shared_ptr<Ast>($7);
+	forStmt->line = @$.first_line;
+	forStmt->column = @$.first_column;
+	stmt->expr = shared_ptr<Ast>(forStmt);
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
+	$$ = stmt;
+}
+|FOR '(' VarDecl  Stmt  ')' Stmt {
+	auto stmt = new StmtAst();
+	stmt->type = StmtType::kFor;
+	auto forStmt = new ForStmtAst();
+	forStmt->expr1 = shared_ptr<Ast>($3);
+	forStmt->expr2 = shared_ptr<Ast>($4);
+	forStmt->stmt =  shared_ptr<Ast>($6);
+	forStmt->line = @$.first_line;
+	forStmt->column = @$.first_column;
+	stmt->expr = shared_ptr<Ast>(forStmt);
+	stmt->line = @$.first_line;
+	stmt->column = @$.first_column;
+	$$ = stmt;
+}
  ;
 
 Expr
@@ -562,16 +632,16 @@ binary->column = @$.first_column;
   $$ = binary;
 }
 |AddExpr '+' MulExpr{
- auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"+");
+  auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"+");
   binary->line = @$.first_line;
-binary->column = @$.first_column;
+  binary->column = @$.first_column;
   $$ = binary;
 }
 |AddExpr '-' MulExpr{
 
-auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"-");
+  auto binary = new BinaryExprAst(shared_ptr<Ast>($1),shared_ptr<Ast>($3),BinaryType::kAdd,"-");
   binary->line = @$.first_line;
-binary->column = @$.first_column;
+  binary->column = @$.first_column;
   $$ = binary;
 };
 
@@ -685,11 +755,11 @@ binary->column = @$.first_column;
 
 
 UnaryExp
-  : PrimaryExpr {
+  : PostfixExp {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>($1);
-  	unaryExp->unaryType = UnaryType::kPrimary;
-  	  unaryExp->line = @$.first_line;
+  	unaryExp->unaryType = UnaryType::kPostfix;
+  	unaryExp->line = @$.first_line;
         unaryExp->column = @$.first_column;
   	$$ = unaryExp;
   }
@@ -698,10 +768,30 @@ UnaryExp
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
         unaryExp->unaryExpr = shared_ptr<Ast>($2);
 	unaryExp->unaryType = UnaryType::kUnary;
-	  	  unaryExp->line = @$.first_line;
-                unaryExp->column = @$.first_column;
+  	unaryExp->line = @$.first_line;
+	unaryExp->column = @$.first_column;
 	$$ = unaryExp;
   }
+  |DEC UnaryExp{
+  	auto unaryExp = new UnaryExprAst();
+  	unaryExp->unaryExpr = shared_ptr<Ast>($2);
+  	auto unaryOpAst = new UnaryOpAst("--");
+  	unaryExp->unaryOp = shared_ptr<Ast>(unaryOpAst);
+  	unaryExp->unaryType = UnaryType::kUnary;
+  	unaryExp->line = @$.first_line;
+	unaryExp->column = @$.first_column;
+  	$$ = unaryExp;
+  }
+  |INC UnaryExp{
+  	auto unaryExp = new UnaryExprAst();
+  	unaryExp->unaryExpr = shared_ptr<Ast>($2);
+  	auto unaryOpAst = new UnaryOpAst("++");
+	unaryExp->unaryOp = shared_ptr<Ast>(unaryOpAst);
+  	unaryExp->unaryType = UnaryType::kUnary;
+  	unaryExp->line = @$.first_line;
+	unaryExp->column = @$.first_column;
+	$$ = unaryExp;
+}
 | Identifier '(' ')'{
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>($1);
@@ -718,6 +808,32 @@ UnaryExp
 	  unaryExp->line = @$.first_line;
 	unaryExp->column = @$.first_column;
 	$$ = unaryExp;
+}
+;
+
+PostfixExp:PrimaryExpr{
+	auto postfixExp = new PostfixExprAst();
+	postfixExp->postfixExpr = shared_ptr<Ast>($1);
+	postfixExp->postfixType = PostfixType::kPrimary;
+	 postfixExp->line = @$.first_line;
+	postfixExp->column = @$.first_column;
+	$$ = postfixExp;
+}
+|PostfixExp DEC {
+	auto postfixExp = new PostfixExprAst();
+	postfixExp->postfixExpr = shared_ptr<Ast>($1);
+	postfixExp->postfixType = PostfixType::kBDec;
+	  postfixExp->line = @$.first_line;
+	postfixExp->column = @$.first_column;
+	$$ = postfixExp;
+}
+|PostfixExp INC {
+	auto postfixExp = new PostfixExprAst();
+	postfixExp->postfixExpr = shared_ptr<Ast>($1);
+	postfixExp->postfixType = PostfixType::kBInc;
+        postfixExp->line = @$.first_line;
+	postfixExp->column = @$.first_column;
+	$$ = postfixExp;
 }
 ;
 

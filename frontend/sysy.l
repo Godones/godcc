@@ -69,6 +69,12 @@ Hex 0[xX][0-9a-fA-F]+
                     //began_colum +=yyleng;
                     return ELSE;
                 }
+"for"           {
+                    file_out("for","for");
+                    yylval.str_val=new string("for");
+                    //began_colum +=yyleng;
+                    return FOR;
+                }
 "while"         {
                     file_out("while","while");
                     yylval.str_val=new string("while");
@@ -173,6 +179,18 @@ Hex 0[xX][0-9a-fA-F]+
                      yylval.str_val=new string("||");
                     //began_colum +=yyleng;
                     return OR;
+                }
+"++"            {
+                    file_out("++","++");
+                     yylval.str_val=new string("++");
+                    //began_colum +=yyleng;
+                    return INC;
+                }
+"--"            {
+                    file_out("--","--");
+                     yylval.str_val=new string("--");
+                    //began_colum +=yyleng;
+                    return DEC;
                 }
 
 "return"        {

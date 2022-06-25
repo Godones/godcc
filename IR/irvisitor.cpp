@@ -53,13 +53,58 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 		std::cout << "\n";
 	  }
 	  break;
-	case InstructionType::Alloc:
-	  std::cout << "@" << instruction->operand1.operand.symbol << " = alloc " << toString(instruction->dataType) << "\n";
+	case InstructionType::Alloc:{
+	  std::cout << "@" << instruction->operand1.operand.symbol << " = alloc " << toString(instruction->dataType) << " ";
+	  if (instruction->array_dim.size() != 0) {//数组
+		std::cout << "array ";
+		std::cout << "[";
+		for (auto &dim : instruction->array_dim) {
+		  std::cout << dim << ",";
+		}
+		std::cout << "]";
+	  }
+	  auto next = instruction->next;
+	  if (!next) {
+		std::cout << "\n";
+		break ;
+	  }
+	  if (instruction->array_dim.size() != 0) {//数组
+		std::cout << " {";
+		for (auto &dim : next->array_dim) {
+		  std::cout << dim << ",";
+		}
+		std::cout << "}";
+	  } else {
+		std::cout <<  next->array_dim[0];
+	  }
+	  std::cout << "\n";
 	  break;
-	case InstructionType::GlobalAlloc:
+	}
+
+	case InstructionType::GlobalAlloc: {
 	  std::cout << "@" << instruction->operand1.operand.symbol << " = global " << toString(instruction->dataType) << " ";
-	  std::cout << instruction->operand2.operand.number << "\n";
+	  if (instruction->array_dim.size() != 0) {//数组
+		std::cout << "array ";
+		std::cout << "[";
+		for (auto &dim : instruction->array_dim) {
+		  std::cout << dim << ",";
+		}
+		std::cout << "]";
+	  }
+	  auto next = instruction->next;
+	  assert(next);
+	  if (instruction->array_dim.size() != 0) {//数组
+		std::cout << " {";
+		for (auto &dim : next->array_dim) {
+		  std::cout << dim << ",";
+		}
+		std::cout << "}";
+	  } else {
+		std::cout <<  next->array_dim[0];
+	  }
+	  std::cout << "\n";
 	  break;
+	}
 	case InstructionType::Store:
 	  std::cout << "store " << toString(instruction->dataType) << " ";
 	  if (instruction->operand1.type == OperandType::kInteger) {
@@ -116,6 +161,10 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 		}
 	  }
 	  std::cout << ")\n";
+	}
+	case InstructionType::Move:{
+	  std::cout << "";
+	  break ;
 	}
 	default:
 	  break;

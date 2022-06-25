@@ -35,8 +35,7 @@ struct SymbolInfo {
 // 额外信息数组
 struct ArrayInfo {
   DataType type;      //数组类型
-  int dim[10] = {0};  //维度信息
-  int dim_num = 0;    //维度数量
+  std::vector<int>dim;  //维度信息
   int size = 0;       //数组大小
   void *ptr = nullptr;//数组指针,有初始化时使用
   void dump();

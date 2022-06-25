@@ -22,11 +22,15 @@ class IRGeneratorVisitor : public Visitor {
   std::stack<unsigned int> while_begin_label;        //continue跳转的位置
   std::vector<std::pair<int, int>> break_instruction;//记录break的指令，需要修改break跳转的位置
   std::vector<Instruction> func_param;               //保存函数参数
- public:
-  std::shared_ptr<Program> programIr = nullptr;
+
+  //判断a = a++/a--的情况
+  bool is_assign_inc_dec = false;
+  Instruction inc_dec_instruction;
+
   int number_record = 0;//记录指令的标号
   int label_record = 0; //记录标签的标号
-
+ public:
+  std::shared_ptr<Program> programIr = nullptr;
  public:
   explicit IRGeneratorVisitor(SymbolTable *symbolTable);
   ~IRGeneratorVisitor();
@@ -43,6 +47,8 @@ class IRGeneratorVisitor : public Visitor {
   void VisitStmtAst(StmtAst *) override;
   void VisitIfStmt(IfStmtAst *) override;
   void VisitWhileStmt(WhileStmtAst *) override;
+  void VisitForStmt(ForStmtAst *) override;
+
   void VisitExp(ExpAst *) override;
   void VisitDecl(DeclAst *) override;
   void VisitConstDecl(ConstDeclAst *) override;
@@ -58,6 +64,7 @@ class IRGeneratorVisitor : public Visitor {
   void VisitInitVal(InitValAst *) override;
   void VisitInitValList(InitValListAst *) override;
 
+  void VisitPostfixExprAst(PostfixExprAst *) override;
   void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;

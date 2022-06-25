@@ -26,6 +26,9 @@ std::string DataTypeToString(DataType type) {
 	case kFunc: {
 	  return "func";
 	}
+	case kArray:{
+	  return "array";
+	}
 	default:
 	  return "unknown";
   }
@@ -113,7 +116,7 @@ void ArrayInfo::dump() {
   // 打印数组信息
   std::cout << DataTypeToString(type) << " ";
   std::cout << "(";
-  for (int i = 0; i < dim_num; i++) {
+  for (int i = 0; i < dim.size(); i++) {
 	std::cout << dim[i] << ",";
   }
   std::cout << ") ";

@@ -31,6 +31,7 @@ class AstVisitor : public Visitor {
   void VisitStmtAst(StmtAst *) override;
   void VisitIfStmt(IfStmtAst *) override;
   void VisitWhileStmt(WhileStmtAst *) override;
+  void VisitForStmt(ForStmtAst *) override;
 
   void VisitExp(ExpAst *) override;
 
@@ -48,7 +49,7 @@ class AstVisitor : public Visitor {
   void VisitArrayExprList(ArrayExprListAst *) override;
   void VisitInitVal(InitValAst *) override;
   void VisitInitValList(InitValListAst *) override;
-
+  void VisitPostfixExprAst(PostfixExprAst *) override;
   void VisitBinaryExpAst(BinaryExprAst *) override;
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
