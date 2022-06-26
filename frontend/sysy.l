@@ -12,6 +12,7 @@
 using namespace std;
 
 void file_out(const char* word,const char* type);
+void comment();
 static int began_colum= 0;
 static int token_num=0;
 
@@ -34,10 +35,22 @@ Decimal [1-9][0-9]*
 Octal 0[0-7]*
 Hex 0[xX][0-9a-fA-F]+
 
+/*字符串*/
+String  L?\"(\\.|[^\\"\n])*\"
+
+/*块注释*/
+CommentBlock "/*".*"\*/"
+
 %%
 \n              {began_colum=0;}
 {WhiteSpace}    {began_colum += yyleng;}
 {LineComment}   {}
+{CommentBlock}  {}
+{String}        {
+                    file_out(yytext,"string");
+                    yylval.str_val = new string(yytext);
+                    return STRING;
+                }
 
 "int"           {
                     file_out("int","int");
@@ -246,4 +259,10 @@ void file_out(const char* word,const char* type){
     if(strcmp(type,"error")==0){
         return;
     }
+}
+
+void comment()
+{
+	char c, prev = 0;
+
 }

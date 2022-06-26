@@ -331,15 +331,20 @@ void AstViewVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
   primary_expr_ast->primaryExpr->accept(this);
 }
 void AstViewVisitor::VisitNumberAst(NumberAst *number_ast) {
-  char str[20];
-  sprintf(str, "%s:%d", "Number", number_ast->value);
+  char str[40];
+  sprintf(str, "%s:%d", "Number", getInt( number_ast->value));
   j_son_.BeganWrite(str);
   j_son_.EndWrite();
 }
 void AstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
-  char str[50];
+  char str[100];
   sprintf(str, "%s:%s", "Identifier", identifier_ast->name);
   j_son_.BeganWrite(str);
   j_son_.EndWrite();
 }
-
+void AstViewVisitor::VisitStringAst(StringAst *stringAst) {
+  char str[100];
+  sprintf(str, "%s:%s", "String", getString( stringAst->value).data());
+  j_son_.BeganWrite(str);
+  j_son_.EndWrite();
+}

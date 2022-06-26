@@ -10,26 +10,32 @@ extern int yyparse(std::shared_ptr<Ast> &ast);
 extern FILE *yyout;
 
 static std::vector<const char *> file_names = {
-	"../test/test1.c",
-	"../test/test2.c",
-	"../test/test3.c",
-	"../test/test4.c",
-	"../test/test5.c",
-	"../test/test6.c",
-	"../test/fab.c",
-	"../test/semantic/0_var_not_defined.c",
-	"../test/semantic/1_var_defined_again.c",
-	"../test/semantic/2_break_not_in_loop.c",
-	"../test/semantic/3_func_arg_not_match.c",
-	"../test/semantic/4_opnd_not_match.c",
-	"../test/semantic/7_func_lack_of_return.c",
-	"../test/dev.c",
-	"../test/semantic/while_if_condition_null.c",
-	"../test/semantic/correct.c",
-	"../test/ir.c",
-	"../test/array.c",
+	"../test/mytest/test1.c",
+//	"../test/mytest/test2.c",
+//	"../test/mytest/test3.c",
+//	"../test/mytest/test4.c",
+//	"../test/mytest/test5.c",
+//	"../test/mytest/test6.c",
+//	"../test/mytest/fab.c",
+//	"../test/semantic/0_var_not_defined.c",
+//	"../test/semantic/1_var_defined_again.c",
+//	"../test/semantic/2_break_not_in_loop.c",
+//	"../test/semantic/3_func_arg_not_match.c",
+//	"../test/semantic/4_opnd_not_match.c",
+//	"../test/semantic/7_func_lack_of_return.c",
+//	"../test/mytest/dev.c",
+//	"../test/semantic/while_if_condition_null.c",
+//	"../test/semantic/correct.c",
+//	"../test/mytest/ir.c",
+//	"../test/mytest/array.c",
+//	"../test/nc_tests/0_BubbleSort.c",
 //	"../test/nc_tests/1_Fibonacci.c",
+//	"../test/nc_tests/2_Prime.c",
+//	"../test/nc_tests/3_PerfectNumber.c",
+//	"../test/nc_tests/4_CounterClockwiseRotationArray4_4.c",
 //	"../test/nc_tests/5_YangHuiTriangle.c",
+//	"../test/nc_tests/6_QuickSort.c",
+//	"../test/nc_tests/7_Dijkstra.c",
 };
 
 void openFile(const char *file_name) {
@@ -80,6 +86,8 @@ void test_ir_gen() {
   auto ast = parser(file_names.back());
   auto semanticVisitor = SemanticVisitor();
   ast->accept(&semanticVisitor);
+  semanticVisitor.globalSymbolTable->dump();
+  std::cout << "-------------------------------------------------------\n";
   auto visitor = IRGeneratorVisitor(semanticVisitor.globalSymbolTable);
   ast->accept(&visitor);
   auto ir_code = visitor.programIr;
@@ -99,7 +107,6 @@ void test_ir_gen() {
 //}
 
 void test_cst_tree() {
-
   auto ast = parser(file_names.back());
   GDot json("cst_Tree.dot");
   auto visitor = CstViewVisitor(json);

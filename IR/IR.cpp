@@ -38,7 +38,6 @@ std::string_view toString(const BinaryOp &binary_op) {
 	case BinaryOp::Ne: return "ne ";
 	default: break;
   }
-  //todo!(符号错误)
   INFO("\n符号错误");
   exit(-1);
 }

@@ -13,10 +13,10 @@ int get(){
   return 1;
 }
 int main(){
-//	Mars_PrintStr("Please input a number:\n");
+	Mars_PrintStr("Please input a number:\n");
 	int n = Mars_GetInt();
 	int res = fibonacci(n);
-//	Mars_PrintStr("This number's fibonacci value is :\n");
-//	Mars_PrintInt(res);
+	Mars_PrintStr("This number's fibonacci value is :\n");
+	Mars_PrintInt(res);
     return 0;
 }

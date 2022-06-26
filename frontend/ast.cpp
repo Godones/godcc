@@ -6,6 +6,13 @@
 
 #include <utility>
 
+std::string  getString(IntString value){
+	return std::get<std::string >(value);
+}
+int getInt(IntString value){
+	return std::get<int>(value);
+}
+
 DataType getFuncType(const FuncTypeAst &func_type) {
   if (strcmp(func_type.type, "int") == 0)
 	return DataType::kInt;
@@ -230,4 +237,7 @@ void ForStmtAst::accept(Visitor *visitor) {
 }
 void PostfixExprAst::accept(Visitor *visitor) {
   visitor->VisitPostfixExprAst(this);
+}
+void StringAst::accept(Visitor *visitor) {
+  visitor->VisitStringAst(this);
 }

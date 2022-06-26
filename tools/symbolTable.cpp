@@ -29,6 +29,9 @@ std::string DataTypeToString(DataType type) {
 	case kArray:{
 	  return "array";
 	}
+	case kString:{
+	  return "string";
+	}
 	default:
 	  return "unknown";
   }
@@ -136,7 +139,7 @@ void FuncInfo::dump() {
 void SymbolInfo::dump() {
   // 打印符号信息
   std::cout << DataTypeToString(type) << " ";
-  if (type == kConstInt || type == kInt || type == kFloat) {
+  if (type == kConstInt || type == kInt || type == kFloat || type==kString) {
 	if (!name.empty()) {
 	  std::cout << name << " ";
 	}

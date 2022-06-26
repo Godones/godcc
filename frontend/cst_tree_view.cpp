@@ -143,9 +143,15 @@ void CstViewVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
   dot.EndWrite();
 }
 void CstViewVisitor::VisitNumberAst(NumberAst *number_ast) {
-  dot.BeganWrite(std::to_string(number_ast->value).c_str());
+  dot.BeganWrite(std::to_string(getInt(number_ast->value)).c_str());
   dot.EndWrite();
 }
+void CstViewVisitor::VisitStringAst(StringAst *stringAst) {
+  dot.BeganWrite(getString(stringAst->value).c_str());
+  dot.EndWrite();
+}
+
+
 void CstViewVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
   dot.BeganWrite("Identifier");
   dot.BeganWrite(identifier_ast->name);

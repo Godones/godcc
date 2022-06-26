@@ -41,7 +41,7 @@ using namespace std;
 // lexer 返回的所有 token 种类的声明
 // 注意 IDENT 和 INT_CONST 会返回 token 的值, 分别对应 str_val 和 int_val
 %token RETURN
-%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT IF ELSE WHILE BREAK CONTINUE VOID FOR DEC INC
+%token <str_val> IDENT LT GT EQ AND OR NE LE GE CONST INT IF ELSE WHILE BREAK CONTINUE VOID FOR DEC INC STRING
 %token <int_val> INT_CONST
 //Lt,//<
 //Gt,//>
@@ -60,7 +60,7 @@ using namespace std;
 ConstDef BlockItemList BlockItem LVal Identifier
 %type <ast_val>  VarDecl VarDef VarDefList CompUnitItem FuncFParamList  FuncFParam
 %type <ast_val>  FuncRParamList  CompUnit ArrayExpList
-%type <ast_val> InitValList  InitVal PostfixExp
+%type <ast_val> InitValList  InitVal PostfixExp String
 //%type <int_val>
 //%type <str_val>
 
@@ -876,6 +876,14 @@ PrimaryExpr
    primaryAst->column = @$.first_column;
     $$ = primaryAst;
   }
+  |String {
+	auto primaryAst = new PrimaryExprAst();
+	primaryAst->primaryExpr = shared_ptr<Ast>($1);
+	primaryAst->primaryType = PrimaryType::STRING;
+	primaryAst->line = @$.first_line;
+	primaryAst->column = @$.first_column;
+	$$ = primaryAst;
+  }
   |LVal{
       auto primaryAst = new PrimaryExprAst();
       primaryAst->primaryType = PrimaryType::IDENTIFIER;
@@ -939,6 +947,13 @@ Number
   }
   ;
 
+String :STRING{
+	auto stringAst = new StringAst();
+	stringAst->value = ($1)->c_str();
+	stringAst->line = @$.first_line;
+	stringAst->column = @$.first_column;
+	$$ = stringAst;
+}
 %%
 
 // 定义错误处理函数, 其中第二个参数是错误信息

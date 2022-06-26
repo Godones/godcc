@@ -55,6 +55,7 @@ class AstViewVisitor : public Visitor {
   void VisitUnaryOpAst(UnaryOpAst *) override;
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
   void VisitNumberAst(NumberAst *) override;
+  void VisitStringAst(StringAst *) override;
   void VisitIdentifierAst(IdentifierAst *) override;
 };
 #endif//GODCC_FRONTEND_AST_TREE_VIEW_H_

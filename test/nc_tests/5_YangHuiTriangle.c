@@ -1,7 +1,4 @@
 //打印杨辉三角
-void Mars_PrintInt(){
-  return ;
-}
 void YangHuiTriangle(){
 	int i,j,triangle[8][8];
 
@@ -20,7 +17,7 @@ void YangHuiTriangle(){
 	{
 		for(j = 0; j <= i; j++)
 			Mars_PrintInt(triangle[i][j]);
-//		Mars_PrintStr("\n");
+		Mars_PrintStr("\n");
 	}
 
 	return ;

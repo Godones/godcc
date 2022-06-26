@@ -5,8 +5,8 @@
 #include "semantic.h"
 
 void SemanticVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
+  add_library_function();
   ast->comp_unit->accept(this);
-  globalSymbolTable->dump();
 }
 void SemanticVisitor::VisitCompUnitAst(CompUnitAst *comp_unit_ast) {
   if (comp_unit_ast->comp_unit) {
@@ -36,9 +36,8 @@ void SemanticVisitor::VisitFuncDefAst(FuncDefAst *func_def_ast) {
 	func_def_ast->funcParamList->accept(this);
   }
   //将局部符号的信息放入函数信息中
-  for (int i = 0; i < globalSymbolTable->key_list.size(); i++) {
-	auto key = globalSymbolTable->key_list[i];
-	auto value = globalSymbolTable->get_symbol(key);
+  for (const auto& key : globalSymbolTable->key_list) {
+		auto value = globalSymbolTable->get_symbol(key);
 	value->name = key;
 	func_info->params.push_back(*value);
   }
@@ -149,7 +148,7 @@ void SemanticVisitor::VisitBlockItem(BlockItemAst *block_item_ast) {
 void SemanticVisitor::VisitStmtAst(StmtAst *stmt_ast) {
   switch (stmt_ast->type) {
 	case StmtType::kReturn: {
-	  if (current_func_name == "") {
+	  if (current_func_name.empty()) {
 		ERROR("address:%d-%d, ES08 return statement is not in a function", stmt_ast->line, stmt_ast->column);
 		return;
 	  }
@@ -358,11 +357,10 @@ void SemanticVisitor::VisitVarDef(VarDefAst *var_def_ast) {
   //记录当前的变量
   auto item = globalSymbolTable->get_symbol(ident->name);
   if (var_def_ast->array_expr_list) {
-	//todo!(需要处理数组)
 	auto array_expr_list = dynamic_cast<ArrayExprListAst *>(var_def_ast->array_expr_list.get());
 	array_expr_list->accept(this);
 	item->type = DataType::kArray;//修改为数组类型
-	ArrayInfo *array_info = new ArrayInfo();
+	auto *array_info = new ArrayInfo();
 	array_info->type = type_current;
 	array_info->dim =array_expr_list->array_num;
 	item->ptr = array_info;
@@ -387,7 +385,7 @@ void SemanticVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) 
   while (!list.empty()) {
 	auto expr = dynamic_cast<ExpAst *>(list.top().get());
 	expr->accept(this);//求值
-	record->array_num.emplace_back(expr->value);
+	record->array_num.emplace_back(getInt(expr->value));
 	list.pop();
   }
 }
@@ -418,7 +416,7 @@ void SemanticVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
 	auto expr_ = dynamic_cast<ExpAst *>(init_val_list_ast->expr_init_val.get());
 	if (expr_->have_value) {
 	  //存入值
-	  init_val_list_ast->values.emplace_back(expr_->value);
+	  init_val_list_ast->values.emplace_back(getInt(expr_->value));
 	}
   }
 }
@@ -473,7 +471,7 @@ void SemanticVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 		return;
 	  }
 	  if (left->have_value && right->have_value) {
-		binary_expr_ast->value = calculate(left->value, right->value, binary_expr_ast->op);
+		binary_expr_ast->value = calculate(getInt(left->value), getInt(right->value), binary_expr_ast->op);
 		binary_expr_ast->have_value = true;
 	  }
 	  binary_expr_ast->data_type = DataType::kInt;
@@ -486,7 +484,7 @@ void SemanticVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 		return;
 	  }
 	  if (left->have_value && right->have_value) {
-		binary_expr_ast->value = calculate(left->value, right->value, binary_expr_ast->op);
+		binary_expr_ast->value = calculate(getInt(left->value), getInt(right->value), binary_expr_ast->op);
 		binary_expr_ast->have_value = true;
 	  }
 	  binary_expr_ast->data_type = DataType::kInt;
@@ -530,7 +528,7 @@ void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 	  unary_expr_ast->unaryExpr->accept(this);
 	  auto unary = dynamic_cast<UnaryExprAst *>(unary_expr_ast->unaryExpr.get());
 	  if (unary->have_value) {
-		unary_expr_ast->value = calculate(0, unary->value, op->op);
+		unary_expr_ast->value = calculate(0, getInt(unary->value), op->op);
 		unary_expr_ast->have_value = true;
 	  }
 	  unary_expr_ast->data_type = unary->data_type;//设置类型
@@ -568,6 +566,7 @@ void SemanticVisitor::VisitUnaryExpAst(UnaryExprAst *unary_expr_ast) {
 		//不存在定义
 		//报错
 		ERROR("address:%d-%d ES01 function %s is not defined", func_name->line, func_name->column, func_name->name);
+		exit(-1);
 	  }
 	  //调用函数中参数可能仍然是一个函数调用
 	  break;
@@ -610,6 +609,13 @@ void SemanticVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 	  primary_expr_ast->data_type = DataType::kInt;
 	  break;
 	};
+	case PrimaryType::STRING:{
+	  auto str = dynamic_cast<StringAst *>(primary_expr_ast->primaryExpr.get());
+	  primary_expr_ast->have_value = true;
+	  primary_expr_ast->value = str->value;
+	  primary_expr_ast->data_type = DataType::kString;
+	  break ;
+	}
 	case PrimaryType::IDENTIFIER: {
 	  // 左值，需要查找符号表是否有对应的符号存在
 	  primary_expr_ast->primaryExpr->accept(this);//左值节点
@@ -633,7 +639,7 @@ void SemanticVisitor::VisitLVal(LValAst *l_val_ast) {
   } else {
 	//符号存在
 	if (l_val_ast->array_expr_list) {//处理数组
-	  l_val_ast->array_expr_list->accept(this);
+	  l_val_ast->array_expr_list->accept(this); //求出数组相关信息
 	}
 	if (symbol->have_value&&symbol->type!=DataType::kArray) {//非数组的情况下向上传值
 	  l_val_ast->have_value = true;    //左值有值
@@ -643,6 +649,9 @@ void SemanticVisitor::VisitLVal(LValAst *l_val_ast) {
   }
 }
 void SemanticVisitor::VisitNumberAst(NumberAst *number_ast) {}
+void SemanticVisitor::VisitStringAst(StringAst *stringAst) {}
+
+
 void SemanticVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {}
 void SemanticVisitor::VisitUnaryOpAst(UnaryOpAst *) {
 }
@@ -651,4 +660,32 @@ SemanticVisitor::SemanticVisitor() {
 }
 SemanticVisitor::~SemanticVisitor() {
   delete globalSymbolTable;
+}
+void SemanticVisitor::add_library_function() {
+  //将库函数加入符号表中
+  //Mars_PrintStr  Mars_GetInt   Mars_PrintInt
+  FuncInfo  funcInfo1 =  FuncInfo();
+  SymbolInfo symbolInfo1 = SymbolInfo();
+  symbolInfo1.type = DataType::kFunc;
+  symbolInfo1. name= "Mars_PrintStr";
+  funcInfo1.ret_type = DataType::kVoid;
+  funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kString});
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_PrintStr",symbolInfo1);
+  INFO("add Mars_PrintStr");
+
+  funcInfo1.ret_type = DataType::kInt;
+  funcInfo1.params.clear();
+  symbolInfo1.name = "Mars_GetInt";
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_GetInt",symbolInfo1);
+  INFO("add Mars_GetInt");
+
+  funcInfo1.ret_type = DataType::kVoid;
+  funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kInt});
+  symbolInfo1.name = "Mars_PrintInt";
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_PrintInt",symbolInfo1);
+  INFO("add Mars_PrintInt");
+
 }

@@ -37,6 +37,7 @@ enum class InstructionType {
   Return,       // 返回语句   return lvalue|number|symbol|null
   Call,         //函数调用语句 call <symbol>
   Move,         //移动语句
+  GlobalString, //全局字符串
 };
 enum class BinaryOp {
   Add ,//+

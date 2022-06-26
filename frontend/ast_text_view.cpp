@@ -393,9 +393,16 @@ void AstVisitor::VisitPrimaryExpAst(PrimaryExprAst *primary_expr_ast) {
 void AstVisitor::VisitNumberAst(NumberAst *number_ast) {
   auto j = json.top();
   (*j)["_type"] = "Number";
-  (*j)["value"] = number_ast->value;
+  (*j)["value"] = getInt(number_ast->value);
   (*j)["address"] = {{"line", number_ast->line}, {"col", number_ast->column}};
 }
+void AstVisitor::VisitStringAst(StringAst *stringAst) {
+  auto j = json.top();
+  (*j)["_type"] = "String";
+  (*j)["value"] = getString(stringAst->value);
+  (*j)["address"] = {{"line", stringAst->line}, {"col", stringAst->column}};
+}
+
 void AstVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {
   auto j = json.top();
   (*j)["_type"] = "Identifier";

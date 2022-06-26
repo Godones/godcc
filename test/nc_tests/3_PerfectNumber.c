@@ -10,7 +10,7 @@ void perfectNumber(int n){
 			if(num % i == 0)          //鑳借i鏁撮櫎
 			{
 				p[count++]  = i;      //淇濆瓨鍥犲瓙锛岃璁℃暟鍣╟ount澧炲姞1
-				s -= i;               //鍑忓幓涓�涓洜瀛�
+				s =s- i;               //todo!(这里修改为s = s-i) ;
 			}
 		}
 		if( 0 == s)

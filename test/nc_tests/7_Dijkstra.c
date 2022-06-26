@@ -1,22 +1,22 @@
-/*
-input : 
-5
-7
-1 2 10
-1 4 30
-1 5 100
-2 3 50
-3 5 10
-4 3 20
-4 5 60
-In mars, you should input these numbers by line:
-5
-7
-1
-2
-10
-...
-*/
+//
+//input :
+//5
+//7
+//1 2 10
+//1 4 30
+//1 5 100
+//2 3 50
+//3 5 10
+//4 3 20
+//4 5 60
+//In mars, you should input these numbers by line:
+//5
+//7
+//1
+//2
+//10
+//...
+
 int maxint = 999999;
 
 int dist[50];

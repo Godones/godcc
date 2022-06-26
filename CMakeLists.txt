@@ -46,6 +46,8 @@ add_library(test STATIC
         IR/IR.cpp
         IR/irvisitor.cpp
         #		backend/asm.cpp
+        backend/register.cpp
+        backend/asmgenerator.cpp
         tools/dot.cpp
         tools/symbolTable.cpp
         ${FRONTENDCPP}

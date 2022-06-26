@@ -80,7 +80,10 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	  std::cout << "\n";
 	  break;
 	}
-
+	case InstructionType::GlobalString:{
+	  std::cout << "@" << instruction->operand1.operand.symbol << " = " << instruction->operand2.operand.symbol << "\n";
+	  break ;
+	}
 	case InstructionType::GlobalAlloc: {
 	  std::cout << "@" << instruction->operand1.operand.symbol << " = global " << toString(instruction->dataType) << " ";
 	  if (instruction->array_dim.size() != 0) {//数组
@@ -106,20 +109,28 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	  break;
 	}
 	case InstructionType::Store:
-	  std::cout << "store " << toString(instruction->dataType) << " ";
+	  std::cout << "store " << "i32" << " ";
 	  if (instruction->operand1.type == OperandType::kInteger) {
 		std::cout << instruction->operand1.operand.number << ",";
 	  }
 	  if (instruction->operand1.type == OperandType::kNumber) {
 		std::cout << "%" << instruction->operand1.operand.number << ",";
 	  }
-	  assert(instruction->operand2.type == OperandType::kString);
-	  std::cout << toString(instruction->dataType) << "* ";
-	  std::cout << instruction->operand2.operand.symbol << "\n";
+	  if (instruction->operand2.type == OperandType::kString) {
+	  	std::cout << instruction->operand2.operand.symbol << "\n";
+	  } else{
+	  	std::cout << "%" << instruction->operand2.operand.number << "\n";
+	  }
 	  break;
+
 	case InstructionType::Load:
-	  std::cout << "%" << instruction->m_number << " = load " << toString(instruction->dataType) << " ";
-	  std::cout << "@" << instruction->operand1.operand.symbol << "\n";
+	  std::cout << "%" << instruction->m_number << " = load " << " ";
+	  if (instruction->operand1.type==OperandType::kNumber) {
+		std::cout << "%" << instruction->operand1.operand.number ;
+	  }else{
+		std::cout << "@" << instruction->operand1.operand.symbol;
+	  }
+	  std::cout << "\n";
 	  break;
 	case InstructionType::Binary: {
 	  auto print_operand = [](Operand &operand) {
@@ -158,9 +169,28 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 		  std::cout << "i32 " << fp.operand1.operand.number << ",";
 		} else if (fp.operand1.type == OperandType::kNumber) {
 		  std::cout << "%" << fp.operand1.operand.number << ",";
+		} else if (fp.operand1.type==OperandType::kString){
+		  std::cout << fp.operand1.operand.symbol << ",";
 		}
 	  }
 	  std::cout << ")\n";
+	  break ;
+	}
+	case InstructionType::GetElementPtr:{
+	  std::cout << "%" << instruction->m_number << " = ";
+	  std::cout << "getelementptr ";
+	  if (instruction->operand1.type==OperandType::kString) {
+		std::cout << "@" <<instruction->operand1.operand.symbol;
+	  }else if(instruction->operand1.type==OperandType::kNumber){
+		std::cout << "%" << instruction->operand1.operand.number;
+	  }
+	  std::cout << ", ";
+	  if (instruction->operand2.type==OperandType::kNumber){
+		std::cout << "%";
+	  }
+	  std::cout <<instruction->operand2.operand.number;
+	  std::cout << "\n";
+	  break;
 	}
 	case InstructionType::Move:{
 	  std::cout << "";

@@ -19,6 +19,7 @@ enum DataType {
   kConstInt,//当前支持
   kFunc,    //函数
   kArray,   //数组
+  kString,  //字符串
 };
 std::string DataTypeToString(DataType type);
 

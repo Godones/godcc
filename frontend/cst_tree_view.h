@@ -7,6 +7,9 @@
 
 #include "../tools/dot.h"
 #include "visitor.h"
+
+
+
 class CstViewVisitor : public Visitor {
  private:
   GDot dot;
@@ -52,6 +55,7 @@ class CstViewVisitor : public Visitor {
   void VisitUnaryExpAst(UnaryExprAst *) override;
   void VisitUnaryOpAst(UnaryOpAst *) override;
   void VisitPostfixExprAst(PostfixExprAst *) override;
+  void VisitStringAst(StringAst *) override;
 
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
   void VisitNumberAst(NumberAst *) override;

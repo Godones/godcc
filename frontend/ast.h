@@ -9,8 +9,10 @@
 #include <iostream>
 #include <memory>
 #include <ostream>
-
+#include <variant>
 #include "visitor.h"
+
+using IntString = std::variant<int, std::string>;
 
 class Visitor;
 class TranslationUnitAst;
@@ -185,7 +187,6 @@ enum class StmtType {
   kFor,
 };
 
-// TODO!(需要处理不同的stmt)
 const char *StmtTypeToString(StmtType &type);
 // Stmt ::= LVal "=" Exp ";"
 //	      | [Exp] ";"
@@ -234,7 +235,7 @@ class ForStmtAst : public Ast {
 // 表达式节点
 class ExpAst : public Ast {
  public:
-  int value;              // 用于编译期值
+  IntString value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
   DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> realExpr;
@@ -263,7 +264,7 @@ enum class BinaryType {
 const char *BinaryTypeToString(BinaryType &type);
 class BinaryExprAst : public Ast {
  public:
-  int value;              // 用于编译期值
+  IntString value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
   DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> left;
@@ -290,7 +291,7 @@ enum class UnaryType {
 const char *UnaryTypeToString(UnaryType &type);
 class UnaryExprAst : public Ast {
  public:
-  int value;              // 用于编译期值
+  IntString value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
   DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
 
@@ -309,7 +310,7 @@ enum class PostfixType {
 };
 class PostfixExprAst : public Ast {
  public :
-  int value;              // 用于编译期值
+  IntString value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
   DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
   std::shared_ptr<Ast> postfixExpr;
@@ -323,11 +324,12 @@ enum class PrimaryType {
   EXP,//(exp) --- 带括号的表达式
   NUMBER,
   IDENTIFIER,
+  STRING,//字符串
 };
 class PrimaryExprAst : public Ast {
  public:
  public:
-  int value;              // 用于编译期值
+  IntString value;              // 用于编译期值
   bool have_value = false;// 用于编译期值
   DataType data_type;     // 用于语义检查,在声明语句中需要判断两边类型是否匹配
 
@@ -340,10 +342,19 @@ class PrimaryExprAst : public Ast {
 // 数字节点
 class NumberAst : public Ast {
  public:
-  int value;
+  IntString value;
   ~NumberAst() override = default;
   void accept(Visitor *) override;
 };
+
+class StringAst : public Ast {
+ public:
+  IntString value;
+  ~StringAst() override = default;
+  void accept(Visitor *) override;
+};
+
+
 
 // 一元运算符
 class UnaryOpAst : public Ast {
@@ -468,14 +479,16 @@ class VarDefAst : public Ast {
 // 左值节点---其对应一个已经声明过的标识符
 class LValAst : public Ast {
  public:
-  int value;
+  IntString value;
   bool have_value;
   DataType data_type;// 用于语义检查,在声明语句中需要判断两边类型是否匹配
-
   std::shared_ptr<Ast> l_val;          // --> IdentifierAst
   std::shared_ptr<Ast> array_expr_list;//a[][]
   ~LValAst() override = default;
   void accept(Visitor *) override;
 };
+
+std::string  getString(IntString value);
+int getInt(IntString value);
 
 #endif//GODCC_AST_H

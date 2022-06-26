@@ -56,5 +56,6 @@ class AstVisitor : public Visitor {
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
   void VisitNumberAst(NumberAst *) override;
   void VisitIdentifierAst(IdentifierAst *) override;
+  void VisitStringAst(StringAst *) override;
 };
 #endif//GODCC_FRONTEND_AST_TEXT_VIEW_H_

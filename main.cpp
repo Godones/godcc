@@ -23,9 +23,9 @@ int main(int argc, const char *argv[]) {
   test_ast_tree();
   INFO("test_ast_tree ok!");
 
-  //  INFO("test_semantic");
-  //  test_semantic();
-  //  INFO("test_semantic ok!");
+//    INFO("test_semantic");
+//    test_semantic();
+//    INFO("test_semantic ok!");
 
   INFO("test_ir_gen:");
   test_ir_gen();

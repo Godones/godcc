@@ -6,8 +6,10 @@
 
 // 生成程序主体
 void IRGeneratorVisitor::VisitTranslationUnit(TranslationUnitAst *ast) {
+  add_library_function();
   programIr = std::make_shared<Program>();
   programIr->global_block = new BaseBlock();
+
   ast->comp_unit->accept(this);
 }
 void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
@@ -20,8 +22,6 @@ void IRGeneratorVisitor::VisitCompUnitAst(CompUnitAst *compUnitAst) {
 // 生成函数定义
 void IRGeneratorVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   // 在进入函数后需要重置label_record、number_record
-  // todo!(将语义分析得到的符号表中的函数定义复制到中间代码的符号表中)
-
   label_record = 0;
   number_record = 0;
   auto ident = dynamic_cast<IdentifierAst *>(funcDefAst->ident.get());
@@ -101,7 +101,7 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	  };
 	  if (expr) {
 		if (expr->have_value) {
-		  f_set(OperandType::kInteger, expr->value);
+		  f_set(OperandType::kInteger, getInt(expr->value));
 		} else {
 		  expr->accept(this);
 		  //获取上一条四元式的标号
@@ -121,37 +121,37 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	  // 赋值语句
 	  auto l_val = dynamic_cast<LValAst *>(stmtAst->l_val.get());
 	  auto ident = dynamic_cast<IdentifierAst *>(l_val->l_val.get());
-
 	  //	  auto item = globalSymbolTable->get_symbol(ident->name);
-
 	  auto item_with_level = m_symbolTable->get_symbol_with_level(ident->name);
 	  auto item = item_with_level.second;
 	  auto expr = dynamic_cast<ExpAst *>(stmtAst->expr.get());
+	  auto symbol= makeSymbolWithLevel(ident->name, item_with_level.first);
+
+	  Instruction instruction = {
+		  .instructionType = InstructionType::Store,
+		  .dataType = item->type,
+		  .operand2 = {.operand = {.symbol = symbol->c_str()},.type=OperandType::kString},
+	  };
+	  if (l_val->array_expr_list){
+		//处理数组
+		array_name = *symbol;
+		l_val->array_expr_list->accept(this);
+		instruction.operand2.type = OperandType::kNumber;
+		instruction.operand2.operand.number = function.blocks.back().instructions.back().m_number; //加载数组的getelementptr指令的标号
+	  }
 
 	  if (expr->have_value) {
 		// 如果是数字，则直接生成一个指令
-		Instruction instruction = {
-			.instructionType = InstructionType::Store,
-			.dataType = item->type,
-			.operand1 = {.operand = {.number = expr->value}, .type = OperandType::kInteger},
-			.operand2 = {.operand = {
-							 .symbol = makeSymbolWithLevel(ident->name, item_with_level.first)->c_str()},
-						 .type = OperandType::kString},
-		};
-		block.instructions.emplace_back(instruction);
+		instruction.operand1.type = OperandType::kInteger;
+		instruction.operand1.operand.number = getInt(expr->value);
 	  } else {
 		stmtAst->expr->accept(this);
 		// 获取上一条四元式的标号
 		auto last_instruction = block.instructions.back();
-		Instruction instruction = {
-			.instructionType = InstructionType::Store,
-			.dataType = item->type,
-			.operand1 = {.operand = {.number = last_instruction.m_number}, .type = OperandType::kNumber},
-			.operand2 = {.operand = {.symbol = makeSymbolWithLevel(ident->name, item_with_level.first)->c_str()},
-						 .type = OperandType::kString},
-		};
-		block.instructions.emplace_back(instruction);
+		instruction.operand1.type = OperandType::kNumber;
+		instruction.operand1.operand.number = last_instruction.m_number;
 	  }
+	  block.instructions.emplace_back(instruction);
 	  //已经保证了l_val是可以赋值的
 	  break;
 	}
@@ -167,6 +167,11 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	}
 	case StmtType::kWhile: {
 	  // while 语句
+	  stmtAst->expr->accept(this);
+	  break;
+	}
+	case StmtType::kFor:{
+	  // for 语句
 	  stmtAst->expr->accept(this);
 	  break;
 	}
@@ -216,7 +221,7 @@ void IRGeneratorVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 	  instruction.operand2.operand.number = number;
 	};
 	if (left_expr->have_value) {
-	  set_operand1(OperandType::kInteger, left_expr->value);
+	  set_operand1(OperandType::kInteger, getInt(left_expr->value));
 	} else {
 	  //  	2+a
 	  // 上面的二元表达式节点生成的中间代码形式为
@@ -229,7 +234,7 @@ void IRGeneratorVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 	if (binary_expr_ast->type != BinaryType::kMul) {
 	  auto right_expr = dynamic_cast<BinaryExprAst *>(binary_expr_ast->right.get());
 	  if (right_expr->have_value) {
-		set_operand2(OperandType::kInteger, right_expr->value);
+		set_operand2(OperandType::kInteger, getInt(right_expr->value));
 	  } else {
 		right_expr->accept(this);
 		auto last_instruction = programIr->functions.back().blocks.back().instructions.back();
@@ -238,7 +243,7 @@ void IRGeneratorVisitor::VisitBinaryExpAst(BinaryExprAst *binary_expr_ast) {
 	} else {
 	  auto right_expr = dynamic_cast<UnaryExprAst *>(binary_expr_ast->right.get());
 	  if (right_expr->have_value) {
-		set_operand2(OperandType::kInteger, right_expr->value);
+		set_operand2(OperandType::kInteger, getInt(right_expr->value));
 	  } else {
 		right_expr->accept(this);
 		auto last_instruction = programIr->functions.back().blocks.back().instructions.back();
@@ -313,6 +318,7 @@ void IRGeneratorVisitor::VisitUnaryExpAst(UnaryExprAst *unaryExprAst) {
 	  //插入函数调用
 	  auto &block = function.blocks.back();
 	  block.instructions.emplace_back(instruction);
+	  break ;
 	}
   }
 }
@@ -367,6 +373,7 @@ void IRGeneratorVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
 
 
 void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_list_ast) {
+  //todo!(函数调用，这里处理字符串的出现)
   std::stack<std::shared_ptr<Ast>> list;
   while (func_r_param_list_ast) {
 	list.push(func_r_param_list_ast->expr);
@@ -379,8 +386,25 @@ void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_
 	if (expr->have_value) {
 	  // 常数直接生成一个指令
 	  Instruction instruction = {
-		  .operand1 = {.operand = {.number = expr->value}, .type = OperandType::kInteger},
+		  .operand1 = {.operand = {.number = 0}, .type = OperandType::kInteger},
 	  };
+	  if (expr->data_type==DataType::kString){
+		//字符串需要放到全局区域
+		auto str = new std::string (getString(expr->value));
+		Instruction instruction1 = {
+			.instructionType = InstructionType::GlobalString,
+			.operand1 = {.operand = {.symbol = makeSymbolWithLevel(".str",str_record++)->c_str()}, .type = OperandType::kString},
+			.operand2 = {
+				.operand = {.symbol = str->data()},
+				.type = OperandType::kString},
+		};
+		// 将数组放到全局区域中
+		programIr->global_block->instructions.emplace_back(instruction1);
+		instruction.operand1.operand.symbol = instruction1.operand1.operand.symbol;
+		instruction.operand1.type = OperandType::kString;
+	  }else{
+		instruction.operand1.operand.number = getInt(expr->value);
+	  }
 	  func_param.emplace_back(instruction);
 	} else {
 	  // 变量需要去求出其值
@@ -416,7 +440,6 @@ void IRGeneratorVisitor::VisitUnaryOpAst(UnaryOpAst *unaryOpAst) {
 	instruction.operand1.operand.number = 1;
   }else {
 	// 引发错误
-	// todo!(一元运算符异常)
 	exit(-1);
   }
   if (op=="--"||op=="++") {
@@ -468,6 +491,10 @@ void IRGeneratorVisitor::VisitConstDef(ConstDefAst *const_def_ast) {
   // 常量声明,其值保证已经被求出
   // 不管是变量还是数组都不用继续遍历
   // 常量定义不用管
+  auto ident = dynamic_cast<IdentifierAst *>(const_def_ast->ident.get());
+  auto item = m_symbolTable->get_symbol(ident->name);
+  assert(item);
+  globalSymbolTable->add_symbol(ident->name,*item);
 }
 
 void IRGeneratorVisitor::VisitInitVal(InitValAst *init_val_ast) {
@@ -487,20 +514,29 @@ void IRGeneratorVisitor::VisitInitValList(InitValListAst *init_val_list_ast) {
 }
 
 void IRGeneratorVisitor::VisitLVal(LValAst *l_val_ast) {
-  // 读取变量a的值  load @a
+  // 读取变量a的值  load @a /load %x
+  auto &function = programIr->functions.back();
   auto ident = dynamic_cast<IdentifierAst *>(l_val_ast->l_val.get());
-  auto item_level = globalSymbolTable->get_symbol_with_level(ident->name);
+  auto item_val = globalSymbolTable->get_symbol_with_level(ident->name);
   //  auto item = m_symbolTable->get_symbol_with_level(ident->name);
-  auto item = item_level.second;
-  assert(item);
-  auto symbol = makeSymbolWithLevel(ident->name, item_level.first);
+  assert(item_val.second);
+  auto symbol = makeSymbolWithLevel(ident->name, item_val.first);
   Instruction instruction = {
 	  .instructionType = InstructionType::Load,
-	  .dataType = item->type,
+	  .dataType = item_val.second->type,
 	  .operand1 = {.operand = {.symbol = symbol->c_str()}, .type = OperandType::kString},
-	  .m_number = number_record++,
   };
-  auto &function = programIr->functions.back();
+
+  if (l_val_ast->array_expr_list){
+	//处理数组相关内容
+	array_name = symbol->c_str();
+	DEBUG("array_name:%s", array_name.c_str());
+	l_val_ast->array_expr_list->accept(this);
+	instruction.operand1.operand.number = function.blocks.back().instructions.back().m_number;
+	instruction.operand1.type = OperandType::kNumber;
+  }
+  instruction.m_number = number_record++;
+
   auto &block = function.blocks.back();
   block.instructions.emplace_back(instruction);
 }
@@ -600,7 +636,7 @@ void IRGeneratorVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
   //如果已知条件的值，可以确定分支的代码
   auto expr = dynamic_cast<ExpAst *>(if_stmt_ast->expr.get());
   if (expr->have_value) {
-	if (expr->value) {
+	if (getInt(expr->value)) {
 	  if_stmt_ast->stmt->accept(this);
 	} else {
 	  //条件为假 并且存在if语句
@@ -663,8 +699,7 @@ void IRGeneratorVisitor::VisitIfStmt(IfStmtAst *if_stmt_ast) {
 }
 void IRGeneratorVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   // while语句翻译
-  // 如果条件的值是已知且为0，则直接跳出循环
-  // 否则
+  // 如果条件的值是已知且为0，则直接跳出循环 否则
   // 在当前块内加入一条jmp指令
   // 在while语句块内加入一条br指令
   auto &function = programIr->functions.back();
@@ -685,7 +720,7 @@ void IRGeneratorVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
   while_begin_label.push(block_while_first_index);          // -----
   auto expr = dynamic_cast<ExpAst *>(while_stmt_ast->expr.get());
   if (expr->have_value) {
-	if (expr->value <= 0) return;
+	if (getInt(expr->value) <= 0) return;
 	else {
 	  //死循环
 	  while_stmt_ast->stmt->accept(this);
@@ -721,9 +756,57 @@ void IRGeneratorVisitor::VisitWhileStmt(WhileStmtAst *while_stmt_ast) {
 }
 void IRGeneratorVisitor::VisitForStmt(ForStmtAst *forStmtAst) {
   // 生成for循环的中间代码
-  // for(init;cond;inc)stmt
-  // 先生成init代码.创建一个block
+  // for(expr1;cond;expr3) stmt
+  // 需要四部分基本块，第一部分基本块的最后一条语句跳转到第二部分基本块的开头
+  // 第二部分基本块的最后进行分支跳转到第三部分开头或者第五部分基本块，
+  // 第三部分无条件跳转到第四部分，第四部分无条件跳转到第二部分
+  auto &function = programIr->functions.back();
+  auto set_break = [&](int next_label) {
+	if (break_instruction.empty()) return;
+	for (auto &break_index : break_instruction) {
+	  function.blocks[break_index.first].instructions[break_index.second].operand1.operand.number = next_label;
+	}
+	break_instruction.clear();
+  };
+  m_symbolTable = m_symbolTable->enter_scope(); //进入for()作用域
+  globalSymbolTable = globalSymbolTable->new_scope();
+  forStmtAst->expr1->accept(this); //生成expr1的中间代码
+  Instruction instruction = make_jump(label_record); //jump
+  function.blocks.back().instructions.emplace_back(instruction);
+  //新建一个block，第二部分基本块
+  function.blocks.emplace_back(label_record++);
+  // 生成条件表达式的中间代码,在完成第三部分和第四部分基本块后，需要回到这里填入br 语句
+  auto for_condition_first_index = function.blocks.size() - 1;//第二部分基本块开始索引
+  forStmtAst->expr2->accept(this);
+  auto for_condition_last_index = function.blocks.size() - 1;//第二部分基本块的最后一个索引
+  // 语句块生成
+  function.blocks.emplace_back(label_record++);
+  auto for_stmt_first_index = function.blocks.size()-1;
+  forStmtAst->stmt->accept(this);
+  function.blocks.back().instructions.emplace_back(make_jump(label_record));
 
+  // 第三个表达式生成
+  function.blocks.emplace_back(label_record++);
+  auto for_expr3_first_index = function.blocks.size()-1;
+  if (forStmtAst->expr3){forStmtAst->expr3->accept(this);};
+  auto label = function.blocks.at(for_condition_first_index).blkId; //label
+  function.blocks.back().instructions.emplace_back(make_jump(label));
+
+  // 开始返填条件部分的br语句
+  label = function.blocks.at(for_stmt_first_index).blkId;//label
+  auto &block = function.blocks.at(for_condition_last_index);
+  if (block.instructions.size()==0){//说明此时条件为空，则直接jump到下一个基本块
+	block.instructions.emplace_back(make_jump(label));
+  }else{
+	auto condition_last_ins = block.instructions.back();
+	block.instructions.emplace_back(make_branch(condition_last_ins.m_number,label,label_record));
+  }
+
+  set_break(label_record);
+  // 开启新的block
+  function.blocks.emplace_back(label_record++);
+  m_symbolTable = m_symbolTable->exit_scope(); //退出for()作用域
+  globalSymbolTable = globalSymbolTable->exit_scope();
 }
 
 
@@ -732,14 +815,60 @@ void IRGeneratorVisitor::VisitFuncFParamListAst(FuncFParamListAst *func_f_param_
 void IRGeneratorVisitor::VisitFuncFParamAst(FuncFParamAst *func_f_param_ast) {}
 
 void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_ast) {
-}
+  // 生成数组相关的代码
+  if (array_name.empty()) {
+	return ;
+  }
+  auto &function = programIr->functions.back();
+  auto &block = function.blocks.back();
+  std::stack<std::shared_ptr<Ast>> list;
+  auto record = array_expr_list_ast;
+  while (array_expr_list_ast) {
+	list.push(array_expr_list_ast->array_expr);
+	array_expr_list_ast = dynamic_cast<ArrayExprListAst *>((array_expr_list_ast->array_expr_list).get());
+  }
+  //语义分析中已经部分求值，这里则需要对那些没有求值的进行继续求值
+  int t =0,number = 0;
+  while (!list.empty()) {
+	auto expr = dynamic_cast<ExpAst*>(list.top().get());
+	auto symbol = new std::string (array_name);
+	Instruction instruction = {
+		.instructionType = InstructionType::GetElementPtr,
+		.operand1 = {.operand = {.symbol = symbol->c_str()},.type = OperandType::kString},
+	};
+	if (t==0){
+	  instruction.operand1.operand.symbol = symbol->c_str();
+	}else{
+	  instruction.operand1.operand.number = number;
+	  instruction.operand1.type = OperandType::kNumber;
+	}
+	t ++;
+	if (expr->have_value){
+	  // %ptr = getelemptr @arr, 1(偏移)
+	  instruction.operand2.operand.number = getInt(expr->value);
+	  instruction.operand2.type = OperandType::kInteger;
+	} else{
+	  expr->accept(this);
+	  // %ptr = getelemptr @arr, %0(偏移)
+	  auto last_ins = block.instructions.back();
+	  instruction.operand2.operand.number = last_ins.m_number;
+	  instruction.operand2.type = OperandType::kNumber;
+	}
+	number = number_record;
+	instruction.m_number = number_record++;
+	block.instructions.emplace_back(instruction);
+	list.pop();
+  }
 
+  array_name = "";
+}
+void IRGeneratorVisitor::VisitStringAst(StringAst *) {}
 void IRGeneratorVisitor::VisitNumberAst(NumberAst *numberAst) {}
 void IRGeneratorVisitor::VisitIdentifierAst(IdentifierAst *identifier_ast) {}
 
 IRGeneratorVisitor::IRGeneratorVisitor(SymbolTable *symbolTable) {
   m_symbolTable = symbolTable;
-  globalSymbolTable = new SymbolTable;
+  globalSymbolTable = new SymbolTable();
 }
 std::string *IRGeneratorVisitor::makeSymbolWithLevel(const char *name, int level) {
   // 根据符号和层级生成一个新的符号
@@ -747,6 +876,7 @@ std::string *IRGeneratorVisitor::makeSymbolWithLevel(const char *name, int level
   std::string *s = new std::string(t);
   return s;
 }
+
 IRGeneratorVisitor::~IRGeneratorVisitor() {
   delete globalSymbolTable;
 }
@@ -769,17 +899,41 @@ Instruction IRGeneratorVisitor::make_branch(int condition, int label1, int label
 		  .type = OperandType::kNumber,
 	  },
 	  .operand2 = {
-		  .operand = {
-			  .number = label1,
-		  },
+		  .operand = {.number = label1,},
 		  .type = OperandType::kLabel,
 	  },
 	  .operand3 = {
-		  .operand = {
-			  .number = label2,
-		  },
+		  .operand = {.number = label2,},
 		  .type = OperandType::kLabel,
 	  },
   };
   return instruction;
 }
+void IRGeneratorVisitor::add_library_function() {
+  //将库函数加入符号表中
+  //Mars_PrintStr  Mars_GetInt   Mars_PrintInt
+  FuncInfo  funcInfo1 =  FuncInfo();
+  SymbolInfo symbolInfo1 = SymbolInfo();
+  symbolInfo1.type = DataType::kFunc;
+  symbolInfo1. name= "Mars_PrintStr";
+  funcInfo1.ret_type = DataType::kVoid;
+  funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kString});
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_PrintStr",symbolInfo1);
+//  INFO("add Mars_PrintStr");
+
+  funcInfo1.ret_type = DataType::kInt;
+  funcInfo1.params.clear();
+  symbolInfo1.name = "Mars_GetInt";
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_GetInt",symbolInfo1);
+//  INFO("add Mars_GetInt");
+
+  funcInfo1.ret_type = DataType::kVoid;
+  funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kInt});
+  symbolInfo1.name = "Mars_PrintInt";
+  symbolInfo1.ptr = new FuncInfo(funcInfo1);
+  globalSymbolTable->add_symbol("Mars_PrintInt",symbolInfo1);
+//  INFO("add Mars_PrintInt");
+}
+

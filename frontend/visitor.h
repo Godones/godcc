@@ -55,6 +55,7 @@ class VarDefListAst;
 class ArrayExprListAst;
 class InitValListAst;
 class InitValAst;
+class StringAst;
 
 class Visitor {
  public:
@@ -91,6 +92,7 @@ class Visitor {
   virtual void VisitNumberAst(NumberAst *) = 0;
   virtual void VisitIdentifierAst(IdentifierAst *) = 0;
   virtual void VisitPostfixExprAst(PostfixExprAst *) = 0;
+  virtual void VisitStringAst(StringAst *) = 0;
 };
 
 BinaryOp to_BinaryOp(const std::string_view &op);

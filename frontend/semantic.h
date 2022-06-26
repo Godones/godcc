@@ -19,6 +19,7 @@ class SemanticVisitor : public Visitor {
  public:
   SemanticVisitor();
   ~SemanticVisitor();
+  void add_library_function();
   void VisitTranslationUnit(TranslationUnitAst *ast) override;
   void VisitCompUnitAst(CompUnitAst *) override;
 
@@ -60,6 +61,7 @@ class SemanticVisitor : public Visitor {
   void VisitUnaryOpAst(UnaryOpAst *) override;
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
   void VisitNumberAst(NumberAst *) override;
+  void VisitStringAst(StringAst *) override;
   void VisitIdentifierAst(IdentifierAst *) override;
 };
 int calculate(int left, int right, std::string_view op);

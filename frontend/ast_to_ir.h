@@ -23,12 +23,14 @@ class IRGeneratorVisitor : public Visitor {
   std::vector<std::pair<int, int>> break_instruction;//记录break的指令，需要修改break跳转的位置
   std::vector<Instruction> func_param;               //保存函数参数
 
-  //判断a = a++/a--的情况
-  bool is_assign_inc_dec = false;
-  Instruction inc_dec_instruction;
+  //数组访问
+  std::string array_name;                            //数组名
 
   int number_record = 0;//记录指令的标号
   int label_record = 0; //记录标签的标号
+  int str_record = 0;  //记录字符串的标号
+
+  void add_library_function();
  public:
   std::shared_ptr<Program> programIr = nullptr;
  public:
@@ -70,6 +72,7 @@ class IRGeneratorVisitor : public Visitor {
   void VisitUnaryOpAst(UnaryOpAst *) override;
   void VisitPrimaryExpAst(PrimaryExprAst *) override;
   void VisitNumberAst(NumberAst *) override;
+  void VisitStringAst(StringAst *) override;
   void VisitIdentifierAst(IdentifierAst *) override;
 };
 
