@@ -30,7 +30,6 @@ void IRGeneratorVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
   //拷贝到中间代码的符号表中
   globalSymbolTable->add_symbol(ident->name, *item);
   Function function;
-  function.blocks.reserve(100);
   function.name = ident->name;
   assert(item->type == DataType::kFunc);
   auto func_item = static_cast<FuncInfo *>(item->ptr);
@@ -43,6 +42,7 @@ void IRGeneratorVisitor::VisitFuncDefAst(FuncDefAst *funcDefAst) {
 	Instruction instruction;
 	instruction.instructionType = InstructionType::FuncArgRef;
 	instruction.dataType = param.type;
+	instruction.name = makeSymbolWithLevel(param.name.c_str(),m_symbolTable->level)->c_str();
 	function.params.emplace_back(instruction);
 	globalSymbolTable->add_symbol(param.name, param);
   }
@@ -122,7 +122,7 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	  auto l_val = dynamic_cast<LValAst *>(stmtAst->l_val.get());
 	  auto ident = dynamic_cast<IdentifierAst *>(l_val->l_val.get());
 	  //	  auto item = globalSymbolTable->get_symbol(ident->name);
-	  auto item_with_level = m_symbolTable->get_symbol_with_level(ident->name);
+	  auto item_with_level = globalSymbolTable->get_symbol_with_level(ident->name);
 	  auto item = item_with_level.second;
 	  auto expr = dynamic_cast<ExpAst *>(stmtAst->expr.get());
 	  auto symbol= makeSymbolWithLevel(ident->name, item_with_level.first);
@@ -135,6 +135,7 @@ void IRGeneratorVisitor::VisitStmtAst(StmtAst *stmtAst) {
 	  if (l_val->array_expr_list){
 		//处理数组
 		array_name = *symbol;
+		pre_array_name = ident->name;
 		l_val->array_expr_list->accept(this);
 		instruction.operand2.type = OperandType::kNumber;
 		instruction.operand2.operand.number = function.blocks.back().instructions.back().m_number; //加载数组的getelementptr指令的标号
@@ -357,7 +358,6 @@ void IRGeneratorVisitor::VisitPostfixExprAst(PostfixExprAst *postfixExprAst) {
 	  .dataType = last_instruction.dataType,
 	  .operand1 = {.operand = {.number = instruction.m_number}, .type = OperandType::kNumber},
 	  .operand2 = {.operand = {.symbol = last_instruction.operand1.operand.symbol}, .type = OperandType::kString},
-
   };
   //额外的一条指令
   Instruction instruction2 = {
@@ -393,7 +393,7 @@ void IRGeneratorVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_
 		auto str = new std::string (getString(expr->value));
 		Instruction instruction1 = {
 			.instructionType = InstructionType::GlobalString,
-			.operand1 = {.operand = {.symbol = makeSymbolWithLevel(".str",str_record++)->c_str()}, .type = OperandType::kString},
+			.operand1 = {.operand = {.symbol = makeSymbolWithLevel("str",str_record++)->c_str()}, .type = OperandType::kString},
 			.operand2 = {
 				.operand = {.symbol = str->data()},
 				.type = OperandType::kString},
@@ -530,7 +530,8 @@ void IRGeneratorVisitor::VisitLVal(LValAst *l_val_ast) {
   if (l_val_ast->array_expr_list){
 	//处理数组相关内容
 	array_name = symbol->c_str();
-	DEBUG("array_name:%s", array_name.c_str());
+	pre_array_name = ident->name;
+//	DEBUG("Lval_array_name:%s", array_name.c_str());
 	l_val_ast->array_expr_list->accept(this);
 	instruction.operand1.operand.number = function.blocks.back().instructions.back().m_number;
 	instruction.operand1.type = OperandType::kNumber;
@@ -819,6 +820,7 @@ void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_as
   if (array_name.empty()) {
 	return ;
   }
+//  DEBUG("array_name:%s", array_name.c_str());
   auto &function = programIr->functions.back();
   auto &block = function.blocks.back();
   std::stack<std::shared_ptr<Ast>> list;
@@ -827,6 +829,12 @@ void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_as
 	list.push(array_expr_list_ast->array_expr);
 	array_expr_list_ast = dynamic_cast<ArrayExprListAst *>((array_expr_list_ast->array_expr_list).get());
   }
+  //获取数组的信息
+  auto item = globalSymbolTable->get_symbol(pre_array_name);
+  assert(item->ptr);
+  auto array_info = (ArrayInfo *)item->ptr;
+  int size = array_info->get_size();
+//  DEBUG("array_info->dim:%d size:%d", array_info->dim.size(), size);
   //语义分析中已经部分求值，这里则需要对那些没有求值的进行继续求值
   int t =0,number = 0;
   while (!list.empty()) {
@@ -835,6 +843,7 @@ void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_as
 	Instruction instruction = {
 		.instructionType = InstructionType::GetElementPtr,
 		.operand1 = {.operand = {.symbol = symbol->c_str()},.type = OperandType::kString},
+		.operand3 = {.operand = {.number = size = (size/array_info->dim[t])},.type = OperandType::kInteger},
 	};
 	if (t==0){
 	  instruction.operand1.operand.symbol = symbol->c_str();
@@ -842,7 +851,7 @@ void IRGeneratorVisitor::VisitArrayExprList(ArrayExprListAst *array_expr_list_as
 	  instruction.operand1.operand.number = number;
 	  instruction.operand1.type = OperandType::kNumber;
 	}
-	t ++;
+	t++;
 	if (expr->have_value){
 	  // %ptr = getelemptr @arr, 1(偏移)
 	  instruction.operand2.operand.number = getInt(expr->value);

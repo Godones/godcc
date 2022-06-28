@@ -23,6 +23,5 @@ int main(){
 	for (int i = 0; i < 10; i++) {
 		Mars_PrintInt(a[i]);
 	}
-
     return 0;
 }

@@ -25,6 +25,7 @@ class IRGeneratorVisitor : public Visitor {
 
   //数组访问
   std::string array_name;                            //数组名
+  std::string pre_array_name;                       //数组名前缀
 
   int number_record = 0;//记录指令的标号
   int label_record = 0; //记录标签的标号

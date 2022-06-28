@@ -587,12 +587,12 @@ static const yytype_int16 yyrline[] =
      246,   254,   261,   272,   279,   288,   298,   304,   312,   321,
      331,   337,   345,   352,   358,   367,   373,   383,   393,   399,
      408,   415,   423,   431,   443,   454,   462,   469,   477,   484,
-     492,   501,   514,   528,   541,   548,   555,   571,   585,   601,
-     618,   628,   634,   640,   649,   655,   661,   667,   673,   681,
-     687,   693,   701,   707,   716,   722,   730,   736,   742,   748,
-     758,   766,   775,   785,   795,   803,   814,   822,   830,   842,
-     848,   857,   871,   879,   887,   898,   905,   917,   924,   931,
-     941,   950
+     492,   501,   514,   528,   541,   548,   555,   570,   584,   599,
+     616,   626,   632,   638,   647,   653,   659,   665,   671,   679,
+     685,   691,   699,   705,   714,   720,   728,   734,   740,   746,
+     756,   764,   773,   783,   793,   801,   812,   820,   828,   840,
+     846,   855,   869,   877,   885,   896,   903,   915,   922,   929,
+     939,   948
 };
 #endif
 
@@ -2103,7 +2103,6 @@ yyreduce:
   case 56: /* Stmt: FOR '(' Stmt Stmt Expr ')' Stmt  */
 #line 555 "/home/godcc/frontend/sysy.y"
                                    {
-	printf("FOR\n");
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
 	auto forStmt = new ForStmtAst();
@@ -2118,11 +2117,11 @@ yyreduce:
 	stmt->column = (yyloc).first_column;
 	(yyval.ast_val) = stmt;
 }
-#line 2122 "/home/godcc/frontend/parser.cpp"
+#line 2121 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 57: /* Stmt: FOR '(' Stmt Stmt ')' Stmt  */
-#line 571 "/home/godcc/frontend/sysy.y"
+#line 570 "/home/godcc/frontend/sysy.y"
                               {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
@@ -2137,13 +2136,12 @@ yyreduce:
 	stmt->column = (yyloc).first_column;
 	(yyval.ast_val) = stmt;
 }
-#line 2141 "/home/godcc/frontend/parser.cpp"
+#line 2140 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 58: /* Stmt: FOR '(' VarDecl Stmt Expr ')' Stmt  */
-#line 585 "/home/godcc/frontend/sysy.y"
+#line 584 "/home/godcc/frontend/sysy.y"
                                       {
-	printf("FOR\n");
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
 	auto forStmt = new ForStmtAst();
@@ -2158,11 +2156,11 @@ yyreduce:
 	stmt->column = (yyloc).first_column;
 	(yyval.ast_val) = stmt;
 }
-#line 2162 "/home/godcc/frontend/parser.cpp"
+#line 2160 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 59: /* Stmt: FOR '(' VarDecl Stmt ')' Stmt  */
-#line 601 "/home/godcc/frontend/sysy.y"
+#line 599 "/home/godcc/frontend/sysy.y"
                                  {
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
@@ -2177,11 +2175,11 @@ yyreduce:
 	stmt->column = (yyloc).first_column;
 	(yyval.ast_val) = stmt;
 }
-#line 2181 "/home/godcc/frontend/parser.cpp"
+#line 2179 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 60: /* Expr: OrExpr  */
-#line 618 "/home/godcc/frontend/sysy.y"
+#line 616 "/home/godcc/frontend/sysy.y"
            {
     auto Expr = new ExpAst();
     Expr->realExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2189,33 +2187,33 @@ yyreduce:
 	Expr->column = (yyloc).first_column;
     (yyval.ast_val) = Expr;
   }
-#line 2193 "/home/godcc/frontend/parser.cpp"
+#line 2191 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 61: /* AddExpr: MulExpr  */
-#line 628 "/home/godcc/frontend/sysy.y"
+#line 626 "/home/godcc/frontend/sysy.y"
          {
   auto binary = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd);
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2204 "/home/godcc/frontend/parser.cpp"
+#line 2202 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 62: /* AddExpr: AddExpr '+' MulExpr  */
-#line 634 "/home/godcc/frontend/sysy.y"
+#line 632 "/home/godcc/frontend/sysy.y"
                     {
   auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd,"+");
   binary->line = (yyloc).first_line;
   binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2215 "/home/godcc/frontend/parser.cpp"
+#line 2213 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 63: /* AddExpr: AddExpr '-' MulExpr  */
-#line 640 "/home/godcc/frontend/sysy.y"
+#line 638 "/home/godcc/frontend/sysy.y"
                     {
 
   auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAdd,"-");
@@ -2223,187 +2221,187 @@ binary->column = (yyloc).first_column;
   binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2227 "/home/godcc/frontend/parser.cpp"
+#line 2225 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 64: /* RelExpr: AddExpr  */
-#line 649 "/home/godcc/frontend/sysy.y"
+#line 647 "/home/godcc/frontend/sysy.y"
         {
  auto binary = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel);
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2238 "/home/godcc/frontend/parser.cpp"
+#line 2236 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 65: /* RelExpr: RelExpr LT AddExpr  */
-#line 655 "/home/godcc/frontend/sysy.y"
+#line 653 "/home/godcc/frontend/sysy.y"
                     {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,"<");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2249 "/home/godcc/frontend/parser.cpp"
+#line 2247 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 66: /* RelExpr: RelExpr GT AddExpr  */
-#line 661 "/home/godcc/frontend/sysy.y"
+#line 659 "/home/godcc/frontend/sysy.y"
                     {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,">");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2260 "/home/godcc/frontend/parser.cpp"
+#line 2258 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 67: /* RelExpr: RelExpr LE AddExpr  */
-#line 667 "/home/godcc/frontend/sysy.y"
+#line 665 "/home/godcc/frontend/sysy.y"
                     {
 auto binary =  new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,"<=");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2271 "/home/godcc/frontend/parser.cpp"
+#line 2269 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 68: /* RelExpr: RelExpr GE AddExpr  */
-#line 673 "/home/godcc/frontend/sysy.y"
+#line 671 "/home/godcc/frontend/sysy.y"
                     {
 auto binary= new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kRel,">=");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2282 "/home/godcc/frontend/parser.cpp"
+#line 2280 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 69: /* EqExpr: RelExpr  */
-#line 681 "/home/godcc/frontend/sysy.y"
+#line 679 "/home/godcc/frontend/sysy.y"
          {
 auto binary = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq);
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2293 "/home/godcc/frontend/parser.cpp"
+#line 2291 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 70: /* EqExpr: EqExpr EQ RelExpr  */
-#line 687 "/home/godcc/frontend/sysy.y"
+#line 685 "/home/godcc/frontend/sysy.y"
                   {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq,"==");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2304 "/home/godcc/frontend/parser.cpp"
+#line 2302 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 71: /* EqExpr: EqExpr NE RelExpr  */
-#line 693 "/home/godcc/frontend/sysy.y"
+#line 691 "/home/godcc/frontend/sysy.y"
                   {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kEq,"!=");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2315 "/home/godcc/frontend/parser.cpp"
+#line 2313 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 72: /* AndExpr: EqExpr  */
-#line 701 "/home/godcc/frontend/sysy.y"
+#line 699 "/home/godcc/frontend/sysy.y"
        {
 auto binary = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAnd);
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2326 "/home/godcc/frontend/parser.cpp"
+#line 2324 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 73: /* AndExpr: AndExpr AND EqExpr  */
-#line 707 "/home/godcc/frontend/sysy.y"
+#line 705 "/home/godcc/frontend/sysy.y"
                     {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kAnd,"&&");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2337 "/home/godcc/frontend/parser.cpp"
+#line 2335 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 74: /* OrExpr: AndExpr  */
-#line 716 "/home/godcc/frontend/sysy.y"
+#line 714 "/home/godcc/frontend/sysy.y"
         {
 auto binary = new BinaryExprAst( shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kLor);
 	binary->line = (yyloc).first_line;
 	binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2348 "/home/godcc/frontend/parser.cpp"
+#line 2346 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 75: /* OrExpr: OrExpr OR AndExpr  */
-#line 722 "/home/godcc/frontend/sysy.y"
+#line 720 "/home/godcc/frontend/sysy.y"
                   {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kLor,"||");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2359 "/home/godcc/frontend/parser.cpp"
+#line 2357 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 76: /* MulExpr: UnaryExp  */
-#line 730 "/home/godcc/frontend/sysy.y"
+#line 728 "/home/godcc/frontend/sysy.y"
          {
   auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul);
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2370 "/home/godcc/frontend/parser.cpp"
+#line 2368 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 77: /* MulExpr: MulExpr '*' UnaryExp  */
-#line 736 "/home/godcc/frontend/sysy.y"
+#line 734 "/home/godcc/frontend/sysy.y"
                      {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"*");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2381 "/home/godcc/frontend/parser.cpp"
+#line 2379 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 78: /* MulExpr: MulExpr '/' UnaryExp  */
-#line 742 "/home/godcc/frontend/sysy.y"
+#line 740 "/home/godcc/frontend/sysy.y"
                      {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"/");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2392 "/home/godcc/frontend/parser.cpp"
+#line 2390 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 79: /* MulExpr: MulExpr '%' UnaryExp  */
-#line 748 "/home/godcc/frontend/sysy.y"
+#line 746 "/home/godcc/frontend/sysy.y"
                      {
 auto binary = new BinaryExprAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)),BinaryType::kMul,"%");
   binary->line = (yyloc).first_line;
 binary->column = (yyloc).first_column;
   (yyval.ast_val) = binary;
 }
-#line 2403 "/home/godcc/frontend/parser.cpp"
+#line 2401 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 80: /* UnaryExp: PostfixExp  */
-#line 758 "/home/godcc/frontend/sysy.y"
+#line 756 "/home/godcc/frontend/sysy.y"
                {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp-> unaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2412,11 +2410,11 @@ binary->column = (yyloc).first_column;
         unaryExp->column = (yyloc).first_column;
   	(yyval.ast_val) = unaryExp;
   }
-#line 2416 "/home/godcc/frontend/parser.cpp"
+#line 2414 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 81: /* UnaryExp: UnaryOp UnaryExp  */
-#line 766 "/home/godcc/frontend/sysy.y"
+#line 764 "/home/godcc/frontend/sysy.y"
                    {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -2426,11 +2424,11 @@ binary->column = (yyloc).first_column;
 	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
   }
-#line 2430 "/home/godcc/frontend/parser.cpp"
+#line 2428 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 82: /* UnaryExp: DEC UnaryExp  */
-#line 775 "/home/godcc/frontend/sysy.y"
+#line 773 "/home/godcc/frontend/sysy.y"
                {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp->unaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2441,11 +2439,11 @@ binary->column = (yyloc).first_column;
 	unaryExp->column = (yyloc).first_column;
   	(yyval.ast_val) = unaryExp;
   }
-#line 2445 "/home/godcc/frontend/parser.cpp"
+#line 2443 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 83: /* UnaryExp: INC UnaryExp  */
-#line 785 "/home/godcc/frontend/sysy.y"
+#line 783 "/home/godcc/frontend/sysy.y"
                {
   	auto unaryExp = new UnaryExprAst();
   	unaryExp->unaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2456,11 +2454,11 @@ binary->column = (yyloc).first_column;
 	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
 }
-#line 2460 "/home/godcc/frontend/parser.cpp"
+#line 2458 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 84: /* UnaryExp: Identifier '(' ')'  */
-#line 795 "/home/godcc/frontend/sysy.y"
+#line 793 "/home/godcc/frontend/sysy.y"
                     {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-2].ast_val));
@@ -2469,11 +2467,11 @@ binary->column = (yyloc).first_column;
 	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
 }
-#line 2473 "/home/godcc/frontend/parser.cpp"
+#line 2471 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 85: /* UnaryExp: Identifier '(' FuncRParamList ')'  */
-#line 803 "/home/godcc/frontend/sysy.y"
+#line 801 "/home/godcc/frontend/sysy.y"
                                   {
 	auto unaryExp = new UnaryExprAst();
 	unaryExp->unaryOp = shared_ptr<Ast>((yyvsp[-3].ast_val));
@@ -2483,11 +2481,11 @@ binary->column = (yyloc).first_column;
 	unaryExp->column = (yyloc).first_column;
 	(yyval.ast_val) = unaryExp;
 }
-#line 2487 "/home/godcc/frontend/parser.cpp"
+#line 2485 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 86: /* PostfixExp: PrimaryExpr  */
-#line 814 "/home/godcc/frontend/sysy.y"
+#line 812 "/home/godcc/frontend/sysy.y"
                       {
 	auto postfixExp = new PostfixExprAst();
 	postfixExp->postfixExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2496,11 +2494,11 @@ binary->column = (yyloc).first_column;
 	postfixExp->column = (yyloc).first_column;
 	(yyval.ast_val) = postfixExp;
 }
-#line 2500 "/home/godcc/frontend/parser.cpp"
+#line 2498 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 87: /* PostfixExp: PostfixExp DEC  */
-#line 822 "/home/godcc/frontend/sysy.y"
+#line 820 "/home/godcc/frontend/sysy.y"
                 {
 	auto postfixExp = new PostfixExprAst();
 	postfixExp->postfixExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -2509,11 +2507,11 @@ binary->column = (yyloc).first_column;
 	postfixExp->column = (yyloc).first_column;
 	(yyval.ast_val) = postfixExp;
 }
-#line 2513 "/home/godcc/frontend/parser.cpp"
+#line 2511 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 88: /* PostfixExp: PostfixExp INC  */
-#line 830 "/home/godcc/frontend/sysy.y"
+#line 828 "/home/godcc/frontend/sysy.y"
                 {
 	auto postfixExp = new PostfixExprAst();
 	postfixExp->postfixExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -2522,33 +2520,33 @@ binary->column = (yyloc).first_column;
 	postfixExp->column = (yyloc).first_column;
 	(yyval.ast_val) = postfixExp;
 }
-#line 2526 "/home/godcc/frontend/parser.cpp"
+#line 2524 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 89: /* FuncRParamList: Expr  */
-#line 842 "/home/godcc/frontend/sysy.y"
+#line 840 "/home/godcc/frontend/sysy.y"
      {
 	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>((yyvsp[0].ast_val)));
 	  	  funcRPUp->line = (yyloc).first_line;
                 funcRPUp->column = (yyloc).first_column;
 	(yyval.ast_val) = funcRPUp;
 }
-#line 2537 "/home/godcc/frontend/parser.cpp"
+#line 2535 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 90: /* FuncRParamList: FuncRParamList ',' Expr  */
-#line 848 "/home/godcc/frontend/sysy.y"
+#line 846 "/home/godcc/frontend/sysy.y"
                         {
 	auto funcRPUp = new FuncRParamListAst(shared_ptr<Ast>((yyvsp[-2].ast_val)),shared_ptr<Ast>((yyvsp[0].ast_val)));
 	  funcRPUp->line = (yyloc).first_line;
 	funcRPUp->column = (yyloc).first_column;
 	(yyval.ast_val) = funcRPUp;
 }
-#line 2548 "/home/godcc/frontend/parser.cpp"
+#line 2546 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 91: /* PrimaryExpr: '(' Expr ')'  */
-#line 857 "/home/godcc/frontend/sysy.y"
+#line 855 "/home/godcc/frontend/sysy.y"
                  {
   auto primaryAst = new PrimaryExprAst();
   primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -2563,11 +2561,11 @@ binary->column = (yyloc).first_column;
   }
   (yyval.ast_val) = primaryAst;
   }
-#line 2567 "/home/godcc/frontend/parser.cpp"
+#line 2565 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 92: /* PrimaryExpr: Number  */
-#line 871 "/home/godcc/frontend/sysy.y"
+#line 869 "/home/godcc/frontend/sysy.y"
           {
   auto primaryAst = new PrimaryExprAst();
     primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2576,11 +2574,11 @@ binary->column = (yyloc).first_column;
    primaryAst->column = (yyloc).first_column;
     (yyval.ast_val) = primaryAst;
   }
-#line 2580 "/home/godcc/frontend/parser.cpp"
+#line 2578 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 93: /* PrimaryExpr: String  */
-#line 879 "/home/godcc/frontend/sysy.y"
+#line 877 "/home/godcc/frontend/sysy.y"
           {
 	auto primaryAst = new PrimaryExprAst();
 	primaryAst->primaryExpr = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2589,11 +2587,11 @@ binary->column = (yyloc).first_column;
 	primaryAst->column = (yyloc).first_column;
 	(yyval.ast_val) = primaryAst;
   }
-#line 2593 "/home/godcc/frontend/parser.cpp"
+#line 2591 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 94: /* PrimaryExpr: LVal  */
-#line 887 "/home/godcc/frontend/sysy.y"
+#line 885 "/home/godcc/frontend/sysy.y"
        {
       auto primaryAst = new PrimaryExprAst();
       primaryAst->primaryType = PrimaryType::IDENTIFIER;
@@ -2602,11 +2600,11 @@ binary->column = (yyloc).first_column;
       	  primaryAst->column = (yyloc).first_column;
       (yyval.ast_val) = primaryAst;
   }
-#line 2606 "/home/godcc/frontend/parser.cpp"
+#line 2604 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 95: /* LVal: Identifier  */
-#line 898 "/home/godcc/frontend/sysy.y"
+#line 896 "/home/godcc/frontend/sysy.y"
            {
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>((yyvsp[0].ast_val));
@@ -2614,11 +2612,11 @@ binary->column = (yyloc).first_column;
 	  lval->column = (yyloc).first_column;
 	(yyval.ast_val) = lval;
 }
-#line 2618 "/home/godcc/frontend/parser.cpp"
+#line 2616 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 96: /* LVal: Identifier ArrayExpList  */
-#line 905 "/home/godcc/frontend/sysy.y"
+#line 903 "/home/godcc/frontend/sysy.y"
                          {
 	auto lval = new LValAst();
 	lval->l_val = shared_ptr<Ast>((yyvsp[-1].ast_val));
@@ -2627,11 +2625,11 @@ binary->column = (yyloc).first_column;
 	  lval->column = (yyloc).first_column;
 	(yyval.ast_val) = lval;
 }
-#line 2631 "/home/godcc/frontend/parser.cpp"
+#line 2629 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 97: /* UnaryOp: '+'  */
-#line 917 "/home/godcc/frontend/sysy.y"
+#line 915 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "+";
@@ -2639,11 +2637,11 @@ binary->column = (yyloc).first_column;
    unaryOpAst->column = (yyloc).first_column;
    (yyval.ast_val) = unaryOpAst;
  }
-#line 2643 "/home/godcc/frontend/parser.cpp"
+#line 2641 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 98: /* UnaryOp: '-'  */
-#line 924 "/home/godcc/frontend/sysy.y"
+#line 922 "/home/godcc/frontend/sysy.y"
        {
  auto unaryOpAst = new UnaryOpAst();
    unaryOpAst->op = "-";
@@ -2651,11 +2649,11 @@ binary->column = (yyloc).first_column;
    unaryOpAst->column = (yyloc).first_column;
    (yyval.ast_val) = unaryOpAst;
  }
-#line 2655 "/home/godcc/frontend/parser.cpp"
+#line 2653 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 99: /* UnaryOp: '!'  */
-#line 931 "/home/godcc/frontend/sysy.y"
+#line 929 "/home/godcc/frontend/sysy.y"
        {
   auto unaryOpAst = new UnaryOpAst();
   unaryOpAst->op = "!";
@@ -2663,11 +2661,11 @@ binary->column = (yyloc).first_column;
   unaryOpAst->column = (yyloc).first_column;
   (yyval.ast_val) = unaryOpAst;
  }
-#line 2667 "/home/godcc/frontend/parser.cpp"
+#line 2665 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 100: /* Number: INT_CONST  */
-#line 941 "/home/godcc/frontend/sysy.y"
+#line 939 "/home/godcc/frontend/sysy.y"
               {
   auto numberAst = new NumberAst();
   numberAst->value = ((yyvsp[0].int_val));
@@ -2675,11 +2673,11 @@ binary->column = (yyloc).first_column;
   numberAst->column = (yyloc).first_column;
   (yyval.ast_val) = numberAst;
   }
-#line 2679 "/home/godcc/frontend/parser.cpp"
+#line 2677 "/home/godcc/frontend/parser.cpp"
     break;
 
   case 101: /* String: STRING  */
-#line 950 "/home/godcc/frontend/sysy.y"
+#line 948 "/home/godcc/frontend/sysy.y"
               {
 	auto stringAst = new StringAst();
 	stringAst->value = ((yyvsp[0].str_val))->c_str();
@@ -2687,11 +2685,11 @@ binary->column = (yyloc).first_column;
 	stringAst->column = (yyloc).first_column;
 	(yyval.ast_val) = stringAst;
 }
-#line 2691 "/home/godcc/frontend/parser.cpp"
+#line 2689 "/home/godcc/frontend/parser.cpp"
     break;
 
 
-#line 2695 "/home/godcc/frontend/parser.cpp"
+#line 2693 "/home/godcc/frontend/parser.cpp"
 
       default: break;
     }
@@ -2889,7 +2887,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 957 "/home/godcc/frontend/sysy.y"
+#line 955 "/home/godcc/frontend/sysy.y"
 
 
 // 定义错误处理函数, 其中第二个参数是错误信息

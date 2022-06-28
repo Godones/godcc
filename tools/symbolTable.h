@@ -40,6 +40,8 @@ struct ArrayInfo {
   int size = 0;       //数组大小
   void *ptr = nullptr;//数组指针,有初始化时使用
   void dump();
+  int get_size();
+
 };
 struct FuncInfo {
   std::vector<SymbolInfo> params;// 函数参数

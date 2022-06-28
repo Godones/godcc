@@ -8,8 +8,13 @@ CodeGenVisitor::CodeGenVisitor() : asmGenerator("../riscv/a.asm"){}
 CodeGenVisitor::CodeGenVisitor(const char *outfile): asmGenerator(outfile){}
 
 void CodeGenVisitor::VisitProgram(Program *program) {
+  asmGenerator.genGloblData();
+  for (auto & instruction : program->global_block->instructions) {
+	instruction.accept(this);
+  }
   asmGenerator.genProgram(program);
   for (auto &func : program->functions) {
+	asmGenerator.reset();
 	func.accept(this);
   }
 }
@@ -22,6 +27,7 @@ void CodeGenVisitor::VisitFunction(Function *function) {
 }
 
 void CodeGenVisitor::VisitBaseBlock(BaseBlock *baseBlock) {
+  asmGenerator.genBaseBlock(baseBlock);
   for (auto &ins : baseBlock->instructions) {
 	ins.accept(this);
   }
@@ -41,8 +47,37 @@ void CodeGenVisitor::VisitInstruction(Instruction *instruction) {
 	  // 二元运算+一元运算
 	  asmGenerator.genBinary(instruction);
 	  break;
+	case InstructionType::Alloc:
+	  asmGenerator.genAlloc(instruction);
+	  break;
+	case InstructionType::Load:
+	  asmGenerator.genLoad(instruction);
+	  break;
+	case InstructionType::Store:
+	  asmGenerator.genStore(instruction);
+	  break;
+	case InstructionType::Call: {
+	  asmGenerator.genCall(instruction);
+	  break;
+	}
+	case InstructionType::Jump :{
+	  asmGenerator.genJump(instruction);
+	  break;
+	}
+	case InstructionType::Branch:{
+	  asmGenerator.genBranch(instruction);
+	}
+	case InstructionType::GetElementPtr:
+	  asmGenerator.genGetElementPtr(instruction);
+	  break;
+	case InstructionType::GlobalString:{
+	  asmGenerator.genGlobalString(instruction);
+	  break;
+	}
+	case InstructionType::GlobalAlloc:
+	  asmGenerator.genGlobalAlloc(instruction);
+	  break;
 	default:
 	  break;
   }
 }
-

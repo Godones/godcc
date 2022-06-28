@@ -49,7 +49,6 @@ void Dijkskra(int n, int v){
 		for(int j = 1; j<=n; ++j){
 			if((!s[j]) && cc[u][j] < maxint){
 				int newdist = dist[u] + cc[u][j];
-
 				if(newdist < dist[j]){
 					dist[j] = newdist;
 					prev[j] = u;
@@ -83,9 +82,8 @@ void searchPath(int v,int u){
 	return;
 }
 int main(){
-
-	n = Mars_GetInt();
-	line = Mars_GetInt();
+	n = Mars_GetInt(); // 5
+	line = Mars_GetInt(); //7
 	int p,q,len;
 	for(int i = 1; i<=n; ++i){
 		for(int j = 1; j<=n; j++){
@@ -110,6 +108,7 @@ int main(){
 	for(int i = 1; i<=n; ++i){
 		for(int j = 1; j<=n; ++j){
 			Mars_PrintInt(cc[i][j]);
+			Mars_PrintStr(" ");
 		}
 		Mars_PrintStr("\n");
 	}

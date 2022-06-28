@@ -12,15 +12,15 @@ set(lexer_path ${FRONTEND}/lexer.cpp)
 set(parser_path ${FRONTEND}/parser.cpp)
 set(parser_hpp_path ${FRONTEND}/parser.hpp)
 
-if (EXISTS ${lexer_path})
-    file(REMOVE ${lexer_path})
-endif ()
-if (EXISTS ${parser_path})
-    file(REMOVE ${parser_path})
-endif ()
-if (EXISTS ${FRONTEND}/parser.hpp)
-    file(REMOVE ${FRONTEND}/parser.hpp)
-endif ()
+#if (EXISTS ${lexer_path})
+#    file(REMOVE ${lexer_path})
+#endif ()
+#if (EXISTS ${parser_path})
+#    file(REMOVE ${parser_path})
+#endif ()
+#if (EXISTS ${FRONTEND}/parser.hpp)
+#    file(REMOVE ${FRONTEND}/parser.hpp)
+#endif ()
 
 add_custom_command(
         OUTPUT ${parser_path} ${parser_hpp_path}
@@ -45,7 +45,8 @@ add_library(test STATIC
         tools/log.cpp
         IR/IR.cpp
         IR/irvisitor.cpp
-        #		backend/asm.cpp
+        backend/framestack.cpp
+        backend/asm.cpp
         backend/register.cpp
         backend/asmgenerator.cpp
         tools/dot.cpp

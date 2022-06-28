@@ -489,7 +489,7 @@ LVal ::= IDENT [ArrayExpList]
                         | "return" [Exp] ";";
 表达式      Exp          ::= LOrExp;
 左值        LVal          ::= IDENT ArrayExpList ; 
-基本表达式   PrimaryExp    ::= "(" Exp ")" | LVal | Number ;
+基本表达式   PrimaryExp    ::= "(" Exp ")" | LVal | Number |Strings;
 PostfixExp = PrimaryExp 
 			|PostfixExp --;
 			|PostfixExp ++;		
@@ -542,3 +542,15 @@ PostfixExp = PrimaryExp
 - 符号表建立---> 赋值语句
 
 如何保证`continue`和`break`位于循环中
+
+
+
+
+
+
+
+```
+%v ==== xi   虚拟寄存器到实际寄存器之间的映射关系
+
+```
+

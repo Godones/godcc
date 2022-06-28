@@ -16,6 +16,7 @@ void perfectNumber(int n){
 		if( 0 == s)
 		{
 			Mars_PrintInt(num);
+			Mars_PrintStr(" ");
 			c++;
 		}
 	}

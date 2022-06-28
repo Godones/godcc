@@ -10,7 +10,7 @@ extern int yyparse(std::shared_ptr<Ast> &ast);
 extern FILE *yyout;
 
 static std::vector<const char *> file_names = {
-	"../test/mytest/test1.c",
+//	"../test/mytest/test1.c",
 //	"../test/mytest/test2.c",
 //	"../test/mytest/test3.c",
 //	"../test/mytest/test4.c",
@@ -28,14 +28,14 @@ static std::vector<const char *> file_names = {
 //	"../test/semantic/correct.c",
 //	"../test/mytest/ir.c",
 //	"../test/mytest/array.c",
-//	"../test/nc_tests/0_BubbleSort.c",
-//	"../test/nc_tests/1_Fibonacci.c",
-//	"../test/nc_tests/2_Prime.c",
-//	"../test/nc_tests/3_PerfectNumber.c",
-//	"../test/nc_tests/4_CounterClockwiseRotationArray4_4.c",
-//	"../test/nc_tests/5_YangHuiTriangle.c",
-//	"../test/nc_tests/6_QuickSort.c",
-//	"../test/nc_tests/7_Dijkstra.c",
+	"../test/nc_tests/0_BubbleSort.c",
+	"../test/nc_tests/1_Fibonacci.c",
+	"../test/nc_tests/2_Prime.c",
+	"../test/nc_tests/3_PerfectNumber.c",
+	"../test/nc_tests/4_CounterClockwiseRotationArray4_4.c",
+	"../test/nc_tests/5_YangHuiTriangle.c",
+	"../test/nc_tests/6_QuickSort.c",
+	"../test/nc_tests/7_Dijkstra.c",
 };
 
 void openFile(const char *file_name) {
@@ -58,10 +58,7 @@ void openFile(const char *file_name) {
 }
 
 auto parser(const char *file_name) -> decltype(std::make_shared<Ast>()) {
-  static std::shared_ptr<Ast> ast = nullptr;
-  if (ast != nullptr) {
-	return ast;
-  }
+  std::shared_ptr<Ast> ast = nullptr;
   openFile(file_name);
   int result = yyparse(ast);
   assert(!result);
@@ -95,16 +92,27 @@ void test_ir_gen() {
   ir_code->accept(&visitor_default);
 }
 
-//void test_asm_gen() {
-//  auto ast = parser(file_names.back());
-//  auto semanticVisitor = SemanticVisitor();
-//  ast->accept(&semanticVisitor);
-//  auto visitor = IRGeneratorVisitor(semanticVisitor.globalSymbolTable);
-//  ast->accept(&visitor);
-//  auto ir_code = visitor.programIr;
-//  auto asmCodeGen = CodeGenVisitor();
-//  ir_code->accept(&asmCodeGen);
-//}
+void test_asm_gen() {
+  for(auto &file_name : file_names) {
+	auto ast = parser(file_name);
+	auto semanticVisitor = SemanticVisitor();
+	ast->accept(&semanticVisitor);
+	auto visitor = IRGeneratorVisitor(semanticVisitor.globalSymbolTable);
+	ast->accept(&visitor);
+	auto ir_code = visitor.programIr;
+	// 获取文件名称
+	std::string file_name_str(file_name);
+	auto pos = file_name_str.find_last_of('/');
+	auto file_name_without_path = file_name_str.substr(pos + 1);
+	auto pos_ = file_name_without_path.find_last_of('.');
+	auto file_name_without_extension = file_name_without_path.substr(0, pos_);
+	auto filename = file_name_without_extension + ".s";
+	auto prefix = "../mips/";
+	filename  = prefix + filename;
+	auto asmCodeGen = CodeGenVisitor(filename.data());
+	ir_code->accept(&asmCodeGen);
+  }
+}
 
 void test_cst_tree() {
   auto ast = parser(file_names.back());
@@ -113,7 +121,6 @@ void test_cst_tree() {
   ast->accept(&visitor);
 }
 void test_ast_tree() {
-
   auto ast = parser(file_names.back());
   GDot json("ast_Tree.dot");
   auto visitor = AstViewVisitor(json);

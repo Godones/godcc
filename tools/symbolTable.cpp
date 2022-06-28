@@ -124,6 +124,15 @@ void ArrayInfo::dump() {
   }
   std::cout << ") ";
 }
+int ArrayInfo::get_size() {
+  // 计算数组大小
+  size = 1;
+  for (int i = 0; i < dim.size(); i++) {
+	size *= dim[i];
+  }
+  return size;
+}
+
 
 void FuncInfo::dump() {
   // 打印函数信息

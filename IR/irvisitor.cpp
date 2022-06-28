@@ -6,8 +6,8 @@
 #include "tools/log.h"
 
 void IrVisitorDefault::VisitProgram(Program *program) {
-  for (int i = 0; i < program->global_block->instructions.size(); i++) {
-	program->global_block->instructions[i].accept(this);
+  for (auto & instruction : program->global_block->instructions) {
+	instruction.accept(this);
   }
   for (auto &func : program->functions) {
 	func.accept(this);
@@ -86,7 +86,7 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	}
 	case InstructionType::GlobalAlloc: {
 	  std::cout << "@" << instruction->operand1.operand.symbol << " = global " << toString(instruction->dataType) << " ";
-	  if (instruction->array_dim.size() != 0) {//数组
+	  if (!instruction->array_dim.empty()) {//数组
 		std::cout << "array ";
 		std::cout << "[";
 		for (auto &dim : instruction->array_dim) {
@@ -96,7 +96,7 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	  }
 	  auto next = instruction->next;
 	  assert(next);
-	  if (instruction->array_dim.size() != 0) {//数组
+	  if (!instruction->array_dim.empty()) {//数组
 		std::cout << " {";
 		for (auto &dim : next->array_dim) {
 		  std::cout << dim << ",";
@@ -189,7 +189,8 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 		std::cout << "%";
 	  }
 	  std::cout <<instruction->operand2.operand.number;
-	  std::cout << "\n";
+	  std::cout << "*";
+	  std::cout << instruction->operand3.operand.number << "\n";
 	  break;
 	}
 	case InstructionType::Move:{

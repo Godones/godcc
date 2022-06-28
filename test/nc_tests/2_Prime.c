@@ -12,6 +12,7 @@ int prime(int n){
 		if(flag == 1){
 			sum ++;
 			Mars_PrintInt(i);
+			Mars_PrintStr(" ");
 		}
 	}
 	return sum;

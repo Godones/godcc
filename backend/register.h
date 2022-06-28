@@ -5,22 +5,29 @@
 #ifndef GODCC_REGISTER_H
 #define GODCC_REGISTER_H
 #include <unordered_map>
-#include <queue>
+#include <deque>
 #include <iostream>
-
+#include <algorithm>
+#include "../tools/log.h"
 
 // 寄存器分配类
-// 功能:负责分配risc-v的寄存器给目标代码生成模块
+// 功能:负责分配mips32的寄存器给目标代码生成模块
 // 寄存器分配针对每一个函数
 class RegisterAllocator{
  private:
-  std::unordered_map<int,std::string > reg_var_map; //寄存器到变量的映射
-  std::unordered_map<std::string,int> var_reg_map; // 变量到寄存器的映射
-  std::queue<int> unused_reg; // 未使用的寄存器
+  std::unordered_map<int,int> virtualRegMap; //虚拟寄存器与实际寄存器的对应关系
+  int regNum = 16; // 寄存器数量
+//  int unusedReg[16] = {0};
+  std::deque<int> unusedReg; // 未使用的寄存器
+  std::vector<int> allReg; // 所有的寄存器
  public:
   RegisterAllocator();
-  void add_param_reg(int params); // 添加参数寄存器
-//  void flush(int params); // 删除参数寄存器
+  int getReg(int virtualReg); // 获取一个寄存器
+  int getTempReg(); // 获取一个寄存器,这种寄存器会马上被回收
+  void freeReg(int reg); // 释放一个寄存器
+  void freeTempReg(int reg); // 释放一个临时寄存器
+  void addVirtualReg(int virtualReg,int reg); // 添加一个虚拟寄存器与实际寄存器的对应关系
+  std::vector<int> getUsedReg(); // 获取所有已使用的寄存器
 };
 
 

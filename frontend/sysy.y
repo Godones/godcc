@@ -553,7 +553,6 @@ Stmt
 	$$ = stmt;
 }
 |FOR '(' Stmt  Stmt  Expr ')' Stmt {
-	printf("FOR\n");
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
 	auto forStmt = new ForStmtAst();
@@ -583,7 +582,6 @@ Stmt
 	$$ = stmt;
 }
 |FOR '(' VarDecl  Stmt  Expr ')' Stmt {
-	printf("FOR\n");
 	auto stmt = new StmtAst();
 	stmt->type = StmtType::kFor;
 	auto forStmt = new ForStmtAst();

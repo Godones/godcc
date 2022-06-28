@@ -101,10 +101,10 @@ void SemanticVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_lis
   auto func_info = static_cast<FuncInfo *>(item->ptr);
   //检查参数个数是否匹配
   if (func_info->params.size() != list.size()) {
-	ERROR("address:%d-%d, function:%s has %d parameters, but %d parameters are given",
-		  line, column,
-		  name.c_str(),
-		  func_info->params.size(), list.size());
+//	ERROR("address:%d-%d, function:%s has %d parameters, but %d parameters are given",
+//		  line, column,
+//		  name.c_str(),
+//		  func_info->params.size(), list.size());
 	return;
   }
   //检查参数类型是否匹配
@@ -115,12 +115,12 @@ void SemanticVisitor::VisitFuncRParamListAst(FuncRParamListAst *func_r_param_lis
 	auto expr = dynamic_cast<ExpAst *>(expr_top.get());
 	expr->accept(this);//参数编译期求值
 	if (param.type != expr->data_type) {
-	  ERROR("address:%d-%d, function:%s parameter %d type is %s, but %s is given",
-			line, column,
-			name.c_str(),
-			i + 1,
-			DataTypeToString(param.type).c_str(),
-			DataTypeToString(expr->data_type).c_str());
+//	  ERROR("address:%d-%d, function:%s parameter %d type is %s, but %s is given",
+//			line, column,
+//			name.c_str(),
+//			i + 1,
+//			DataTypeToString(param.type).c_str(),
+//			DataTypeToString(expr->data_type).c_str());
 	}
   }
   //由于我们定义的数据类型只有一个，因此不需要检查类型匹配
@@ -672,20 +672,20 @@ void SemanticVisitor::add_library_function() {
   funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kString});
   symbolInfo1.ptr = new FuncInfo(funcInfo1);
   globalSymbolTable->add_symbol("Mars_PrintStr",symbolInfo1);
-  INFO("add Mars_PrintStr");
+//  INFO("add Mars_PrintStr");
 
   funcInfo1.ret_type = DataType::kInt;
   funcInfo1.params.clear();
   symbolInfo1.name = "Mars_GetInt";
   symbolInfo1.ptr = new FuncInfo(funcInfo1);
   globalSymbolTable->add_symbol("Mars_GetInt",symbolInfo1);
-  INFO("add Mars_GetInt");
+//  INFO("add Mars_GetInt");
 
   funcInfo1.ret_type = DataType::kVoid;
   funcInfo1.params.emplace_back(SymbolInfo{.type = DataType::kInt});
   symbolInfo1.name = "Mars_PrintInt";
   symbolInfo1.ptr = new FuncInfo(funcInfo1);
   globalSymbolTable->add_symbol("Mars_PrintInt",symbolInfo1);
-  INFO("add Mars_PrintInt");
+//  INFO("add Mars_PrintInt");
 
 }
