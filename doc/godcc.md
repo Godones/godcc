@@ -509,33 +509,6 @@ PostfixExp = PrimaryExp
 
 ==考虑如何展开表达式语句中的重复语句==
 
-```
-  std::string pre_name = BinaryTypeToString(binary_expr_ast->type);
-  auto left = dynamic_cast<PrimaryExprAst*>(binary_expr_ast->left.get());
-  auto right = dynamic_cast<PrimaryExprAst*>(binary_expr_ast->right.get());
-  if (left || right){
-	j_son_.BeganWrite(pre_name+"BinaryExp");
-	if(left){
-	  left->accept(this);
-	  j_son_.BeganWrite(binary_expr_ast->op);
-	  j_son_.EndWrite();
-	}
-	assert(right);
-	right->accept(this);
-	j_son_.EndWrite();
-  } else{
-	if (binary_expr_ast->left)
-		binary_expr_ast->left->accept(this);
-	binary_expr_ast->right->accept(this);
-  }
-```
-
-如果是二元节点的话则就需要将两边的表达式同时递归到最底层
-
-如果是一元节点就需要将右节点递归到最底层
-
-对于递归文法，使用堆栈将其取出。
-
 ### 语义检查
 
 - 编译器求值--->针对二元运算、一元运算

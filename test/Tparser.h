@@ -26,6 +26,6 @@ void test_semantic();
 void test_ast_tree();
 void test_cst_tree();
 void test_asm_gen();
-
+std::shared_ptr<Ast> parser(const char *filename);
 void test_parse_correct();
 #endif//GODCC_TPARSER_H

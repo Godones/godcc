@@ -7,7 +7,7 @@
 
 #include <cassert>
 #include <fstream>
-
+#include <ostream>
 #include "IR.h"
 class Program;
 class Function;
@@ -24,7 +24,11 @@ class IrVisitor {
 
 // 查看中间代码形式
 class IrVisitorDefault : public IrVisitor {
+  private:
+	std::ofstream out;
  public:
+  IrVisitorDefault(std::string&& filename );
+  IrVisitorDefault();
   void VisitProgram(Program *) override;
   void VisitFunction(Function *) override;
   void VisitBaseBlock(BaseBlock *) override;

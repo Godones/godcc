@@ -12,30 +12,30 @@ void IrVisitorDefault::VisitProgram(Program *program) {
   for (auto &func : program->functions) {
 	func.accept(this);
   }
-  std::cout << "\n";
+  out << "\n";
 }
 
 void IrVisitorDefault::VisitFunction(Function *function) {
-  std::cout << "fun @" << function->name << ":" << toString(function->retType);
+  out << "fun @" << function->name << ":" << toString(function->retType);
   //参数
-  std::cout << "(";
+  out << "(";
   for (auto &arg : function->params) {
-	std::cout << toString(arg.dataType) << ",";
+	out << toString(arg.dataType) << ",";
   }
-  std::cout << ")";
-  std::cout << "{\n";
+  out << ")";
+  out << "{\n";
   for (auto &block : function->blocks) {
 	block.accept(this);
   }
-  std::cout << "}\n";
+  out << "}\n";
 }
 
 void IrVisitorDefault::VisitBaseBlock(BaseBlock *block) {
-  std::cout << block->blkId << ":\n";
+  out << block->blkId << ":\n";
   for (auto &ins : block->instructions) {
 	ins.accept(this);
   }
-  std::cout << "\n";
+  out << "\n";
 }
 
 void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
@@ -44,160 +44,172 @@ void IrVisitorDefault::VisitInstruction(Instruction *instruction) {
 	case InstructionType::Integer:
 	  break;
 	case InstructionType::Return:
-	  std::cout << "ret ";
+	  out << "ret ";
 	  if (instruction->operand1.type == OperandType::kInteger) {
-		std::cout << instruction->operand1.operand.number << "\n";
+		out << instruction->operand1.operand.number << "\n";
 	  } else if (instruction->operand1.type == OperandType::kNumber) {
-		std::cout << "%" << instruction->operand1.operand.number << "\n";
+		out << "%" << instruction->operand1.operand.number << "\n";
 	  } else {
-		std::cout << "\n";
+		out << "\n";
 	  }
 	  break;
 	case InstructionType::Alloc:{
-	  std::cout << "@" << instruction->operand1.operand.symbol << " = alloc " << toString(instruction->dataType) << " ";
+	  out << "@" << instruction->operand1.operand.symbol << " = alloc " << toString(instruction->dataType) << " ";
 	  if (instruction->array_dim.size() != 0) {//数组
-		std::cout << "array ";
-		std::cout << "[";
+		out << "array ";
+		out << "[";
 		for (auto &dim : instruction->array_dim) {
-		  std::cout << dim << ",";
+		  out << dim << ",";
 		}
-		std::cout << "]";
+		out << "]";
 	  }
 	  auto next = instruction->next;
 	  if (!next) {
-		std::cout << "\n";
+		out << "\n";
 		break ;
 	  }
 	  if (instruction->array_dim.size() != 0) {//数组
-		std::cout << " {";
+		out << " {";
 		for (auto &dim : next->array_dim) {
-		  std::cout << dim << ",";
+		  out << dim << ",";
 		}
-		std::cout << "}";
+		out << "}";
 	  } else {
-		std::cout <<  next->array_dim[0];
+		out <<  next->array_dim[0];
 	  }
-	  std::cout << "\n";
+	  out << "\n";
 	  break;
 	}
 	case InstructionType::GlobalString:{
-	  std::cout << "@" << instruction->operand1.operand.symbol << " = " << instruction->operand2.operand.symbol << "\n";
+	  out << "@" << instruction->operand1.operand.symbol << " = " << instruction->operand2.operand.symbol << "\n";
 	  break ;
 	}
 	case InstructionType::GlobalAlloc: {
-	  std::cout << "@" << instruction->operand1.operand.symbol << " = global " << toString(instruction->dataType) << " ";
+	  out << "@" << instruction->operand1.operand.symbol << " = global " << toString(instruction->dataType) << " ";
 	  if (!instruction->array_dim.empty()) {//数组
-		std::cout << "array ";
-		std::cout << "[";
+		out << "array ";
+		out << "[";
 		for (auto &dim : instruction->array_dim) {
-		  std::cout << dim << ",";
+		  out << dim << ",";
 		}
-		std::cout << "]";
+		out << "]";
 	  }
 	  auto next = instruction->next;
 	  assert(next);
 	  if (!instruction->array_dim.empty()) {//数组
-		std::cout << " {";
+		out << " {";
 		for (auto &dim : next->array_dim) {
-		  std::cout << dim << ",";
+		  out << dim << ",";
 		}
-		std::cout << "}";
+		out << "}";
 	  } else {
-		std::cout <<  next->array_dim[0];
+		out <<  next->array_dim[0];
 	  }
-	  std::cout << "\n";
+	  out << "\n";
 	  break;
 	}
 	case InstructionType::Store:
-	  std::cout << "store " << "i32" << " ";
+	  out << "store " << "i32" << " ";
 	  if (instruction->operand1.type == OperandType::kInteger) {
-		std::cout << instruction->operand1.operand.number << ",";
+		out << instruction->operand1.operand.number << ",";
 	  }
 	  if (instruction->operand1.type == OperandType::kNumber) {
-		std::cout << "%" << instruction->operand1.operand.number << ",";
+		out << "%" << instruction->operand1.operand.number << ",";
 	  }
 	  if (instruction->operand2.type == OperandType::kString) {
-	  	std::cout << instruction->operand2.operand.symbol << "\n";
+	  	out << instruction->operand2.operand.symbol << "\n";
 	  } else{
-	  	std::cout << "%" << instruction->operand2.operand.number << "\n";
+	  	out << "%" << instruction->operand2.operand.number << "\n";
 	  }
 	  break;
 
 	case InstructionType::Load:
-	  std::cout << "%" << instruction->m_number << " = load " << " ";
+	  out << "%" << instruction->m_number << " = load " << " ";
 	  if (instruction->operand1.type==OperandType::kNumber) {
-		std::cout << "%" << instruction->operand1.operand.number ;
+		out << "%" << instruction->operand1.operand.number ;
 	  }else{
-		std::cout << "@" << instruction->operand1.operand.symbol;
+		out << "@" << instruction->operand1.operand.symbol;
 	  }
-	  std::cout << "\n";
+	  out << "\n";
 	  break;
 	case InstructionType::Binary: {
-	  auto print_operand = [](Operand &operand) {
+	  auto print_operand = [&](Operand &operand) {
 		if (operand.type == OperandType::kNumber)
-		  std::cout << "%" << operand.operand.number;
+		  out << "%" << operand.operand.number;
 		else if (operand.type == OperandType::kInteger)
-		  std::cout << operand.operand.number;
+		  out << operand.operand.number;
 	  };
-	  std::cout << "%" << instruction->m_number << " = ";
-	  std::cout << toString(instruction->binaryOp);
+	  out << "%" << instruction->m_number << " = ";
+	  out << toString(instruction->binaryOp);
 	  print_operand(instruction->operand1);
-	  std::cout << ", ";
+	  out << ", ";
 	  print_operand(instruction->operand2);
-	  std::cout << "\n";
+	  out << "\n";
 	  break;
 	}
 	case InstructionType::Jump: {
-	  std::cout << "jmp "
+	  out << "jmp "
 				<< "label " << instruction->operand1.operand.number << "\n";
 	  break;
 	}
 	case InstructionType::Branch: {
-	  std::cout << "br "
+	  out << "br "
 				<< "%" << instruction->operand1.operand.number << ", ";
-	  std::cout << "label " << instruction->operand2.operand.number << ", ";
-	  std::cout << "label " << instruction->operand3.operand.number << "\n";
+	  out << "label " << instruction->operand2.operand.number << ", ";
+	  out << "label " << instruction->operand3.operand.number << "\n";
 	  break;
 	}
 	case InstructionType::Call: {
 	  if (instruction->m_number != -1) {
-		std::cout << "%" << instruction->m_number << " = ";
+		out << "%" << instruction->m_number << " = ";
 	  }
-	  std::cout << "call " << instruction->name << "(";
+	  out << "call " << instruction->name << "(";
 	  for (auto &fp : instruction->extra) {
 		if (fp.operand1.type == OperandType::kInteger) {
-		  std::cout << "i32 " << fp.operand1.operand.number << ",";
+		  out << "i32 " << fp.operand1.operand.number << ",";
 		} else if (fp.operand1.type == OperandType::kNumber) {
-		  std::cout << "%" << fp.operand1.operand.number << ",";
+		  out << "%" << fp.operand1.operand.number << ",";
 		} else if (fp.operand1.type==OperandType::kString){
-		  std::cout << fp.operand1.operand.symbol << ",";
+		  out << fp.operand1.operand.symbol << ",";
 		}
 	  }
-	  std::cout << ")\n";
+	  out << ")\n";
 	  break ;
 	}
 	case InstructionType::GetElementPtr:{
-	  std::cout << "%" << instruction->m_number << " = ";
-	  std::cout << "getelementptr ";
+	  out << "%" << instruction->m_number << " = ";
+	  out << "getelementptr ";
 	  if (instruction->operand1.type==OperandType::kString) {
-		std::cout << "@" <<instruction->operand1.operand.symbol;
+		out << "@" <<instruction->operand1.operand.symbol;
 	  }else if(instruction->operand1.type==OperandType::kNumber){
-		std::cout << "%" << instruction->operand1.operand.number;
+		out << "%" << instruction->operand1.operand.number;
 	  }
-	  std::cout << ", ";
+	  out << ", ";
 	  if (instruction->operand2.type==OperandType::kNumber){
-		std::cout << "%";
+		out << "%";
 	  }
-	  std::cout <<instruction->operand2.operand.number;
-	  std::cout << "*";
-	  std::cout << instruction->operand3.operand.number << "\n";
+	  out <<instruction->operand2.operand.number;
+	  out << "*";
+	  out << instruction->operand3.operand.number << "\n";
 	  break;
 	}
 	case InstructionType::Move:{
-	  std::cout << "";
+	  out << "";
 	  break ;
 	}
 	default:
 	  break;
+  }
+}
+IrVisitorDefault::IrVisitorDefault(std::string &&filename) {
+  out.open(filename);
+  if (!out.is_open()) {
+    std::cerr << "open file error" << std::endl;
+  }
+}
+IrVisitorDefault::IrVisitorDefault() {
+  out.open("../mips/a.ir");
+  if (!out.is_open()) {
+    std::cerr << "open file error" << std::endl;
   }
 }
